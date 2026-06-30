@@ -23,7 +23,7 @@
 
 ## Descrição
 
-O **Zsh AI Assistant** (`@assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Zsh/Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais orquestrados via **Ollama** ou **OpenCode** diretamente a partir do terminal.
+O **Assistant CLI** (`@assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Zsh/Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais orquestrados via **Ollama** ou **OpenCode** diretamente a partir do terminal.
 
 Todas as escolhas de configuração (como engine ativa, modelo selecionado, idioma e modo de pensamento) são salvas localmente e persistem entre as sessões do terminal.
 
