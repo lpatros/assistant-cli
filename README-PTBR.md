@@ -46,6 +46,7 @@ Todas as escolhas de configuração (como engine ativa, modelo selecionado, idio
 ### Habilidades (*Skills*) Personalizadas
 - **Assistente de Commit (`@assistant commit`)**: Analisa o status do seu repositório Git, diffs da staging e estatísticas de alterações para gerar sugestões de mensagens de commit claras e estruturadas, seguindo as diretrizes recomendadas.
 - **Gerador de Resumos de Projeto (`@assistant resume [caminhos...]`)**: Coleta informações estruturais do diretório (árvore estrutural e arquivos de manifesto como `package.json`, `pom.xml`, `Cargo.toml`, etc.) e formata um resumo completo em markdown descrevendo a arquitetura e dependências do projeto.
+- **Gerador de README (`@assistant readme --lang [en|pt-br] --name [nome_do_arquivo]`)**: Analisa automaticamente a estrutura do seu projeto e arquivos de configuração para gerar um README profissional e contextualizado.
 
 ### Gerenciamento do Modo Think (Ollama)
 - Ativa, desativa ou oculta as etapas de raciocínio do modelo (para modelos com suporte a pensamento/reasoning que utilizam tags `<think>...</think>`). Pode ser configurado por sessão ou salvo globalmente.
@@ -55,20 +56,16 @@ Todas as escolhas de configuração (como engine ativa, modelo selecionado, idio
 
 ## Instalação e Configuração
 
-1. Clone ou copie a pasta do assistente para o seu diretório de configuração do Zsh:
-   ```bash
-   git clone https://github.com/lpatros/assistant-cli.git ~/.config/zsh/assistant
-   ```
+Você pode instalar o Assistant CLI diretamente usando o `curl`:
 
-2. Adicione a seguinte linha ao seu arquivo `~/.zshrc` (ou `~/.bashrc`):
-   ```bash
-   source "$HOME/.config/zsh/assistant/init.sh"
-   ```
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
 
-3. Recarregue a configuração do terminal:
-   ```bash
-   source ~/.zshrc
-   ```
+O instalador interativo irá:
+1. Clonar o repositório para `~/.config/assistant-cli` (ou outro diretório de sua escolha).
+2. Adicionar automaticamente a configuração ao seu shell (`~/.zshrc`, `~/.bashrc`, ou `config.fish`).
+3. Fornecer instruções de como recarregar o seu terminal para começar a usar o assistente.
 
 ## Uso
 
@@ -81,6 +78,7 @@ Ao rodar `@assistant`, você tem acesso aos seguintes comandos:
 | `@assistant status` | Mostra a engine ativa, modelos ativos, modo think e idioma |
 | `@assistant commit` | Analisa a área de staging do git e sugere commits estruturados |
 | `@assistant resume [caminhos...]` | Escaneia diretórios e gera resumos de projeto em arquivos markdown |
+| `@assistant readme --lang <lang> --name <name>` | Escaneia a estrutura do projeto e gera um arquivo README |
 | `@assistant model --list` | Lista de forma interativa os modelos disponíveis na engine ativa para seleção |
 | `@assistant model status` | Mostra os modelos configurados para todas as engines |
 | `@assistant engine [ollama\|opencode]` | Altera a engine de orquestração de modelo ativa |
@@ -110,10 +108,7 @@ assistant/
 ├── data/                    # Armazena configurações e metadados do sistema.
 ├── lib/                     # Caminhos constantes, traduções e rotas de comandos.
 ├── locales/                 # Traduções usadas pelo CLI
-├── skills/
-│   ├── commit/              # Habilidade de sugestão de commits de Git
-│   └── resume/              # Habilidade de geração de resumos de projeto
-│
+├── skills/                  # Habilidades do Assistant
 ├── utils/                   # Funções utilitárias auxiliares
 ├── init.sh                  # Ponto de entrada principal para carregar no shell
 ├── README-PTBR.md           # Documentação em português

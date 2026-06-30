@@ -46,6 +46,7 @@ All configuration choices (such as active engine, selected model, language, and 
 ### Custom LLM Skills
 - **Commit Assistant (`@assistant commit`)**: Analyzes your Git repository's status, staged diffs, and unstaged change statistics, and runs them against standard guidelines to generate clean, readable commit message suggestions.
 - **Project Resume Generator (`@assistant resume [paths...]`)**: Automatically gathers context from your project directory (structural tree and manifest files like `package.json`, `pom.xml`, `Cargo.toml`, etc.) and formats a comprehensive markdown resume outlining project architecture and dependencies.
+- **README Generator (`@assistant readme --lang [en|pt-br] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
 
 ### Think Mode Management (Ollama)
 - Enables, disables, or hides the model's reasoning/thinking steps (e.g., for models that output thoughts like `<think>...</think>`). Can be toggled per session or saved globally.
@@ -55,20 +56,16 @@ All configuration choices (such as active engine, selected model, language, and 
 
 ## Installation & Setup
 
-1. Clone or copy the assistant folder to your Zsh configuration directory:
-   ```bash
-   git clone https://github.com/lpatros/assistant-cli.git ~/.config/zsh/assistant
-   ```
+You can install Assistant CLI directly using `curl`:
 
-2. Add the following line to your `~/.zshrc` (or `~/.bashrc`):
-   ```bash
-   source "$HOME/.config/zsh/assistant/init.sh"
-   ```
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
 
-3. Reload your shell configuration:
-   ```bash
-   source ~/.zshrc
-   ```
+The interactive installer will:
+1. Clone the repository to `~/.config/assistant-cli` (or a custom directory of your choice).
+2. Automatically add the configuration to your shell (`~/.zshrc`, `~/.bashrc`, or `config.fish`).
+3. Guide you on how to reload your terminal to start using the assistant.
 
 ## Usage
 
@@ -81,6 +78,7 @@ When running `@assistant`, you have access to the following commands:
 | `@assistant status` | Shows active engine, active models, think mode, and language |
 | `@assistant commit` | Analyzes git staging and suggests structured commits |
 | `@assistant resume [paths...]` | Scans directories and generates project resume markdown files |
+| `@assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
 | `@assistant model --list` | Interactively lists available models for the current engine to switch them |
 | `@assistant model status` | Shows currently configured models for all engines |
 | `@assistant engine [ollama\|opencode]` | Switches the active model orchestration engine |
@@ -110,10 +108,7 @@ assistant/
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── lib/                     # Paths constants,Translates and Handles command routes.
 ├── locales/                 # Text translations
-├── skills/
-│   ├── commit/              # Git commit suggestion tools
-│   └── resume/              # Project resume generator tools
-│
+├── skills/                  # Assistant tools
 ├── utils/                   # Utility scripts and helpers
 ├── init.sh                  # Main entry point to source in shell config files
 ├── README-PTBR.md           # Documentation in Portuguese
