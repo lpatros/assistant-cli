@@ -18,6 +18,7 @@ _load_locale
 
 source "$ASSISTANT_ROOT_DIR/skills/commit/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
+source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
 
 function @assistant() {
   local subcmd="${1:-}"
@@ -33,6 +34,10 @@ function @assistant() {
     "resume")
       shift
       _cmd_resume "$@"
+      ;;
+    "readme")
+      shift
+      _cmd_readme "$@"
       ;;
     "model")
       shift

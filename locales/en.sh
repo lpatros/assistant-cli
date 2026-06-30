@@ -206,6 +206,33 @@ t_resume_parallel_done() {
   _success "Parallel analysis completed."
 }
 
+# Readme skill
+t_readme_missing_args() {
+  _warn "Please provide both parameters to continue:
+
+- --lang — the language for the README content (e.g., en, pt-br, es, fr)
+- --name — the output filename without extension (e.g., README, README-PTBR)
+
+Example: @assistant readme --lang en --name README"
+}
+
+t_readme_analyzing() {
+  _header "Analyzing project with $1 ($2)..."
+}
+
+t_readme_prompt_instructions() {
+  echo "Analyze the project above and generate the README file strictly following the provided guidelines. The output language MUST be: $1. IMPORTANT: Output ONLY the raw Markdown content for the README. Do NOT include any conversational text, confirmations, or markdown codeblocks formatting (\`\`\`markdown) wrapping the response."
+}
+
+t_readme_failed() {
+  _error "Failed to generate README."
+}
+
+t_readme_success() {
+  _success "$1 generated in $2."
+}
+
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}@assistant${RESET} — CLI wrapper for Ollama and OpenCode
@@ -216,6 +243,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}@assistant status${RESET}                           Show engine, models, think mode, and language
   ${GREEN}@assistant commit${RESET}                           Analyze git repo and suggest commits
   ${GREEN}@assistant resume${RESET} [paths...]                 Generate project resumes in markdown
+  ${GREEN}@assistant readme${RESET} --lang <code> --name <name>  Generate project README file
   ${GREEN}@assistant model --list${RESET}                     List models and allow switching
   ${GREEN}@assistant model status${RESET}                     Show current engine's model and saved models
   ${GREEN}@assistant engine${RESET} [ollama|opencode|--list|status]  Switch the active engine
@@ -237,6 +265,7 @@ ${BOLD}Examples:${RESET}
   @assistant commit
   @assistant commit --no-think
   @assistant \"Summarize this text\" --think
+  @assistant readme --lang en --name README
   @assistant model --list
   @assistant model status
   @assistant engine opencode

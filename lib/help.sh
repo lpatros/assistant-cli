@@ -13,7 +13,8 @@ _cmd_help() {
     "${ASSISTANT_LANG:-$ASSISTANT_DEFAULT_LANG}" \
     "$ASSISTANT_CONFIG_FILE" \
     "$(_get_skill_md_path "commit")" \
-    "$(_get_skill_md_path "resume")"
+    "$(_get_skill_md_path "resume")" \
+    "$(_get_skill_md_path "readme")"
 }
 
 _cmd_status() {
