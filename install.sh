@@ -16,6 +16,15 @@ success() { printf "${GREEN} %s${RESET}\n" "$1"; }
 warn()    { printf "${YELLOW}  %s${RESET}\n" "$1"; }
 error()   { printf "${RED} %s${RESET}\n" "$1"; }
 
+prompt_read() {
+  local var_name="$1"
+  if [ -c /dev/tty ]; then
+    read -r "$var_name" </dev/tty || true
+  else
+    read -r "$var_name" || true
+  fi
+}
+
 detect_shell() {
   case "$SHELL" in
     */zsh)  echo "zsh"  ;;
@@ -50,12 +59,12 @@ printf "${RESET}\n"
 
 echo ""
 printf "  Use default installation path (${BOLD}%s${RESET})? [Y/n]: " "$INSTALL_DIR"
-read -r USE_DEFAULT_DIR
+prompt_read USE_DEFAULT_DIR
 
 case "$USE_DEFAULT_DIR" in
   [nN]|[nN][oO])
     printf "  Enter custom installation path: "
-    read -r CUSTOM_DIR
+    prompt_read CUSTOM_DIR
     if [ -n "$CUSTOM_DIR" ]; then
       INSTALL_DIR="${CUSTOM_DIR/#\~/$HOME}"
     fi
@@ -94,7 +103,7 @@ else
 fi
 
 printf "  Choice [1-4, default: %s]: " "$PROMPT_DEFAULT"
-read -r CHOICE
+prompt_read CHOICE
 
 case "$CHOICE" in
   1) SHELL_NAME="zsh"  ;;
@@ -123,7 +132,7 @@ echo ""
 if [ -d "$INSTALL_DIR/.git" ]; then
   info "Installation directory already exists: $INSTALL_DIR"
   printf "  Do you want to update it? [y/N]: "
-  read -r UPDATE_CHOICE
+  prompt_read UPDATE_CHOICE
 
   case "$UPDATE_CHOICE" in
     [yY]|[yY][eE][sS])
@@ -138,7 +147,7 @@ if [ -d "$INSTALL_DIR/.git" ]; then
 elif [ -d "$INSTALL_DIR" ]; then
   warn "Directory $INSTALL_DIR exists but is not a git repository."
   printf "  Do you want to remove it and reinstall? [y/N]: "
-  read -r REINSTALL_CHOICE
+  prompt_read REINSTALL_CHOICE
 
   case "$REINSTALL_CHOICE" in
     [yY]|[yY][eE][sS])
