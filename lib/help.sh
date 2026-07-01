@@ -11,10 +11,6 @@ _cmd_help() {
     "$(_model_display "$ASSISTANT_MODEL_OPENCODE")" \
     "$ASSISTANT_THINK_FLAG" \
     "${ASSISTANT_LANG:-$ASSISTANT_DEFAULT_LANG}" \
-    "$ASSISTANT_CONFIG_FILE" \
-    "$(_get_skill_md_path "commit")" \
-    "$(_get_skill_md_path "resume")" \
-    "$(_get_skill_md_path "readme")"
 }
 
 _cmd_status() {

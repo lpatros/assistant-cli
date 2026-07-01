@@ -232,6 +232,18 @@ t_readme_success() {
   _success "$1 generated in $2."
 }
 
+# Update command
+t_update_starting() {
+  _header "Updating the assistant..."
+}
+
+t_update_success() {
+  _success "Assistant updated successfully!"
+}
+
+t_update_failed() {
+  _error "Failed to update the assistant."
+}
 
 t_help_output() {
   echo -e "
@@ -241,6 +253,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}@assistant${RESET}                                  Interactive chat with current model
   ${GREEN}@assistant${RESET} \"<message>\"                    Send a direct message
   ${GREEN}@assistant status${RESET}                           Show engine, models, think mode, and language
+  ${GREEN}@assistant update${RESET}                           Update the assistant to the latest version
   ${GREEN}@assistant commit${RESET}                           Analyze git repo and suggest commits
   ${GREEN}@assistant resume${RESET} [paths...]                 Generate project resumes in markdown
   ${GREEN}@assistant readme${RESET} --lang <code> --name <name>  Generate project README file
@@ -285,8 +298,5 @@ ${BOLD}Ollama model:${RESET} ${GREEN}${BOLD}${3:-}${RESET}
 ${BOLD}OpenCode model:${RESET} ${GREEN}${BOLD}${4:-}${RESET}
 ${BOLD}Think flag:${RESET}   ${YELLOW}${5:-(model default)}${RESET}
 ${BOLD}Language:${RESET}     ${CYAN}${BOLD}${6:-}${RESET}
-${BOLD}Config in:${RESET}    $7
-${BOLD}Skill Commit MD in:${RESET}        $8
-${BOLD}Skill Resume MD in:${RESET}        $9
 "
 }
