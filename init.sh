@@ -13,6 +13,7 @@ source "$ASSISTANT_LIB_DIR/think.sh"
 source "$ASSISTANT_LIB_DIR/engine.sh"
 source "$ASSISTANT_LIB_DIR/llm.sh"
 source "$ASSISTANT_LIB_DIR/help.sh"
+source "$ASSISTANT_LIB_DIR/update.sh"
 
 _load_locale
 
@@ -68,6 +69,9 @@ function @assistant() {
       ;;
     "status")
       _cmd_status
+      ;;
+    "update")
+      _cmd_update
       ;;
     "--help"|"-h"|"help")
       _cmd_help
