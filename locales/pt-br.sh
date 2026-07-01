@@ -245,6 +245,16 @@ t_update_failed() {
   _error "Falha ao atualizar o assistente."
 }
 
+t_unknown_command() {
+  _error "Comando '$1' não existe."
+  echo -e "Tente ${GREEN}@assistant --help${RESET} para visualizar a lista de comandos."
+}
+
+t_message_needs_quotes() {
+  _error "A mensagem deve estar entre aspas."
+  echo -e "Exemplo: ${GREEN}@assistant \"sua mensagem aqui\"${RESET}"
+}
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}@assistant${RESET} — CLI wrapper para Ollama e OpenCode

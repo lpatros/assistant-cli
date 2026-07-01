@@ -245,6 +245,16 @@ t_update_failed() {
   _error "Failed to update the assistant."
 }
 
+t_unknown_command() {
+  _error "Command '$1' does not exist."
+  echo -e "Try ${GREEN}@assistant --help${RESET} to see the list of commands."
+}
+
+t_message_needs_quotes() {
+  _error "Message must be enclosed in quotes."
+  echo -e "Example: ${GREEN}@assistant \"your message here\"${RESET}"
+}
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}@assistant${RESET} — CLI wrapper for Ollama and OpenCode

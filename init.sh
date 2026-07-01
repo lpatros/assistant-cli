@@ -80,6 +80,16 @@ function @assistant() {
       _llm_run_interactive "$@"
       ;;
     *)
+      if [[ "$#" -gt 1 ]]; then
+        t_message_needs_quotes
+        return 1
+      fi
+
+      if [[ -n "$1" && ! "$1" =~ [[:space:]] ]]; then
+        t_unknown_command "$1"
+        return 1
+      fi
+
       _llm_run_interactive "$@"
       ;;
   esac
