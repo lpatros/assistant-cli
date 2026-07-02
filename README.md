@@ -56,16 +56,34 @@ All configuration choices (such as active engine, selected model, language, and 
 
 ## Installation & Setup
 
+The Assistant CLI provides installation scripts tailored for different operating systems.
+
+### Linux and macOS
+
 You can install Assistant CLI directly using `curl`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
 ```
 
-The interactive installer will:
+**On Linux and macOS, the interactive installer will:**
 1. Clone the repository to `~/.config/assistant-cli` (or a custom directory of your choice).
-2. Automatically add the configuration to your shell (`~/.zshrc`, `~/.bashrc`, or `config.fish`).
+2. Automatically add the configuration to your shell profile (`~/.zshrc`, `~/.bashrc`, or `config.fish`).
 3. Guide you on how to reload your terminal to start using the assistant.
+
+### Windows
+
+For **Windows** users, you can install it using PowerShell. Open your PowerShell and run:
+
+```powershell
+irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | iex
+```
+
+**On Windows, the interactive installer will:**
+1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
+2. Verify if `bash` is available in your system (e.g., Git Bash or WSL) since the core project uses `.sh` scripts.
+3. Add a wrapper function directly into your PowerShell profile (`$PROFILE`) that transparently calls `bash`. **This means you don't need to open Git Bash manually; the assistant will work seamlessly right inside your standard PowerShell!**
+4. Guide you on how to reload your terminal.
 
 ## Usage
 
