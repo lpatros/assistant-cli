@@ -6,7 +6,7 @@ t_engine_changed() {
 }
 
 t_engine_usage() {
-  _error "Usage: @assistant engine [ollama|opencode|--list|status]"
+  _error "Usage: assistant engine [ollama|opencode|--list|status]"
 }
 
 t_engine_status() {
@@ -74,7 +74,7 @@ t_choose_engine_header() {
 }
 
 t_use_model_list_to_choose() {
-  _info "Use ${CYAN}@assistant model --list${RESET} to choose a model for this engine."
+  _info "Use ${CYAN}assistant model --list${RESET} to choose a model for this engine."
 }
 
 t_current_engine_label() {
@@ -82,7 +82,7 @@ t_current_engine_label() {
 }
 
 t_model_usage() {
-  _error "Usage: @assistant model --list|status"
+  _error "Usage: assistant model --list|status"
 }
 
 # Think commands
@@ -111,7 +111,7 @@ t_think_status_current() {
 }
 
 t_think_usage() {
-  _error "Usage: @assistant think [on|off|hide|clear|status]"
+  _error "Usage: assistant think [on|off|hide|clear|status]"
 }
 
 # General / LLM / Helpers
@@ -149,7 +149,7 @@ t_lang_changed() {
 }
 
 t_lang_usage() {
-  _error "Usage: @assistant lang [en|pt-br|status]"
+  _error "Usage: assistant lang [en|pt-br|status]"
 }
 
 t_lang_status() {
@@ -213,7 +213,7 @@ t_readme_missing_args() {
 - --lang — the language for the README content (e.g., en, pt-br, es, fr)
 - --name — the output filename without extension (e.g., README, README-PTBR)
 
-Example: @assistant readme --lang en --name README"
+Example: assistant readme --lang en --name README"
 }
 
 t_readme_analyzing() {
@@ -247,32 +247,32 @@ t_update_failed() {
 
 t_unknown_command() {
   _error "Command '$1' does not exist."
-  echo -e "Try ${GREEN}@assistant --help${RESET} to see the list of commands."
+  echo -e "Try ${GREEN}assistant --help${RESET} to see the list of commands."
 }
 
 t_message_needs_quotes() {
   _error "Message must be enclosed in quotes."
-  echo -e "Example: ${GREEN}@assistant \"your message here\"${RESET}"
+  echo -e "Example: ${GREEN}assistant \"your message here\"${RESET}"
 }
 
 t_help_output() {
   echo -e "
-${BOLD}${BLUE}@assistant${RESET} — CLI wrapper for Ollama and OpenCode
+${BOLD}${BLUE}assistant${RESET} — CLI wrapper for Ollama and OpenCode
 
 ${BOLD}Usage:${RESET}
-  ${GREEN}@assistant${RESET}                                  Interactive chat with current model
-  ${GREEN}@assistant${RESET} \"<message>\"                    Send a direct message
-  ${GREEN}@assistant status${RESET}                           Show engine, models, think mode, and language
-  ${GREEN}@assistant update${RESET}                           Update the assistant to the latest version
-  ${GREEN}@assistant commit${RESET}                           Analyze git repo and suggest commits
-  ${GREEN}@assistant resume${RESET} [paths...]                 Generate project resumes in markdown
-  ${GREEN}@assistant readme${RESET} --lang <code> --name <name>  Generate project README file
-  ${GREEN}@assistant model --list${RESET}                     List models and allow switching
-  ${GREEN}@assistant model status${RESET}                     Show current engine's model and saved models
-  ${GREEN}@assistant engine${RESET} [ollama|opencode|--list|status]  Switch the active engine
-  ${GREEN}@assistant engine status${RESET}                    Show current engine and active model
-  ${GREEN}@assistant think${RESET} [on|off|hide|clear|status] Manage think mode (ollama)
-  ${GREEN}@assistant lang${RESET} [en|pt-br|status]          Manage assistant language
+  ${GREEN}assistant${RESET}                                  Interactive chat with current model
+  ${GREEN}assistant${RESET} \"<message>\"                    Send a direct message
+  ${GREEN}assistant status${RESET}                           Show engine, models, think mode, and language
+  ${GREEN}assistant update${RESET}                           Update the assistant to the latest version
+  ${GREEN}assistant commit${RESET}                           Analyze git repo and suggest commits
+  ${GREEN}assistant resume${RESET} [paths...]                 Generate project resumes in markdown
+  ${GREEN}assistant readme${RESET} --lang <code> --name <name>  Generate project README file
+  ${GREEN}assistant model --list${RESET}                     List models and allow switching
+  ${GREEN}assistant model status${RESET}                     Show current engine's model and saved models
+  ${GREEN}assistant engine${RESET} [ollama|opencode|--list|status]  Switch the active engine
+  ${GREEN}assistant engine status${RESET}                    Show current engine and active model
+  ${GREEN}assistant think${RESET} [on|off|hide|clear|status] Manage think mode (ollama)
+  ${GREEN}assistant lang${RESET} [en|pt-br|status]          Manage assistant language
 
 ${BOLD}Notes:${RESET}
   - Models are saved per engine; switching the engine doesn't lose the previous model.
@@ -284,23 +284,23 @@ ${BOLD}Thinking flags — Ollama only (per session or persistent):${RESET}
   ${YELLOW}--hide-think${RESET}                      Hide thinking (and save)
 
 ${BOLD}Examples:${RESET}
-  @assistant \"Explain what a closure is in JS\"
-  @assistant commit
-  @assistant commit --no-think
-  @assistant \"Summarize this text\" --think
-  @assistant readme --lang en --name README
-  @assistant model --list
-  @assistant model status
-  @assistant engine opencode
-  @assistant engine ollama
-  @assistant engine --list
-  @assistant engine status
-  @assistant status
-  @assistant think off
-  @assistant think status
-  @assistant think clear
-  @assistant lang en
-  @assistant lang status
+  assistant \"Explain what a closure is in JS\"
+  assistant commit
+  assistant commit --no-think
+  assistant \"Summarize this text\" --think
+  assistant readme --lang en --name README
+  assistant model --list
+  assistant model status
+  assistant engine opencode
+  assistant engine ollama
+  assistant engine --list
+  assistant engine status
+  assistant status
+  assistant think off
+  assistant think status
+  assistant think clear
+  assistant lang en
+  assistant lang status
 
 ${BOLD}Current engine:${RESET} ${MAGENTA}${BOLD}${1:-}${RESET}
 ${BOLD}Current model:${RESET} ${GREEN}${BOLD}${2:-}${RESET}

@@ -226,4 +226,4 @@ if [ "$SHELL_NAME" != "none" ]; then
   printf "    ${BOLD}source %s${RESET}\n\n" "$RC_FILE"
 fi
 
-printf "  Then try: ${BOLD}@assistant --help${RESET}\n\n"
+printf "  Then try: ${BOLD}assistant --help${RESET}\n\n"

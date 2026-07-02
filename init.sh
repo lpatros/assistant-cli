@@ -21,7 +21,7 @@ source "$ASSISTANT_ROOT_DIR/skills/commit/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
 
-function @assistant() {
+function assistant() {
   local subcmd="${1:-}"
 
   case "$subcmd" in
