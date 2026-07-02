@@ -91,6 +91,14 @@ if ! command -v git >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v ollama >/dev/null 2>&1; then
+  warn "ollama is not installed. It is recommended for running local models."
+fi
+
+if ! command -v opencode >/dev/null 2>&1; then
+  warn "opencode is not installed. It is recommended for coding models."
+fi
+
 DETECTED_SHELL=$(detect_shell)
 
 echo ""

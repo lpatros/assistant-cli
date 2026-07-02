@@ -56,6 +56,14 @@ if (!(Get-Command bash -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
+if (!(Get-Command ollama -ErrorAction SilentlyContinue)) {
+    Write-Color "  ollama is not installed. It is recommended for running local models." -Color Yellow
+}
+
+if (!(Get-Command opencode -ErrorAction SilentlyContinue)) {
+    Write-Color "  opencode is not installed. It is recommended for coding models." -Color Yellow
+}
+
 if (Test-Path "$InstallDir\.git") {
     Write-Color "  Installation directory already exists: $InstallDir" -Color Cyan
     Write-Color "  Do you want to update it? [y/N]: " -NoNewline
