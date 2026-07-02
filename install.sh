@@ -1,7 +1,20 @@
 set -e
 
 REPO_URL="https://github.com/lpatros/assistant-cli.git"
-INSTALL_DIR="$HOME/.config/assistant-cli"
+
+get_default_install_dir() {
+  local os_name="$(uname -s)"
+  case "$os_name" in
+    CYGWIN*|MINGW*|MSYS*)
+      echo "$HOME/AppData/Local/assistant-cli"
+      ;;
+    *)
+      echo "$HOME/.config/assistant-cli"
+      ;;
+  esac
+}
+
+INSTALL_DIR="$(get_default_install_dir)"
 
 BOLD='\033[1m'
 DIM='\033[2m'
