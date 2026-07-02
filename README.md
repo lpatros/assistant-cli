@@ -23,7 +23,7 @@
 
 ## Description
 
-The **Assistant CLI** (`@assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Zsh/Bash. It allows users to interact with local Large Language Models (LLMs) orchestrated via **Ollama** or **OpenCode** directly from the terminal. 
+The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Zsh/Bash. It allows users to interact with local Large Language Models (LLMs) orchestrated via **Ollama** or **OpenCode** directly from the terminal. 
 
 All configuration choices (such as active engine, selected model, language, and think mode) are saved locally and persist across terminal sessions.
 
@@ -36,17 +36,17 @@ All configuration choices (such as active engine, selected model, language, and 
 ## Features
 
 ### Interactive & Direct Chat
-- Run `@assistant` to start an interactive chat session with your currently selected model.
-- Run `@assistant "your prompt here"` to quickly send a single query to the model and receive the output.
+- Run `assistant` to start an interactive chat session with your currently selected model.
+- Run `assistant "your prompt here"` to quickly send a single query to the model and receive the output.
 
 ### Multi-Engine Support
 - Seamless switching between **Ollama** and **OpenCode**.
 - The assistant stores preferred models per engine, meaning you won't lose your selected model configurations when switching between engines.
 
 ### Custom LLM Skills
-- **Commit Assistant (`@assistant commit`)**: Analyzes your Git repository's status, staged diffs, and unstaged change statistics, and runs them against standard guidelines to generate clean, readable commit message suggestions.
-- **Project Resume Generator (`@assistant resume [paths...]`)**: Automatically gathers context from your project directory (structural tree and manifest files like `package.json`, `pom.xml`, `Cargo.toml`, etc.) and formats a comprehensive markdown resume outlining project architecture and dependencies.
-- **README Generator (`@assistant readme --lang [en|pt-br] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
+- **Commit Assistant (`assistant commit`)**: Analyzes your Git repository's status, staged diffs, and unstaged change statistics, and runs them against standard guidelines to generate clean, readable commit message suggestions.
+- **Project Resume Generator (`assistant resume [paths...]`)**: Automatically gathers context from your project directory (structural tree and manifest files like `package.json`, `pom.xml`, `Cargo.toml`, etc.) and formats a comprehensive markdown resume outlining project architecture and dependencies.
+- **README Generator (`assistant readme --lang [en|pt-br] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
 
 ### Think Mode Management (Ollama)
 - Enables, disables, or hides the model's reasoning/thinking steps (e.g., for models that output thoughts like `<think>...</think>`). Can be toggled per session or saved globally.
@@ -69,36 +69,36 @@ The interactive installer will:
 
 ## Usage
 
-When running `@assistant`, you have access to the following commands:
+When running `assistant`, you have access to the following commands:
 
 | Command | Description |
 | :--- | :--- |
-| `@assistant` | Starts interactive chat with the current model |
-| `@assistant "<message>"` | Sends a direct message to the current model |
-| `@assistant status` | Shows active engine, active models, think mode, and language |
-| `@assistant commit` | Analyzes git staging and suggests structured commits |
-| `@assistant resume [paths...]` | Scans directories and generates project resume markdown files |
-| `@assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
-| `@assistant model --list` | Interactively lists available models for the current engine to switch them |
-| `@assistant model status` | Shows currently configured models for all engines |
-| `@assistant engine [ollama\|opencode]` | Switches the active model orchestration engine |
-| `@assistant think [on\|off\|hide\|clear]` | Toggles thinking/reasoning modes on Ollama models |
-| `@assistant lang [en\|pt-br]` | Changes the CLI's language configuration |
+| `assistant` | Starts interactive chat with the current model |
+| `assistant "<message>"` | Sends a direct message to the current model |
+| `assistant status` | Shows active engine, active models, think mode, and language |
+| `assistant commit` | Analyzes git staging and suggests structured commits |
+| `assistant resume [paths...]` | Scans directories and generates project resume markdown files |
+| `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
+| `assistant model --list` | Interactively lists available models for the current engine to switch them |
+| `assistant model status` | Shows currently configured models for all engines |
+| `assistant engine [ollama\|opencode]` | Switches the active model orchestration engine |
+| `assistant think [on\|off\|hide\|clear]` | Toggles thinking/reasoning modes on Ollama models |
+| `assistant lang [en\|pt-br]` | Changes the CLI's language configuration |
 
 ### Examples
 
 ```bash
 # Ask a general coding question
-@assistant "How do I implement a debouncer in vanilla JS?"
+assistant "How do I implement a debouncer in vanilla JS?"
 
 # Generate git commits from staged changes
-@assistant commit
+assistant commit
 
 # Create project summary docs in parallel for two folders
-@assistant resume ./backend-service ./frontend-app
+assistant resume ./backend-service ./frontend-app
 
 # Interactively change model
-@assistant model --list
+assistant model --list
 ```
 
 ## Project Structure
