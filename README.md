@@ -75,16 +75,18 @@ curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.
 
 For **Windows** users, you can install it using PowerShell. Open your PowerShell and run:
 
-> **Note:** Make sure your script execution policy is enabled before running the installer. You can set it by running:
+> [!IMPORTANT]
+> Make sure your script execution policy is enabled before running the installer. You can set it by running:
 > ```powershell
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 > ```
->
-> **Note:** Also ensure that Git Bash is included in your system's Environment Variables (usually located at `C:\Program Files\Git\bin`).
 
 ```powershell
 irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | iex
 ```
+
+> [!NOTE]
+> Also ensure that Git Bash is included in your system's Environment Variables (usually located at `C:\Program Files\Git\bin`).
 
 **On Windows, the interactive installer will:**
 1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
