@@ -10,7 +10,7 @@ _cmd_help() {
     "$(_model_display "$ASSISTANT_MODEL_OLLAMA")" \
     "$(_model_display "$ASSISTANT_MODEL_OPENCODE")" \
     "$ASSISTANT_THINK_FLAG" \
-    "${ASSISTANT_LANG:-$ASSISTANT_DEFAULT_LANG}" \
+    "${ASSISTANT_LANG:-$ASSISTANT_DEFAULT_LANG}"
 }
 
 _cmd_status() {
