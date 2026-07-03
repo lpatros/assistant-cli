@@ -1,5 +1,13 @@
 if [ -z "${ASSISTANT_ROOT_DIR:-}" ]; then
-  ASSISTANT_ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+  if [ -n "${BASH_SOURCE[0]:-}" ]; then
+    _assistant_dir="$(dirname -- "${BASH_SOURCE[0]}")"
+  elif [ -n "${ZSH_VERSION:-}" ]; then
+    _assistant_dir="$(dirname -- "${(%):-%x}")"
+  else
+    _assistant_dir="$(dirname -- "$0")"
+  fi
+  ASSISTANT_ROOT_DIR="$(cd -- "$_assistant_dir" && pwd)"
+  unset _assistant_dir
 fi
 
 ASSISTANT_LIB_DIR="${ASSISTANT_LIB_DIR:-$ASSISTANT_ROOT_DIR/lib}"
