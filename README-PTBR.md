@@ -17,9 +17,9 @@
 - [Tecnologias](#tecnologias)
 - [Funcionalidades](#funcionalidades)
 - [Instalação e Configuração](#instalação-e-configuração)
+- [Atualização](#atualização)
 - [Uso](#uso)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Licença](#licença)
 
 ## Descrição
 
@@ -94,6 +94,14 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 2. Verificar se o sistema possui o `bash` instalado (via Git Bash ou WSL), que é necessário para rodar os scripts `.sh`.
 3. Adicionar uma função wrapper ao seu perfil do PowerShell (`$PROFILE`) que chamará o `bash` silenciosamente. **Isso significa que você não precisa abrir o Git Bash para usar o assistente; ele funcionará perfeitamente direto no seu PowerShell!**
 4. Fornecer instruções de como recarregar o seu terminal.
+
+## Atualização
+
+Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente executando o comando de atualização. Isso fará o download das últimas alterações do repositório, garantindo que sua instalação local esteja em dia.
+
+```bash
+assistant update
+```
 
 ## Uso
 

@@ -17,9 +17,9 @@
 - [Technologies](#technologies)
 - [Features](#features)
 - [Installation & Setup](#installation--setup)
+- [Update](#update)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
-- [License](#license)
 
 ## Description
 
@@ -93,6 +93,14 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 2. Verify if `bash` is available in your system (e.g., Git Bash or WSL) since the core project uses `.sh` scripts.
 3. Add a wrapper function directly into your PowerShell profile (`$PROFILE`) that transparently calls `bash`. **This means you don't need to open Git Bash manually; the assistant will work seamlessly right inside your standard PowerShell!**
 4. Guide you on how to reload your terminal.
+
+## Update
+
+You can easily update your Assistant CLI to the latest version by running the update command. This will pull the latest changes from the repository and ensure your local installation is up to date.
+
+```bash
+assistant update
+```
 
 ## Usage
 
