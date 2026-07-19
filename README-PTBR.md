@@ -1,7 +1,9 @@
-[EN](README.md)
-
 <div align="center">
-  <h1 style="font-size: 32px; border: none; line-height: 0; font-weight: bold">Assistant CLI</h1>
+
+# Assistant CLI
+
+[English](README.md) | **Português** | [Español](README-ES.md)
+
   <p>Um wrapper de terminal leve, modular e localizado para Ollama e OpenCode, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Linguagem: Zsh/Bash"/>
@@ -74,9 +76,6 @@ assistant <nome> "sua instrução ou tarefa"
 
 ### Gerenciamento do Modo Think (Ollama)
 - Ativa, desativa ou oculta as etapas de raciocínio do modelo (para modelos com suporte a pensamento/reasoning que utilizam tags `<think>...</think>`). Pode ser configurado por sessão ou salvo globalmente.
-
-### Tradução e Suporte Multilíngue
-- Suporte nativo para mensagens, status e menus de ajuda em inglês (`en`) e português (`pt-br`).
 
 ## Instalação e Configuração
 
@@ -167,12 +166,12 @@ assistant model --list
 
 ```
 assistant/
+├── custom/                  # Habilidades personalizadas do usuário
 ├── data/                    # Armazena configurações e metadados do sistema.
 ├── lib/                     # Caminhos constantes, traduções e rotas de comandos.
 ├── locales/                 # Traduções usadas pelo CLI
 ├── skills/                  # Habilidades do Assistant
 ├── utils/                   # Funções utilitárias auxiliares
 ├── init.sh                  # Ponto de entrada principal para carregar no shell
-├── README-PTBR.md           # Documentação em português
-└── README.md                # Documentação em inglês
+└── README.md                # Documentação
 ```

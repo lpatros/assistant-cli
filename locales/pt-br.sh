@@ -147,7 +147,7 @@ t_lang_changed() {
 }
 
 t_lang_usage() {
-  _error "Uso: assistant lang [en|pt-br|status]"
+  _error "Uso: assistant lang [en|pt-br|es|status]"
 }
 
 t_lang_status() {
@@ -310,7 +310,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant engine${RESET} [ollama|opencode|--list|status]  Troca a engine ativa
   ${GREEN}assistant engine status${RESET}                    Mostra engine atual e modelo ativo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status] Gerencia o think mode (ollama)
-  ${GREEN}assistant lang${RESET} [en|pt-br|status]          Gerencia o idioma do assistente
+  ${GREEN}assistant lang${RESET} [en|pt-br|es|status]       Gerencia o idioma do assistente
 
 ${BOLD}Notas:${RESET}
   - Modelos sao salvos por engine; trocar a engine nao perde o modelo anterior.

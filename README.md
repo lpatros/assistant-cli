@@ -1,7 +1,9 @@
-[PT-BR](README-PTBR.md)
-
 <div align="center">
-  <h1 style="font-size: 32px; border: none; line-height: 0; font-weight: bold">Assistant CLI</h1>
+
+# Assistant CLI
+
+**English** | [Português](README-PTBR.md) | [Español](README-ES.md)
+
   <p>A lightweight, modular, and localized shell wrapper for Ollama and OpenCode, supporting interactive chat, commit generation, README generation, project summaries, and more.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Language: Zsh/Bash"/>
@@ -74,9 +76,6 @@ assistant <name> "your prompt or task"
 
 ### Think Mode Management (Ollama)
 - Enables, disables, or hides the model's reasoning/thinking steps (e.g., for models that output thoughts like `<think>...</think>`). Can be toggled per session or saved globally.
-
-### Localization & Multi-language Support
-- Built-in support for both English (`en`) and Portuguese (`pt-br`) output messages, status reports, and help sections.
 
 ## Installation & Setup
 
@@ -166,12 +165,12 @@ assistant model --list
 
 ```
 assistant/
+├── custom/                  # User-defined custom skills
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── lib/                     # Paths constants,Translates and Handles command routes.
 ├── locales/                 # Text translations
 ├── skills/                  # Assistant tools
 ├── utils/                   # Utility scripts and helpers
 ├── init.sh                  # Main entry point to source in shell config files
-├── README-PTBR.md           # Documentation in Portuguese
-└── README.md                # Documentation in English
+└── README.md                # Documentation
 ```

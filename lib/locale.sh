@@ -1,7 +1,7 @@
 _load_locale() {
   _load_config
   local lang="${ASSISTANT_LANG:-$ASSISTANT_DEFAULT_LANG}"
-  if [[ "$lang" != "en" && "$lang" != "pt-br" ]]; then
+  if [[ "$lang" != "en" && "$lang" != "pt-br" && "$lang" != "es" ]]; then
     lang="$ASSISTANT_DEFAULT_LANG"
   fi
 
@@ -26,6 +26,11 @@ _cmd_lang() {
       _set_lang "pt-br"
       _load_locale
       t_lang_changed "pt-br"
+      ;;
+    es)
+      _set_lang "es"
+      _load_locale
+      t_lang_changed "es"
       ;;
     status|"")
       _load_config
