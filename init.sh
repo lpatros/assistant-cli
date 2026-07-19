@@ -25,12 +25,17 @@ source "$ASSISTANT_LIB_DIR/engine.sh"
 source "$ASSISTANT_LIB_DIR/llm.sh"
 source "$ASSISTANT_LIB_DIR/help.sh"
 source "$ASSISTANT_LIB_DIR/update.sh"
+source "$ASSISTANT_LIB_DIR/custom.sh"
 
 _load_locale
 
 source "$ASSISTANT_ROOT_DIR/skills/commit/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
+
+if [[ -f "$ASSISTANT_ROOT_DIR/custom/init.sh" ]]; then
+  source "$ASSISTANT_ROOT_DIR/custom/init.sh"
+fi
 
 function assistant() {
   local subcmd="${1:-}"
@@ -42,6 +47,19 @@ function assistant() {
     "commit")
       shift
       _cmd_commit "$@"
+      ;;
+    "create")
+      shift
+      case "${1:-}" in
+        "skill")
+          shift
+          _cmd_create_skill "$@"
+          ;;
+        *)
+          t_create_skill_usage
+          return 1
+          ;;
+      esac
       ;;
     "resume")
       shift
@@ -91,6 +109,18 @@ function assistant() {
       _llm_run_interactive "$@"
       ;;
     *)
+      if [[ -f "$ASSISTANT_ROOT_DIR/custom/${subcmd}-assistant.md" ]]; then
+        shift
+        _run_generic_skill "$subcmd" "$@"
+        return $?
+      fi
+
+      if command -v "_cmd_${subcmd}" &>/dev/null; then
+        shift
+        "_cmd_${subcmd}" "$@"
+        return $?
+      fi
+
       if [[ "$#" -gt 1 ]]; then
         t_message_needs_quotes
         return 1
