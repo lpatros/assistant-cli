@@ -1,5 +1,3 @@
-# locales/pt-br.sh
-
 # Engine commands
 t_engine_changed() {
   _success "Engine alterada para: ${BOLD}$1${RESET}"
@@ -279,6 +277,18 @@ t_create_skill_invalid_name() {
 
 t_create_skill_md_not_found() {
   _error "Arquivo markdown original não encontrado em: $1"
+}
+
+t_create_skill_warning_default_override() {
+  _warn "A skill '${BOLD}$1${RESET}' é uma skill padrão do assistente."
+}
+
+t_create_skill_prompt_override() {
+  echo -n "Deseja realmente sobrescrevê-la? [y/N]: "
+}
+
+t_create_skill_aborted() {
+  _warn "Operação cancelada. A skill não foi criada."
 }
 
 t_help_output() {

@@ -51,6 +51,17 @@ _cmd_create_skill() {
     return 1
   fi
 
+  if [[ -d "$ASSISTANT_ROOT_DIR/skills/$skill_name" ]]; then
+    t_create_skill_warning_default_override "$skill_name"
+    local answer
+    t_create_skill_prompt_override
+    read -r answer
+    if [[ ! "$answer" =~ ^[yY](es)?$ ]]; then
+      t_create_skill_aborted
+      return 1
+    fi
+  fi
+
   local custom_dir="$ASSISTANT_ROOT_DIR/custom"
   mkdir -p "$custom_dir"
 
