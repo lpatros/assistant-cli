@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 style="font-size: 32px; border: none; line-height: 0; font-weight: bold">Assistant CLI</h1>
-  <p>Um wrapper de terminal leve, modular e localizado para Ollama e OpenCode, com suporte a chat interativo, análise de repositórios e resumos de projetos.</p>
+  <p>Um wrapper de terminal leve, modular e localizado para Ollama e OpenCode, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Linguagem: Zsh/Bash"/>
     <img src="https://img.shields.io/badge/Engines-Ollama%20%7C%20OpenCode-blue.svg" alt="Engines: Ollama & OpenCode"/>
@@ -43,10 +43,34 @@ Todas as escolhas de configuração (como engine ativa, modelo selecionado, idio
 - Alternância rápida entre **Ollama** e **OpenCode**.
 - O assistente salva os modelos de preferência por engine. Desta forma, você não perde as configurações de modelo ao alternar de engine.
 
-### Habilidades (*Skills*) Personalizadas
+### Habilidades Padrão (Built-in Skills)
+O assistente vem com várias habilidades prontas para acelerar o seu fluxo de trabalho:
 - **Assistente de Commit (`assistant commit`)**: Analisa o status do seu repositório Git, diffs da staging e estatísticas de alterações para gerar sugestões de mensagens de commit claras e estruturadas, seguindo as diretrizes recomendadas.
 - **Gerador de Resumos de Projeto (`assistant resume [caminhos...]`)**: Coleta informações estruturais do diretório (árvore estrutural e arquivos de manifesto como `package.json`, `pom.xml`, `Cargo.toml`, etc.) e formata um resumo completo em markdown descrevendo a arquitetura e dependências do projeto.
 - **Gerador de README (`assistant readme --lang [en|pt-br] --name [nome_do_arquivo]`)**: Analisa automaticamente a estrutura do seu projeto e arquivos de configuração para gerar um README profissional e contextualizado.
+
+### Habilidades Personalizadas (Custom Skills)
+Você pode criar suas próprias habilidades personalizadas usando arquivos Markdown que definem as instruções e diretrizes para o LLM.
+
+#### Criando uma Skill Customizada
+```bash
+assistant create skill <nome> <caminho-do-arquivo-md>
+```
+Isso salvará as regras da sua skill personalizada em `custom/<nome>-assistant.md`.
+
+#### Sobrescrevendo Skills Padrão
+Se você tentar criar uma skill customizada com o mesmo nome de uma skill padrão/embutida (como `commit`), o CLI solicitará confirmação antes de prosseguir:
+```
+⚠ A skill 'commit' é uma skill padrão do assistente.
+Deseja realmente sobrescrevê-la? [y/N]:
+```
+Se você optar por sobrescrever (`y`/`yes`), sua skill customizada terá prioridade sobre a embutida ao executar `assistant commit`.
+
+#### Executando Skills Customizadas
+Execute sua skill customizada diretamente como um comando do assistente:
+```bash
+assistant <nome> "sua instrução ou tarefa"
+```
 
 ### Gerenciamento do Modo Think (Ollama)
 - Ativa, desativa ou oculta as etapas de raciocínio do modelo (para modelos com suporte a pensamento/reasoning que utilizam tags `<think>...</think>`). Pode ser configurado por sessão ou salvo globalmente.
@@ -115,6 +139,8 @@ Ao rodar `assistant`, você tem acesso aos seguintes comandos:
 | `assistant commit` | Analisa a área de staging do git e sugere commits estruturados |
 | `assistant resume [caminhos...]` | Escaneia diretórios e gera resumos de projeto em arquivos markdown |
 | `assistant readme --lang <lang> --name <name>` | Escaneia a estrutura do projeto e gera um arquivo README |
+| `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um template Markdown |
+| `assistant <skill-customizada> [args]` | Executa uma skill personalizada |
 | `assistant model --list` | Lista de forma interativa os modelos disponíveis na engine ativa para seleção |
 | `assistant model status` | Mostra os modelos configurados para todas as engines |
 | `assistant engine [ollama\|opencode]` | Altera a engine de orquestração de modelo ativa |

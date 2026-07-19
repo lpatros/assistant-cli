@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 style="font-size: 32px; border: none; line-height: 0; font-weight: bold">Assistant CLI</h1>
-  <p>A lightweight, modular, and localized shell wrapper for Ollama and OpenCode, supporting interactive chat, repository analysis, and project summaries.</p>
+  <p>A lightweight, modular, and localized shell wrapper for Ollama and OpenCode, supporting interactive chat, commit generation, README generation, project summaries, and more.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Language: Zsh/Bash"/>
     <img src="https://img.shields.io/badge/Engines-Ollama%20%7C%20OpenCode-blue.svg" alt="Engines: Ollama & OpenCode"/>
@@ -43,10 +43,34 @@ All configuration choices (such as active engine, selected model, language, and 
 - Seamless switching between **Ollama** and **OpenCode**.
 - The assistant stores preferred models per engine, meaning you won't lose your selected model configurations when switching between engines.
 
-### Custom LLM Skills
+### Built-in Skills (Default Skills)
+The assistant comes with several built-in skills to boost your workflow:
 - **Commit Assistant (`assistant commit`)**: Analyzes your Git repository's status, staged diffs, and unstaged change statistics, and runs them against standard guidelines to generate clean, readable commit message suggestions.
 - **Project Resume Generator (`assistant resume [paths...]`)**: Automatically gathers context from your project directory (structural tree and manifest files like `package.json`, `pom.xml`, `Cargo.toml`, etc.) and formats a comprehensive markdown resume outlining project architecture and dependencies.
 - **README Generator (`assistant readme --lang [en|pt-br] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
+
+### Custom Skills
+You can create your own custom skills using Markdown files that define guidelines for the LLM.
+
+#### Creating a Custom Skill
+```bash
+assistant create skill <name> <path-to-markdown-file>
+```
+This will save your custom skill rules in `custom/<name>-assistant.md`.
+
+#### Overwriting Default Skills
+If you try to create a custom skill with the same name as a default/built-in skill (e.g., `commit`), the CLI will ask for confirmation:
+```
+⚠ The skill 'commit' is a default assistant skill.
+Do you really want to overwrite it? [y/N]:
+```
+If you choose to overwrite (`y`/`yes`), your custom skill will take precedence over the built-in skill when executing `assistant commit`.
+
+#### Running Custom Skills
+Run your custom skill directly as a command:
+```bash
+assistant <name> "your prompt or task"
+```
 
 ### Think Mode Management (Ollama)
 - Enables, disables, or hides the model's reasoning/thinking steps (e.g., for models that output thoughts like `<think>...</think>`). Can be toggled per session or saved globally.
@@ -114,6 +138,8 @@ When running `assistant`, you have access to the following commands:
 | `assistant commit` | Analyzes git staging and suggests structured commits |
 | `assistant resume [paths...]` | Scans directories and generates project resume markdown files |
 | `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
+| `assistant create skill <name> <path.md>` | Creates a new custom skill from a Markdown template |
+| `assistant <custom-skill> [args]` | Executes a custom skill |
 | `assistant model --list` | Interactively lists available models for the current engine to switch them |
 | `assistant model status` | Shows currently configured models for all engines |
 | `assistant engine [ollama\|opencode]` | Switches the active model orchestration engine |
