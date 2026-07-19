@@ -4,7 +4,7 @@ _run_generic_skill() {
 
   local md_file="$ASSISTANT_ROOT_DIR/custom/${skill_name}-assistant.md"
   if [[ ! -f "$md_file" ]]; then
-    _error "Skill customizada não encontrada: $md_file"
+    t_custom_skill_not_found "$md_file"
     return 1
   fi
 
@@ -42,12 +42,12 @@ _cmd_create_skill() {
   fi
 
   if [[ ! "$skill_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-    _error "Invalid skill name. Use only alphanumeric characters, underscores, or hyphens."
+    t_create_skill_invalid_name
     return 1
   fi
 
   if [[ ! -f "$skill_md_path" ]]; then
-    _error "Skill markdown file not found: $skill_md_path"
+    t_create_skill_md_not_found "$skill_md_path"
     return 1
   fi
 

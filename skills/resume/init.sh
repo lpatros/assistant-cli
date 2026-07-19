@@ -45,7 +45,7 @@ _analyze_single_project() {
   local think_flags=("$@")
 
   if [[ ! -d "$proj" ]]; then
-    _error "Diretório do projeto não encontrado: $proj"
+    t_resume_project_dir_not_found "$proj"
     return 1
   fi
 

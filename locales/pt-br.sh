@@ -190,6 +190,10 @@ t_resume_failed() {
   _error "Falha ao gerar resumo para ${BOLD}$1${RESET}"
 }
 
+t_resume_project_dir_not_found() {
+  _error "Diretório do projeto não encontrado: $1"
+}
+
 t_resume_success() {
   _success "Resumo gerado para ${BOLD}$1${RESET} em ${GREEN}$2${RESET}"
 }
@@ -263,6 +267,18 @@ t_create_skill_success() {
   _success "Skill customizada '${BOLD}$1${RESET}' criada com sucesso!"
   _info "Markdown salvo em: $2"
   _info "Agora você pode executá-la com: ${GREEN}assistant $1${RESET}"
+}
+
+t_custom_skill_not_found() {
+  _error "Skill customizada não encontrada: $1"
+}
+
+t_create_skill_invalid_name() {
+  _error "Nome de skill inválido. Use apenas caracteres alfanuméricos, sublinhados (_) ou hífens (-)."
+}
+
+t_create_skill_md_not_found() {
+  _error "Arquivo markdown original não encontrado em: $1"
 }
 
 t_help_output() {

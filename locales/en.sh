@@ -190,6 +190,10 @@ t_resume_failed() {
   _error "Failed to generate resume for ${BOLD}$1${RESET}"
 }
 
+t_resume_project_dir_not_found() {
+  _error "Project directory not found: $1"
+}
+
 t_resume_success() {
   _success "Resume generated for ${BOLD}$1${RESET} in ${GREEN}$2${RESET}"
 }
@@ -263,6 +267,18 @@ t_create_skill_success() {
   _success "Custom skill '${BOLD}$1${RESET}' successfully created!"
   _info "Markdown saved to: $2"
   _info "You can now run it using: ${GREEN}assistant $1${RESET}"
+}
+
+t_custom_skill_not_found() {
+  _error "Custom skill not found: $1"
+}
+
+t_create_skill_invalid_name() {
+  _error "Invalid skill name. Use only alphanumeric characters, underscores, or hyphens."
+}
+
+t_create_skill_md_not_found() {
+  _error "Skill markdown file not found: $1"
 }
 
 t_help_output() {
