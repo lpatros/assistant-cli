@@ -40,6 +40,12 @@ fi
 function assistant() {
   local subcmd="${1:-}"
 
+  if [[ -n "$subcmd" && -f "$ASSISTANT_ROOT_DIR/custom/${subcmd}-assistant.md" ]]; then
+    shift
+    _run_generic_skill "$subcmd" "$@"
+    return $?
+  fi
+
   case "$subcmd" in
     "")
       _llm_run_interactive
@@ -109,12 +115,6 @@ function assistant() {
       _llm_run_interactive "$@"
       ;;
     *)
-      if [[ -f "$ASSISTANT_ROOT_DIR/custom/${subcmd}-assistant.md" ]]; then
-        shift
-        _run_generic_skill "$subcmd" "$@"
-        return $?
-      fi
-
       if command -v "_cmd_${subcmd}" &>/dev/null; then
         shift
         "_cmd_${subcmd}" "$@"
