@@ -255,6 +255,16 @@ t_message_needs_quotes() {
   echo -e "Exemplo: ${GREEN}assistant \"sua mensagem aqui\"${RESET}"
 }
 
+t_create_skill_usage() {
+  _error "Uso: assistant create skill [nome-da-skill] [caminho-do-arquivo-md]"
+}
+
+t_create_skill_success() {
+  _success "Skill customizada '${BOLD}$1${RESET}' criada com sucesso!"
+  _info "Markdown salvo em: $2"
+  _info "Agora você pode executá-la com: ${GREEN}assistant $1${RESET}"
+}
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}assistant${RESET} — CLI wrapper para Ollama e OpenCode
@@ -267,6 +277,8 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant commit${RESET}                           Analisa o repo git e sugere commits
   ${GREEN}assistant resume${RESET} [caminhos...]             Gera resumos de projetos em markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <nome>  Gera o README do projeto
+  ${GREEN}assistant create skill${RESET} <nome> <caminho.md>  Cria uma nova skill customizada
+  ${GREEN}assistant <skill-customizada>${RESET} [argumentos]   Executa uma skill customizada
   ${GREEN}assistant model --list${RESET}                     Lista modelos e permite trocar
   ${GREEN}assistant model status${RESET}                     Mostra modelo da engine atual e modelos salvos
   ${GREEN}assistant engine${RESET} [ollama|opencode|--list|status]  Troca a engine ativa
@@ -289,6 +301,8 @@ ${BOLD}Exemplos:${RESET}
   assistant commit --no-think
   assistant \"Resuma esse texto\" --think
   assistant readme --lang pt-br --name README-PTBR
+  assistant create skill deploy ./deploy.md
+  assistant deploy \"crie uma configuração do docker\"
   assistant model --list
   assistant model status
   assistant engine opencode

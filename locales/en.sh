@@ -255,6 +255,16 @@ t_message_needs_quotes() {
   echo -e "Example: ${GREEN}assistant \"your message here\"${RESET}"
 }
 
+t_create_skill_usage() {
+  _error "Usage: assistant create skill [skill-name] [path-to-md-file]"
+}
+
+t_create_skill_success() {
+  _success "Custom skill '${BOLD}$1${RESET}' successfully created!"
+  _info "Markdown saved to: $2"
+  _info "You can now run it using: ${GREEN}assistant $1${RESET}"
+}
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}assistant${RESET} — CLI wrapper for Ollama and OpenCode
@@ -267,6 +277,8 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant commit${RESET}                           Analyze git repo and suggest commits
   ${GREEN}assistant resume${RESET} [paths...]                 Generate project resumes in markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <name>  Generate project README file
+  ${GREEN}assistant create skill${RESET} <name> <path.md>     Create a new custom skill
+  ${GREEN}assistant <custom-skill>${RESET} [arguments]        Execute a custom skill
   ${GREEN}assistant model --list${RESET}                     List models and allow switching
   ${GREEN}assistant model status${RESET}                     Show current engine's model and saved models
   ${GREEN}assistant engine${RESET} [ollama|opencode|--list|status]  Switch the active engine
@@ -289,6 +301,8 @@ ${BOLD}Examples:${RESET}
   assistant commit --no-think
   assistant \"Summarize this text\" --think
   assistant readme --lang en --name README
+  assistant create skill deploy ./deploy.md
+  assistant deploy \"create a docker configuration\"
   assistant model --list
   assistant model status
   assistant engine opencode
