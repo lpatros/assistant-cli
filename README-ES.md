@@ -25,13 +25,13 @@
 
 ## Descripción
 
-El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) potente y ligera escrita en Zsh/Bash. Permite a los usuarios interactuar con Modelos de Lenguaje Grande (LLMs) locales organizados a través de **Ollama** o **OpenCode** directamente desde la terminal.
+El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) potente y ligera escrita en Bash. Permite a los usuarios interactuar con Modelos de Lenguaje Grande (LLMs) locales organizados a través de **Ollama** o **OpenCode** directamente desde la terminal.
 
 Todas las opciones de configuración (como el motor activo, el modelo seleccionado, el idioma y el modo de pensamiento) se guardan localmente y persisten entre sesiones de terminal.
 
 ## Tecnologías
 
-- **Zsh / Bash** - Entorno de scripting y envoltura de la función principal
+- **Bash** - Entorno de scripting y envoltura de la función principal
 - **Ollama** - Motor de orquestación para modelos locales (por ejemplo, DeepSeek, Llama, Gemma)
 - **OpenCode** - Motor de orquestación y registro para modelos de programación
 
@@ -73,9 +73,6 @@ Ejecuta tu habilidad personalizada directamente como un comando:
 ```bash
 assistant <nombre> "tu consulta o tarea"
 ```
-
-### Gestión del Modo Pensamiento (Ollama)
-- Activa, desactiva u oculta los pasos de razonamiento/pensamiento del modelo (por ejemplo, para modelos que muestran pensamientos como `<think>...</think>`). Puede cambiarse por sesión o guardarse globalmente.
 
 ## Instalación y Configuración
 
@@ -143,7 +140,6 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant model status` | Muestra los modelos configurados actualmente para todos los motores |
 | `assistant engine [ollama\|opencode]` | Cambia el motor de orquestación de modelos activo |
 | `assistant think [on\|off\|hide\|clear]` | Alterna los modos de pensamiento/razonamiento en modelos de Ollama |
-| `assistant lang [en\|pt-br]` | Cambia la configuración del idioma de la CLI |
 
 ### Ejemplos
 

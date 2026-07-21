@@ -25,13 +25,13 @@
 
 ## Descrição
 
-O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Zsh/Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais orquestrados via **Ollama** ou **OpenCode** diretamente a partir do terminal.
+O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais orquestrados via **Ollama** ou **OpenCode** diretamente a partir do terminal.
 
 Todas as escolhas de configuração (como engine ativa, modelo selecionado, idioma e modo de pensamento) são salvas localmente e persistem entre as sessões do terminal.
 
 ## Tecnologias
 
-- **Zsh / Bash** - Ambiente de script e wrapper da função principal
+- **Bash** - Ambiente de script e wrapper da função principal
 - **Ollama** - Engine de orquestração para modelos locais (ex: DeepSeek, Llama, Gemma)
 - **OpenCode** - Engine de orquestração e registro para modelos voltados a código
 
@@ -73,9 +73,6 @@ Execute sua skill customizada diretamente como um comando do assistente:
 ```bash
 assistant <nome> "sua instrução ou tarefa"
 ```
-
-### Gerenciamento do Modo Think (Ollama)
-- Ativa, desativa ou oculta as etapas de raciocínio do modelo (para modelos com suporte a pensamento/reasoning que utilizam tags `<think>...</think>`). Pode ser configurado por sessão ou salvo globalmente.
 
 ## Instalação e Configuração
 
@@ -144,7 +141,6 @@ Ao rodar `assistant`, você tem acesso aos seguintes comandos:
 | `assistant model status` | Mostra os modelos configurados para todas as engines |
 | `assistant engine [ollama\|opencode]` | Altera a engine de orquestração de modelo ativa |
 | `assistant think [on\|off\|hide\|clear]` | Gerencia as opções de pensamento/raciocínio nos modelos Ollama |
-| `assistant lang [en\|pt-br]` | Altera a configuração de idioma da interface CLI |
 
 ### Exemplos
 
