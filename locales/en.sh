@@ -147,11 +147,19 @@ t_lang_changed() {
 }
 
 t_lang_usage() {
-  _error "Usage: assistant lang [en|pt-br|es|status]"
+  _error "Usage: assistant lang [<language>|--list|status]"
 }
 
 t_lang_status() {
   _info "Current language: ${CYAN}${BOLD}$1${RESET}"
+}
+
+t_lang_not_found() {
+  _error "Locale '$1' not found in locales/ or custom/locales/."
+}
+
+t_lang_list_header() {
+  _header "Available languages:"
 }
 
 # Commit skill
