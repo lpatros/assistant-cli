@@ -40,7 +40,7 @@ fi
 function assistant() {
   local subcmd="${1:-}"
 
-  if [[ -n "$subcmd" && -f "$ASSISTANT_ROOT_DIR/custom/${subcmd}-assistant.md" ]]; then
+  if [[ -n "$subcmd" && -f "$ASSISTANT_ROOT_DIR/custom/skills/${subcmd}-assistant.md" ]]; then
     shift
     _run_generic_skill "$subcmd" "$@"
     return $?

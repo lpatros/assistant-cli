@@ -2,7 +2,7 @@ _run_generic_skill() {
   local skill_name="$1"
   shift
 
-  local md_file="$ASSISTANT_ROOT_DIR/custom/${skill_name}-assistant.md"
+  local md_file="$ASSISTANT_ROOT_DIR/custom/skills/${skill_name}-assistant.md"
   if [[ ! -f "$md_file" ]]; then
     t_custom_skill_not_found "$md_file"
     return 1
@@ -62,7 +62,7 @@ _cmd_create_skill() {
     fi
   fi
 
-  local custom_dir="$ASSISTANT_ROOT_DIR/custom"
+  local custom_dir="$ASSISTANT_ROOT_DIR/custom/skills"
   mkdir -p "$custom_dir"
 
   local dest_md="$custom_dir/${skill_name}-assistant.md"
