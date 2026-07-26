@@ -58,7 +58,7 @@ Você pode criar suas próprias habilidades personalizadas usando arquivos Markd
 ```bash
 assistant create skill <nome> <caminho-do-arquivo-md>
 ```
-Isso salvará as regras da sua skill personalizada em `custom/<nome>-assistant.md`.
+Isso salvará as regras da sua skill personalizada em `custom/skills/<nome>-assistant.md`.
 
 #### Sobrescrevendo Skills Padrão
 Se você tentar criar uma skill customizada com o mesmo nome de uma skill padrão/embutida (como `commit`), o CLI solicitará confirmação antes de prosseguir:
@@ -72,6 +72,48 @@ Se você optar por sobrescrever (`y`/`yes`), sua skill customizada terá priorid
 Execute sua skill customizada diretamente como um comando do assistente:
 ```bash
 assistant <nome> "sua instrução ou tarefa"
+```
+
+#### Comandos Dinâmicos Customizados (Shell)
+Você também pode definir funções Shell customizadas para executar lógicas dinâmicas.
+
+Para isso, crie ou edite o arquivo `custom/init.sh` e defina funções seguindo a convenção de nome `_cmd_<nome>`:
+
+```bash
+# custom/init.sh
+_cmd_hello() {
+  echo "Olá a partir de uma função customizada em Shell!"
+  echo "Argumentos recebidos: $*"
+}
+```
+
+Qualquer função declarada como `_cmd_<nome>` no `custom/init.sh` será despachada automaticamente ao executar:
+```bash
+assistant hello "mundo"
+```
+
+#### Locales Customizados (Idiomas Personalizados)
+Você pode adicionar sua própria tradução de idioma criando um arquivo `.sh` em `custom/locales/<lang>.sh` (por exemplo, `custom/locales/fr.sh`).
+
+No arquivo customizado, defina as funções de tradução desejadas (ex: `t_lang_changed`, `t_lang_status`). Qualquer função não definida no seu arquivo customizado utilizará automaticamente o fallback em inglês (`locales/en.sh`).
+
+```bash
+# custom/locales/fr.sh
+t_lang_changed() {
+  _success "Langue modifiée en: ${BOLD}$1${RESET}"
+}
+t_lang_status() {
+  _info "Langue actuelle: ${CYAN}${BOLD}$1${RESET}"
+}
+```
+
+Alterne para o idioma personalizado ou liste os idiomas disponíveis:
+```bash
+# Definir idioma customizado
+assistant lang fr
+
+# Listar todos os idiomas disponíveis (padrão e customizados)
+assistant lang --list
 ```
 
 ## Instalação e Configuração
@@ -137,6 +179,7 @@ Ao rodar `assistant`, você tem acesso aos seguintes comandos:
 | `assistant readme --lang <lang> --name <name>` | Escaneia a estrutura do projeto e gera um arquivo README |
 | `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um template Markdown |
 | `assistant <skill-customizada> [args]` | Executa uma skill personalizada |
+| `assistant lang [<idioma>\|--list\|status]` | Altera o idioma ativo, lista idiomas disponíveis ou mostra o idioma atual |
 | `assistant model --list` | Lista de forma interativa os modelos disponíveis na engine ativa para seleção |
 | `assistant model status` | Mostra os modelos configurados para todas as engines |
 | `assistant engine [ollama\|opencode]` | Altera a engine de orquestração de modelo ativa |
@@ -162,7 +205,7 @@ assistant model --list
 
 ```
 assistant/
-├── custom/                  # Habilidades personalizadas do usuário
+├── custom/                  # Habilidades e idiomas personalizados do usuário
 ├── data/                    # Armazena configurações e metadados do sistema.
 ├── lib/                     # Caminhos constantes, traduções e rotas de comandos.
 ├── locales/                 # Traduções usadas pelo CLI

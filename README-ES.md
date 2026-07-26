@@ -58,7 +58,7 @@ Puedes crear tus propias habilidades personalizadas utilizando archivos Markdown
 ```bash
 assistant create skill <nombre> <ruta-al-archivo-markdown>
 ```
-Esto guardará las reglas de tu habilidad personalizada en `custom/<nombre>-assistant.md`.
+Esto guardará las reglas de tu habilidad personalizada en `custom/skills/<nombre>-assistant.md`.
 
 #### Sobrescribir Habilidades Predeterminadas
 Si intentas crear una habilidad personalizada con el mismo nombre que una habilidad integrada/predeterminada (por ejemplo, `commit`), la CLI te pedirá confirmación:
@@ -72,6 +72,48 @@ Si eliges sobrescribir (`y`/`yes`), tu habilidad personalizada tendrá prioridad
 Ejecuta tu habilidad personalizada directamente como un comando:
 ```bash
 assistant <nombre> "tu consulta o tarea"
+```
+
+#### Comandos Dinámicos Personalizados (Shell)
+También puedes definir funciones Shell personalizadas para ejecutar lógica dinámica.
+
+Para ello, crea o edita el archivo `custom/init.sh` y define funciones siguiendo la convención de nombres `_cmd_<nombre>`:
+
+```bash
+# custom/init.sh
+_cmd_hello() {
+  echo "¡Hola desde una función personalizada en Shell!"
+  echo "Argumentos recibidos: $*"
+}
+```
+
+Cualquier función declarada como `_cmd_<nombre>` en `custom/init.sh` se despachará automáticamente al ejecutar:
+```bash
+assistant hello "mundo"
+```
+
+#### Locales Personalizados (Idiomas Personalizados)
+Puedes agregar tu propia traducción de idioma creando un archivo `.sh` en `custom/locales/<idioma>.sh` (por ejemplo, `custom/locales/fr.sh`).
+
+En el archivo personalizado, define las funciones de traducción deseadas (ej: `t_lang_changed`, `t_lang_status`). Cualquier función no definida en tu archivo personalizado utilizará automáticamente el respaldo en inglés (`locales/en.sh`).
+
+```bash
+# custom/locales/fr.sh
+t_lang_changed() {
+  _success "Langue modifiée en: ${BOLD}$1${RESET}"
+}
+t_lang_status() {
+  _info "Langue actuelle: ${CYAN}${BOLD}$1${RESET}"
+}
+```
+
+Cambia a tu idioma personalizado o lista los idiomas disponibles:
+```bash
+# Definir idioma personalizado
+assistant lang fr
+
+# Listar todos los idiomas disponibles (predeterminados y personalizados)
+assistant lang --list
 ```
 
 ## Instalación y Configuración
@@ -136,6 +178,7 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant readme --lang <idioma> --name <nombre>` | Escanea la estructura del proyecto y genera un archivo README |
 | `assistant create skill <nombre> <ruta.md>` | Crea una nueva habilidad personalizada a partir de una plantilla Markdown |
 | `assistant <habilidad-personalizada> [args]` | Ejecuta una habilidad personalizada |
+| `assistant lang [<idioma>\|--list\|status]` | Cambia el idioma activo, lista idiomas disponibles o muestra el idioma actual |
 | `assistant model --list` | Muestra de forma interactiva los modelos disponibles para el motor actual para cambiarlos |
 | `assistant model status` | Muestra los modelos configurados actualmente para todos los motores |
 | `assistant engine [ollama\|opencode]` | Cambia el motor de orquestación de modelos activo |
@@ -161,7 +204,7 @@ assistant model --list
 
 ```
 assistant/
-├── custom/                  # Habilidades personalizadas del asistente
+├── custom/                  # Habilidades e idiomas personalizados del usuario
 ├── data/                    # Almacenamiento persistente de la configuración (motor, modelo, idioma)
 ├── lib/                     # Constantes de rutas, traducciones y enrutamiento de comandos
 ├── locales/                 # Traducciones de texto

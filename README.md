@@ -58,7 +58,7 @@ You can create your own custom skills using Markdown files that define guideline
 ```bash
 assistant create skill <name> <path-to-markdown-file>
 ```
-This will save your custom skill rules in `custom/<name>-assistant.md`.
+This will save your custom skill rules in `custom/skills/<name>-assistant.md`.
 
 #### Overwriting Default Skills
 If you try to create a custom skill with the same name as a default/built-in skill (e.g., `commit`), the CLI will ask for confirmation:
@@ -72,6 +72,48 @@ If you choose to overwrite (`y`/`yes`), your custom skill will take precedence o
 Run your custom skill directly as a command:
 ```bash
 assistant <name> "your prompt or task"
+```
+
+#### Custom Dynamic Shell Commands
+You can also define custom Shell functions that execute dynamic logic.
+
+To do this, create or edit `custom/init.sh` and define functions using the `_cmd_<name>` naming convention:
+
+```bash
+# custom/init.sh
+_cmd_hello() {
+  echo "Hello from custom shell function!"
+  echo "Arguments received: $*"
+}
+```
+
+Any function named `_cmd_<name>` defined in `custom/init.sh` is automatically dispatched when running:
+```bash
+assistant hello "world"
+```
+
+#### Custom Locales
+You can add your own custom language translation by placing a `.sh` file inside `custom/locales/<lang>.sh` (e.g. `custom/locales/fr.sh`).
+
+In your custom locale file, define translation functions (e.g. `t_lang_changed`, `t_lang_status`). Any function not defined in your custom file automatically falls back to `locales/en.sh`.
+
+```bash
+# custom/locales/fr.sh
+t_lang_changed() {
+  _success "Langue modifiée en: ${BOLD}$1${RESET}"
+}
+t_lang_status() {
+  _info "Langue actuelle: ${CYAN}${BOLD}$1${RESET}"
+}
+```
+
+Switch to your custom locale or list available locales:
+```bash
+# Set custom language
+assistant lang fr
+
+# List all available languages (built-in and custom)
+assistant lang --list
 ```
 
 ## Installation & Setup
@@ -136,6 +178,7 @@ When running `assistant`, you have access to the following commands:
 | `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
 | `assistant create skill <name> <path.md>` | Creates a new custom skill from a Markdown template |
 | `assistant <custom-skill> [args]` | Executes a custom skill |
+| `assistant lang [<lang>\|--list\|status]` | Changes active language, lists available languages, or shows current language |
 | `assistant model --list` | Interactively lists available models for the current engine to switch them |
 | `assistant model status` | Shows currently configured models for all engines |
 | `assistant engine [ollama\|opencode]` | Switches the active model orchestration engine |
@@ -161,7 +204,7 @@ assistant model --list
 
 ```
 assistant/
-├── custom/                  # User-defined custom skills
+├── custom/                  # User-defined custom skills and locales
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── lib/                     # Paths constants,Translates and Handles command routes.
 ├── locales/                 # Text translations
