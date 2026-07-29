@@ -1,3 +1,31 @@
+_ensure_engine_installed() {
+  local engine="${1:-$(_get_engine)}"
+
+  if _is_installed "$engine"; then
+    return 0
+  fi
+
+  t_engine_not_installed_warning "$engine"
+  t_engine_not_installed_prompt
+
+  local answer
+  if [ -c /dev/tty ]; then
+    read -r answer </dev/tty || true
+  else
+    read -r answer || true
+  fi
+
+  case "$answer" in
+    [yY]|[yY][eE][sS])
+      return 0
+      ;;
+    *)
+      t_engine_not_installed_aborted "$engine"
+      return 1
+      ;;
+  esac
+}
+
 _cmd_engine() {
   local action="${1:-status}"
 
@@ -5,10 +33,12 @@ _cmd_engine() {
     ollama)
       _set_engine "ollama"
       t_engine_changed "ollama"
+      _ensure_engine_installed "ollama"
       ;;
     opencode)
       _set_engine "opencode"
       t_engine_changed "opencode"
+      _ensure_engine_installed "opencode"
       ;;
     status|"")
       _cmd_engine_status
@@ -41,6 +71,8 @@ _cmd_model_list() {
   current_engine=$(_get_engine)
   current_model=$(_get_model)
   current_model_display=$(_model_display "$current_model")
+
+  _ensure_engine_installed "$current_engine" || return 1
 
   t_models_available_header "$current_engine"
 

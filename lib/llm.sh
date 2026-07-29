@@ -7,6 +7,8 @@ _llm_run_prompt() {
   current_engine=$(_get_engine)
   current_model=$(_get_model)
 
+  _ensure_engine_installed "$current_engine" || return 1
+
   if [[ "$current_engine" == "opencode" ]]; then
     _llm_run_prompt_opencode "$prompt" "$current_model" "$output_file"
   else
@@ -55,6 +57,8 @@ _llm_run_interactive() {
   current_engine=$(_get_engine)
   current_model=$(_get_model)
   current_model_display=$(_model_display "$current_model")
+
+  _ensure_engine_installed "$current_engine" || return 1
 
   t_engine_display "$current_engine"
   t_model_display "$current_model_display"
