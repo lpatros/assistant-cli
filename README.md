@@ -59,7 +59,40 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 ```
 
 > [!NOTE]
-> Also ensure that Git Bash is included in your system's Environment Variables (usually located at `C:\Program Files\Git\bin`).
+> Also ensure that Git Bash is added to your system's Environment Variables (usually in `C:\Program Files\Git\bin`).
+
+<details>
+<summary> <b>How to add or fix Git Bash in Windows Environment Variables (PATH)</b></summary>
+
+### Step-by-Step:
+
+1. **Verify if it is already configured:**
+   - Open **PowerShell** or **Command Prompt (CMD)**.
+   - Type `bash --version` or `where bash` and press Enter.
+   - If the command returns the Bash version or the executable path, it is already configured! Otherwise, follow the steps below.
+
+2. **Locate the Git Bash installation path:**
+   - By default, Git Bash is installed at: `C:\Program Files\Git\bin` (or `C:\Program Files (x86)\Git\bin`).
+   - Open Windows File Explorer, navigate to this folder, and make sure the `bash.exe` file is there. Copy the folder path (`C:\Program Files\Git\bin`).
+
+3. **Open Environment Variables:**
+   - Press the `Windows` key, type **"environment variables"**, and select the option **"Edit the system environment variables"**.
+   - In the window that opens, click the **"Environment Variables..."** button (located in the bottom right corner).
+
+4. **Edit the PATH variable:**
+   - Under **"User variables"** (to apply only to your user) or **"System variables"** (to apply to all users), locate the variable named **`Path`** and select it.
+   - Click the **"Edit..."** button.
+
+5. **Add the path:**
+   - Click the **"New"** button on the right side.
+   - Paste the path copied in Step 2 (e.g., `C:\Program Files\Git\bin`).
+   - Click **"OK"** in all open windows to save and apply the changes.
+
+6. **Validate the configuration:**
+   - **Important:** Close all open PowerShell or CMD windows and open a new terminal to load the new environment variables.
+   - Type `bash --version` in the new terminal. If the Bash version is successfully displayed, the setup is complete!
+</details>
+
 
 **On Windows, the interactive installer will:**
 1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).

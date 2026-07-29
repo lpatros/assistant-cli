@@ -59,7 +59,39 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 ```
 
 > [!NOTE]
-> También asegúrate de que Git Bash esté incluido en las Variables de Entorno del sistema (generalmente ubicado en `C:\Program Files\Git\bin`).
+> Asegúrate también de que Git Bash esté agregado a las variables de entorno de tu sistema (generalmente en `C:\Program Files\Git\bin`).
+
+<details>
+<summary> <b>Cómo agregar o corregir Git Bash en las Variables de Entorno (PATH) de Windows</b></summary>
+
+### Paso a paso:
+
+1. **Verificar si ya está configurado:**
+   - Abre **PowerShell** o el **Símbolo del sistema (CMD)**.
+   - Escribe `bash --version` o `where bash` y presiona Enter.
+   - Si el comando devuelve la versión de Bash o la ruta del ejecutable, ¡ya está configurado! De lo contrario, sigue los pasos a continuación.
+
+2. **Localizar la ruta de instalación de Git Bash:**
+   - Por defecto, Git Bash se instala en: `C:\Program Files\Git\bin` (o `C:\Program Files (x86)\Git\bin`).
+   - Abre el Explorador de archivos de Windows, navega hasta esa carpeta y asegúrate de que el archivo `bash.exe` esté allí. Copia la ruta de la carpeta (`C:\Program Files\Git\bin`).
+
+3. **Abrir las Variables de entorno:**
+   - Presiona la tecla `Windows`, escribe **"variables de entorno"** y selecciona la opción **"Editar las variables de entorno del sistema"**.
+   - En la ventana que se abra, haz clic en el botón **"Variables de entorno..."** (ubicado en la esquina inferior derecha).
+
+4. **Editar la variable PATH:**
+   - En **"Variables de usuario"** (para aplicar solo a tu usuario) o **"Variables del sistema"** (para aplicar a todos os usuarios), localiza la variable llamada **`Path`** y selecciónala.
+   - Haz clic en el botón **"Editar..."**.
+
+5. **Agregar la ruta:**
+   - Haz clic en el botón **"Nuevo"** en el lado derecho.
+   - Pega la ruta copiada en el Paso 2 (ej: `C:\Program Files\Git\bin`).
+   - Haz clic en **"Aceptar"** en todas las ventanas abiertas para guardar y aplicar el cambio.
+
+6. **Validar la configuración:**
+   - **Importante:** Cierra todas las ventanas abiertas de PowerShell o CMD y abre una nueva terminal para cargar las nuevas variables de entorno.
+   - Escribe `bash --version` en la nueva terminal. Si la versión de Bash se muestra con éxito, ¡la configuración se ha completado!
+</details>
 
 **En Windows, el instalador interactivo:**
 1. Clonará el repositorio en `%LOCALAPPDATA%\assistant-cli` (o un directorio personalizado de tu elección).
