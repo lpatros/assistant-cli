@@ -16,10 +16,9 @@
 # Enlaces Rápidos
 
 - [Descripción](#descripción)
-- [Tecnologías](#tecnologías)
-- [Características](#características)
 - [Instalación y Configuración](#instalación-y-configuración)
 - [Actualización](#actualización)
+- [Características](#características)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 
@@ -29,11 +28,53 @@ El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) p
 
 Todas las opciones de configuración (como el motor activo, el modelo seleccionado, el idioma y el modo de pensamiento) se guardan localmente y persisten entre sesiones de terminal.
 
-## Tecnologías
+## Instalación y Configuración
 
-- **Bash** - Entorno de scripting y envoltura de la función principal
-- **Ollama** - Motor de orquestación para modelos locales (por ejemplo, DeepSeek, Llama, Gemma)
-- **OpenCode** - Motor de orquestación y registro para modelos de programación
+El Assistant CLI proporciona scripts de instalación adaptados a diferentes sistemas operativos.
+
+### Linux y macOS
+
+Puedes instalar Assistant CLI directamente usando `curl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
+
+**En Linux y macOS, el instalador interactivo:**
+1. Clonará el repositorio en `~/.config/assistant-cli` (or un directorio personalizado de tu elección).
+2. Agregará automáticamente la configuración a tu perfil de shell (`~/.zshrc`, `~/.bashrc` o `config.fish`).
+3. Te guiará sobre cómo recargar tu terminal para comenzar a usar el asistente.
+
+### Windows
+
+Para usuarios de **Windows**, se puede instalar usando PowerShell. Abre tu PowerShell y ejecuta:
+
+> [!IMPORTANT]
+> Asegúrate de que la política de ejecución de scripts esté habilitada antes de ejecutar el instalador. Puedes configurarla ejecutando:
+> ```powershell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
+
+```powershell
+irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | iex
+```
+
+> [!NOTE]
+> También asegúrate de que Git Bash esté incluido en las Variables de Entorno del sistema (generalmente ubicado en `C:\Program Files\Git\bin`).
+
+**En Windows, el instalador interactivo:**
+1. Clonará el repositorio en `%LOCALAPPDATA%\assistant-cli` (o un directorio personalizado de tu elección).
+2. Verificará si `bash` está disponible en tu sistema (por ejemplo, Git Bash o WSL), ya que el núcleo del proyecto utiliza scripts `.sh`.
+3. Agregará una función contenedora (wrapper) directamente en tu perfil de PowerShell (`$PROFILE`) que llama a `bash` de manera transparente. **¡Esto significa que no necesitas abrir Git Bash manualmente; el asistente funcionará perfectamente dentro de tu PowerShell estándar!**
+4. Te guiará sobre cómo recargar tu terminal.
+
+## Actualización
+
+Puedes actualizar fácilmente tu Assistant CLI a la versión más reciente ejecutando el comando de actualización. Esto descargará los últimos cambios del repositorio y garantizará que tu instalación local esté actualizada.
+
+```bash
+assistant update
+```
 
 ## Características
 
@@ -49,7 +90,7 @@ Todas las opciones de configuración (como el motor activo, el modelo selecciona
 El asistente viene con varias habilidades integradas para potenciar tu flujo de trabajo:
 - **Asistente de Commits (`assistant commit`)**: Analiza el estado de tu repositorio Git, los diffs en el área de preparación (staged) y las estadísticas de cambios no preparados, y los ejecuta bajo pautas estándar para generar sugerencias de mensajes de commit limpios y legibles.
 - **Generador de Resúmenes de Proyecto (`assistant resume [rutas...]`)**: Reúne automáticamente el contexto del directorio de tu proyecto (árbol estructural y archivos de manifiesto como `package.json`, `pom.xml`, `Cargo.toml`, etc.) y genera un resumen completo en formato markdown que describe la arquitectura y las dependencias del proyecto.
-- **Generador de README (`assistant readme --lang [en|pt-br] --name [nombre_archivo]`)**: Analiza automáticamente la estructura del proyecto y los archivos de configuración para generar un archivo README profesional y contextualizado.
+- **Generador de README (`assistant readme --lang [idioma] --name [nombre_archivo]`)**: Analiza automáticamente la estructura del proyecto y los archivos de configuración para generar un archivo README profesional y contextualizado.
 
 ### Habilidades Personalizadas
 Puedes crear tus propias habilidades personalizadas utilizando archivos Markdown que definan pautas para el LLM.
@@ -114,54 +155,6 @@ assistant lang fr
 
 # Listar todos los idiomas disponibles (predeterminados y personalizados)
 assistant lang --list
-```
-
-## Instalación y Configuración
-
-El Assistant CLI proporciona scripts de instalación adaptados a diferentes sistemas operativos.
-
-### Linux y macOS
-
-Puedes instalar Assistant CLI directamente usando `curl`:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
-```
-
-**En Linux y macOS, el instalador interactivo:**
-1. Clonará el repositorio en `~/.config/assistant-cli` (or un directorio personalizado de tu elección).
-2. Agregará automáticamente la configuración a tu perfil de shell (`~/.zshrc`, `~/.bashrc` o `config.fish`).
-3. Te guiará sobre cómo recargar tu terminal para comenzar a usar el asistente.
-
-### Windows
-
-Para usuarios de **Windows**, se puede instalar usando PowerShell. Abre tu PowerShell y ejecuta:
-
-> [!IMPORTANT]
-> Asegúrate de que la política de ejecución de scripts esté habilitada antes de ejecutar el instalador. Puedes configurarla ejecutando:
-> ```powershell
-> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-> ```
-
-```powershell
-irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | iex
-```
-
-> [!NOTE]
-> También asegúrate de que Git Bash esté incluido en las Variables de Entorno del sistema (generalmente ubicado en `C:\Program Files\Git\bin`).
-
-**En Windows, el instalador interactivo:**
-1. Clonará el repositorio en `%LOCALAPPDATA%\assistant-cli` (o un directorio personalizado de tu elección).
-2. Verificará si `bash` está disponible en tu sistema (por ejemplo, Git Bash o WSL), ya que el núcleo del proyecto utiliza scripts `.sh`.
-3. Agregará una función contenedora (wrapper) directamente en tu perfil de PowerShell (`$PROFILE`) que llama a `bash` de manera transparente. **¡Esto significa que no necesitas abrir Git Bash manualmente; el asistente funcionará perfectamente dentro de tu PowerShell estándar!**
-4. Te guiará sobre cómo recargar tu terminal.
-
-## Actualización
-
-Puedes actualizar fácilmente tu Assistant CLI a la versión más reciente ejecutando el comando de actualización. Esto descargará los últimos cambios del repositorio y garantizará que tu instalación local esté actualizada.
-
-```bash
-assistant update
 ```
 
 ## Uso

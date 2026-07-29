@@ -16,10 +16,9 @@
 # Quick Links
 
 - [Description](#description)
-- [Technologies](#technologies)
-- [Features](#features)
 - [Installation & Setup](#installation--setup)
 - [Update](#update)
+- [Features](#features)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 
@@ -29,11 +28,53 @@ The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line inte
 
 All configuration choices (such as active engine, selected model, language, and think mode) are saved locally and persist across terminal sessions.
 
-## Technologies
+## Installation & Setup
 
-- **Bash** - Scripting environment and main function wrapper
-- **Ollama** - Orchestration engine for local models (e.g., DeepSeek, Llama, Gemma)
-- **OpenCode** - Orchestration engine and registry for coding models
+The Assistant CLI provides installation scripts tailored for different operating systems.
+
+### Linux and macOS
+
+You can install Assistant CLI directly using `curl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
+
+**On Linux and macOS, the interactive installer will:**
+1. Clone the repository to `~/.config/assistant-cli` (or a custom directory of your choice).
+2. Automatically add the configuration to your shell profile (`~/.zshrc`, `~/.bashrc`, or `config.fish`).
+3. Guide you on how to reload your terminal to start using the assistant.
+
+### Windows
+
+For **Windows** users, you can install it using PowerShell. Open your PowerShell and run:
+
+> [!IMPORTANT]
+> Make sure your script execution policy is enabled before running the installer. You can set it by running:
+> ```powershell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
+
+```powershell
+irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | iex
+```
+
+> [!NOTE]
+> Also ensure that Git Bash is included in your system's Environment Variables (usually located at `C:\Program Files\Git\bin`).
+
+**On Windows, the interactive installer will:**
+1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
+2. Verify if `bash` is available in your system (e.g., Git Bash or WSL) since the core project uses `.sh` scripts.
+3. Add a wrapper function directly into your PowerShell profile (`$PROFILE`) that transparently calls `bash`. **This means you don't need to open Git Bash manually; the assistant will work seamlessly right inside your standard PowerShell!**
+4. Guide you on how to reload your terminal.
+
+## Update
+
+You can easily update your Assistant CLI to the latest version by running the update command. This will pull the latest changes from the repository and ensure your local installation is up to date.
+
+```bash
+assistant update
+```
 
 ## Features
 
@@ -49,7 +90,7 @@ All configuration choices (such as active engine, selected model, language, and 
 The assistant comes with several built-in skills to boost your workflow:
 - **Commit Assistant (`assistant commit`)**: Analyzes your Git repository's status, staged diffs, and unstaged change statistics, and runs them against standard guidelines to generate clean, readable commit message suggestions.
 - **Project Resume Generator (`assistant resume [paths...]`)**: Automatically gathers context from your project directory (structural tree and manifest files like `package.json`, `pom.xml`, `Cargo.toml`, etc.) and formats a comprehensive markdown resume outlining project architecture and dependencies.
-- **README Generator (`assistant readme --lang [en|pt-br] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
+- **README Generator (`assistant readme --lang [lang] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
 
 ### Custom Skills
 You can create your own custom skills using Markdown files that define guidelines for the LLM.
@@ -114,54 +155,6 @@ assistant lang fr
 
 # List all available languages (built-in and custom)
 assistant lang --list
-```
-
-## Installation & Setup
-
-The Assistant CLI provides installation scripts tailored for different operating systems.
-
-### Linux and macOS
-
-You can install Assistant CLI directly using `curl`:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
-```
-
-**On Linux and macOS, the interactive installer will:**
-1. Clone the repository to `~/.config/assistant-cli` (or a custom directory of your choice).
-2. Automatically add the configuration to your shell profile (`~/.zshrc`, `~/.bashrc`, or `config.fish`).
-3. Guide you on how to reload your terminal to start using the assistant.
-
-### Windows
-
-For **Windows** users, you can install it using PowerShell. Open your PowerShell and run:
-
-> [!IMPORTANT]
-> Make sure your script execution policy is enabled before running the installer. You can set it by running:
-> ```powershell
-> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-> ```
-
-```powershell
-irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | iex
-```
-
-> [!NOTE]
-> Also ensure that Git Bash is included in your system's Environment Variables (usually located at `C:\Program Files\Git\bin`).
-
-**On Windows, the interactive installer will:**
-1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
-2. Verify if `bash` is available in your system (e.g., Git Bash or WSL) since the core project uses `.sh` scripts.
-3. Add a wrapper function directly into your PowerShell profile (`$PROFILE`) that transparently calls `bash`. **This means you don't need to open Git Bash manually; the assistant will work seamlessly right inside your standard PowerShell!**
-4. Guide you on how to reload your terminal.
-
-## Update
-
-You can easily update your Assistant CLI to the latest version by running the update command. This will pull the latest changes from the repository and ensure your local installation is up to date.
-
-```bash
-assistant update
 ```
 
 ## Usage
