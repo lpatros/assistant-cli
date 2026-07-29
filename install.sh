@@ -24,6 +24,10 @@ YELLOW='\033[33m'
 RED='\033[31m'
 RESET='\033[0m'
 
+_is_installed() {
+  command -v "$1" >/dev/null 2>&1
+}
+
 info()    { printf "${CYAN}  %s${RESET}\n" "$1"; }
 success() { printf "${GREEN} %s${RESET}\n" "$1"; }
 warn()    { printf "${YELLOW}  %s${RESET}\n" "$1"; }
@@ -86,16 +90,16 @@ esac
 
 printf "  -> Installing to: ${BOLD}%s${RESET}\n\n" "$INSTALL_DIR"
 
-if ! command -v git >/dev/null 2>&1; then
+if ! _is_installed git; then
   error "git is not installed. Please install git first."
   exit 1
 fi
 
-if ! command -v ollama >/dev/null 2>&1; then
+if ! _is_installed ollama; then
   warn "ollama is not installed. It is recommended for running local models."
 fi
 
-if ! command -v opencode >/dev/null 2>&1; then
+if ! _is_installed opencode; then
   warn "opencode is not installed. It is recommended for coding models."
 fi
 

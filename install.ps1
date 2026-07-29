@@ -17,6 +17,11 @@ function Write-Color {
     }
 }
 
+function _is_installed {
+    param([string]$cmd)
+    return [bool](Get-Command $cmd -ErrorAction SilentlyContinue)
+}
+
 Write-Host ""
 Write-Color "  ┌──────────────────────────────────────┐" -Color Cyan
 Write-Color "  │       @ Assistant CLI Installer      │" -Color Cyan
@@ -46,21 +51,21 @@ Write-Color "  -> Installing to: " -NoNewline
 Write-Color $InstallDir -Color White
 Write-Host "`n"
 
-if (!(Get-Command git -ErrorAction SilentlyContinue)) {
+if (!(_is_installed "git")) {
     Write-Color "  git is not installed. Please install git first." -Color Red
     exit 1
 }
 
-if (!(Get-Command bash -ErrorAction SilentlyContinue)) {
+if (!(_is_installed "bash")) {
     Write-Color "  bash is not installed or not in PATH. A bash environment (like Git Bash) is required." -Color Red
     exit 1
 }
 
-if (!(Get-Command ollama -ErrorAction SilentlyContinue)) {
+if (!(_is_installed "ollama")) {
     Write-Color "  ollama is not installed. It is recommended for running local models." -Color Yellow
 }
 
-if (!(Get-Command opencode -ErrorAction SilentlyContinue)) {
+if (!(_is_installed "opencode")) {
     Write-Color "  opencode is not installed. It is recommended for coding models." -Color Yellow
 }
 
