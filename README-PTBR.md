@@ -100,9 +100,15 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 3. Adicionar uma função wrapper ao seu perfil do PowerShell (`$PROFILE`) que chamará o `bash` silenciosamente. **Isso significa que você não precisa abrir o Git Bash para usar o assistente; ele funcionará perfeitamente direto no seu PowerShell!**
 4. Fornecer instruções de como recarregar o seu terminal.
 
-## Atualização
+## Atualização e Versão
 
-Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente executando o comando de atualização. Isso fará o download das últimas alterações do repositório, garantindo que sua instalação local esteja em dia.
+Você pode verificar a versão atual do assistente com:
+
+```bash
+assistant --version
+```
+
+Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente executando:
 
 ```bash
 assistant update

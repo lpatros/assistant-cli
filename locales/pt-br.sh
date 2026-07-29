@@ -253,6 +253,15 @@ t_readme_success() {
   _success "$1 gerado em $2."
 }
 
+# Version command
+t_version() {
+  _info "Assistant CLI v$1"
+}
+
+t_version_unknown() {
+  echo "desconhecida"
+}
+
 # Update command
 t_update_starting() {
   _header "Atualizando o assistente..."
@@ -264,6 +273,28 @@ t_update_success() {
 
 t_update_failed() {
   _error "Falha ao atualizar o assistente."
+}
+
+t_update_conflict_warning() {
+  _warn "Conflito detectado ao atualizar o assistente."
+  _info "Verifique se você fez alguma alteração local nos arquivos que possa estar dando conflito."
+  _info "Se você não alterou nada, deve ser seguro forçar a atualização."
+}
+
+t_update_conflict_prompt() {
+  echo -n "Deseja forçar a atualização? [y/N]: "
+}
+
+t_update_changelog_prompt() {
+  echo -n "Deseja visualizar o changelog? [y/N]: "
+}
+
+t_update_aborted() {
+  _warn "Atualização cancelada."
+}
+
+t_changelog_not_found() {
+  _warn "Arquivo CHANGELOG.md não encontrado em: $1"
 }
 
 t_unknown_command() {
@@ -319,6 +350,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET} \"<mensagem>\"                    Envia uma mensagem direta
   ${GREEN}assistant status${RESET}                           Mostra engine, modelos, think mode e idioma
   ${GREEN}assistant update${RESET}                           Atualiza o assistente para a última versão
+  ${GREEN}assistant --version${RESET}                        Mostra a versão atual do assistente
   ${GREEN}assistant commit${RESET}                           Analisa o repo git e sugere commits
   ${GREEN}assistant resume${RESET} [caminhos...]             Gera resumos de projetos em markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <nome>  Gera o README do projeto

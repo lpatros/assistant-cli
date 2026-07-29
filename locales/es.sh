@@ -253,6 +253,15 @@ t_readme_success() {
   _success "$1 generado en $2."
 }
 
+# Version command
+t_version() {
+  _info "Assistant CLI v$1"
+}
+
+t_version_unknown() {
+  echo "desconocida"
+}
+
 # Update command
 t_update_starting() {
   _header "Actualizando el asistente..."
@@ -264,6 +273,28 @@ t_update_success() {
 
 t_update_failed() {
   _error "No se pudo actualizar el asistente."
+}
+
+t_update_conflict_warning() {
+  _warn "Conflicto detectado al actualizar el asistente."
+  _info "Verifica si realizaste cambios locales que puedan estar generando conflicto."
+  _info "Si no has cambiado nada, debería ser seguro forzar la actualización."
+}
+
+t_update_conflict_prompt() {
+  echo -n "¿Deseas forzar la actualización? [y/N]: "
+}
+
+t_update_changelog_prompt() {
+  echo -n "¿Deseas ver el registro de cambios (changelog)? [y/N]: "
+}
+
+t_update_aborted() {
+  _warn "Actualización cancelada."
+}
+
+t_changelog_not_found() {
+  _warn "Archivo CHANGELOG.md no encontrado en: $1"
 }
 
 t_unknown_command() {
@@ -319,6 +350,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET} \"<mensaje>\"                    Enviar un mensaje directo
   ${GREEN}assistant status${RESET}                           Mostrar motor, modelos, modo pensamiento e idioma
   ${GREEN}assistant update${RESET}                           Actualizar el asistente a la última versión
+  ${GREEN}assistant --version${RESET}                        Mostrar la versión actual del asistente
   ${GREEN}assistant commit${RESET}                           Analizar repositorio git y sugerir commits
   ${GREEN}assistant resume${RESET} [rutas...]                 Generar resúmenes de proyectos en markdown
   ${GREEN}assistant readme${RESET} --lang <código> --name <nom> Generar archivo README del proyecto
@@ -342,7 +374,7 @@ ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
   ${YELLOW}--hide-think${RESET}                      Ocultar pensamiento (y guardar)
 
 ${BOLD}Ejemplos:${RESET}
-  assistant \"Explica qué es un closure en JS\"
+  assistant \"Explica qué es un closure in JS\"
   assistant commit
   assistant engine agy
   assistant engine opencode
