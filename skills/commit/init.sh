@@ -3,6 +3,11 @@ _cmd_commit() {
   current_engine=$(_get_engine)
   current_model_display=$(_model_display "$(_get_model)")
 
+  if ! _is_installed "git"; then
+    t_git_not_installed
+    return 1
+  fi
+
   if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     t_commit_not_git_repo
     return 1
