@@ -253,6 +253,15 @@ t_readme_success() {
   _success "$1 generated in $2."
 }
 
+# Version command
+t_version() {
+  _info "Assistant CLI v$1"
+}
+
+t_version_unknown() {
+  echo "unknown"
+}
+
 # Update command
 t_update_starting() {
   _header "Updating the assistant..."
@@ -264,6 +273,28 @@ t_update_success() {
 
 t_update_failed() {
   _error "Failed to update the assistant."
+}
+
+t_update_conflict_warning() {
+  _warn "Conflict detected while updating the assistant."
+  _info "Please check if you made any local changes that might be causing a conflict."
+  _info "If you haven't changed anything, it should be safe to force the update."
+}
+
+t_update_conflict_prompt() {
+  echo -n "Do you want to force the update? [y/N]: "
+}
+
+t_update_changelog_prompt() {
+  echo -n "Would you like to view the changelog? [y/N]: "
+}
+
+t_update_aborted() {
+  _warn "Update cancelled."
+}
+
+t_changelog_not_found() {
+  _warn "CHANGELOG.md file not found at: $1"
 }
 
 t_unknown_command() {
@@ -319,6 +350,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant${RESET} \"<message>\"                    Send a direct message
   ${GREEN}assistant status${RESET}                           Show engine, models, think mode, and language
   ${GREEN}assistant update${RESET}                           Update the assistant to the latest version
+  ${GREEN}assistant --version${RESET}                        Show current assistant version
   ${GREEN}assistant commit${RESET}                           Analyze git repo and suggest commits
   ${GREEN}assistant resume${RESET} [paths...]                 Generate project resumes in markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <name>  Generate project README file

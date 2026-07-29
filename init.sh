@@ -25,6 +25,7 @@ source "$ASSISTANT_LIB_DIR/engine.sh"
 source "$ASSISTANT_LIB_DIR/llm.sh"
 source "$ASSISTANT_LIB_DIR/help.sh"
 source "$ASSISTANT_LIB_DIR/update.sh"
+source "$ASSISTANT_LIB_DIR/version.sh"
 source "$ASSISTANT_LIB_DIR/custom.sh"
 
 _load_locale
@@ -121,6 +122,9 @@ function assistant() {
       ;;
     "update")
       _cmd_update
+      ;;
+    "version"|"--version"|"-v")
+      _cmd_version
       ;;
     "--help"|"-h"|"help")
       _cmd_help
