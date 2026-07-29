@@ -1,3 +1,8 @@
+_is_installed() {
+  local cmd="${1:-}"
+  [[ -n "$cmd" ]] && command -v "$cmd" &>/dev/null
+}
+
 _info()    { echo -e "${CYAN}ℹ${RESET}  $*"; }
 _success() { echo -e "${GREEN}✓${RESET}  $*"; }
 _warn()    { echo -e "${YELLOW}⚠${RESET}  $*"; }
