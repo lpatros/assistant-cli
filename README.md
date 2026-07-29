@@ -21,6 +21,7 @@
 - [Features](#features)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
+- [License](#license)
 
 ## Description
 
@@ -206,3 +207,8 @@ assistant/
 ├── init.sh                  # Main entry point to source in shell config files
 └── README.md                # Documentation
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.txt) file for details.
+

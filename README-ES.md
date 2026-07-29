@@ -21,6 +21,7 @@
 - [Características](#características)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
+- [Licencia](#licencia)
 
 ## Descripción
 
@@ -206,3 +207,8 @@ assistant/
 ├── init.sh                  # Punto de entrada principal para cargar en los archivos de configuración del shell
 └── README.md                # Documentación
 ```
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT - consulte el archivo [LICENSE](LICENSE.txt) para más detalles.
+

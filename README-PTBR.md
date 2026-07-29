@@ -21,6 +21,7 @@
 - [Funcionalidades](#funcionalidades)
 - [Uso](#uso)
 - [Estrutura do Projeto](#estrutura-do-projeto)
+- [Licença](#licença)
 
 ## Descrição
 
@@ -207,3 +208,8 @@ assistant/
 ├── init.sh                  # Ponto de entrada principal para carregar no shell
 └── README.md                # Documentação
 ```
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT - consulte o arquivo [LICENSE](LICENSE.txt) para mais detalhes.
+
