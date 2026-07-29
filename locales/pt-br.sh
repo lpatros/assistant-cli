@@ -12,6 +12,19 @@ t_engine_status() {
   _info "Modelo atual: ${GREEN}${BOLD}$2${RESET}"
 }
 
+t_engine_not_installed_warning() {
+  _warn "A engine '${BOLD}$1${RESET}' não foi encontrada no PATH do seu sistema."
+  _info "É altamente recomendável instalar o CLI do ${BOLD}$1${RESET} ou corrigir a variável de ambiente PATH para que o assistente funcione corretamente."
+}
+
+t_engine_not_installed_prompt() {
+  echo -n "Deseja realmente continuar com a execução? [y/N]: "
+}
+
+t_engine_not_installed_aborted() {
+  _warn "Operação cancelada. Instale o ${BOLD}$1${RESET} ou ajuste a variável PATH do seu sistema."
+}
+
 t_model_status_detailed() {
   _info "Engine atual: ${MAGENTA}${BOLD}$1${RESET}"
   _info "Modelo atual: ${GREEN}${BOLD}$2${RESET}"
@@ -165,6 +178,10 @@ t_lang_list_header() {
 # Commit skill
 t_commit_not_git_repo() {
   _error "Não está dentro de um repositório Git."
+}
+
+t_git_not_installed() {
+  _error "O git não está instalado. Por favor, instale o git primeiro."
 }
 
 t_commit_analyzing() {
