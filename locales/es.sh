@@ -4,7 +4,7 @@ t_engine_changed() {
 }
 
 t_engine_usage() {
-  _error "Uso: assistant engine [ollama|opencode|--list|status]"
+  _error "Uso: assistant engine [<motor>|--list|status]"
 }
 
 t_engine_status() {
@@ -28,20 +28,14 @@ t_engine_not_installed_aborted() {
 t_model_status_detailed() {
   _info "Motor actual: ${MAGENTA}${BOLD}$1${RESET}"
   _info "Modelo actual: ${GREEN}${BOLD}$2${RESET}"
-  _info "Modelo de Ollama: ${GREEN}${BOLD}$3${RESET}"
-  _info "Modelo de OpenCode: ${GREEN}${BOLD}$4${RESET}"
 }
 
 t_models_available_header() {
   _header "Modelos disponibles — motor: $1"
 }
 
-t_no_models_found_ollama() {
-  _error "No se encontraron modelos. ¿Está ejecutándose Ollama?"
-}
-
-t_no_models_found_opencode() {
-  _error "No se encontraron modelos. ¿Está OpenCode instalado y configurado?"
+t_no_models_found() {
+  _error "No se encontraron modelos para el motor '$1'. ¿Está la CLI instalada y configurada?"
 }
 
 t_menu_switch_engine() {
@@ -118,7 +112,7 @@ t_think_status_default() {
 }
 
 t_think_status_current() {
-  _info "Modo pensamiento actual: ${YELLOW}${BOLD}$1${RESET}"
+  _info "Ollama modo pensamiento actual: ${YELLOW}${BOLD}$1${RESET}"
 }
 
 t_think_usage() {
@@ -318,7 +312,7 @@ t_create_skill_aborted() {
 
 t_help_output() {
   echo -e "
-${BOLD}${BLUE}assistant${RESET} — Envoltura CLI para Ollama y OpenCode
+${BOLD}${BLUE}assistant${RESET} — Envoltura CLI para LLMs y motores modulares (Ollama, OpenCode, Antigravity (AGY) y personalizados)
 
 ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                  Chat interactivo con el modelo actual
@@ -332,14 +326,15 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant <habilidad-personalizada>${RESET} [args]  Ejecutar una habilidad personalizada
   ${GREEN}assistant model --list${RESET}                     Listar modelos y permitir cambiar de modelo
   ${GREEN}assistant model status${RESET}                     Mostrar el modelo del motor actual y guardados
-  ${GREEN}assistant engine${RESET} [ollama|opencode|--list|status]  Cambiar el motor activo
+  ${GREEN}assistant engine${RESET} [<motor>|--list|status]   Cambiar el motor activo
   ${GREEN}assistant engine status${RESET}                    Mostrar motor actual y modelo activo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status] Gestionar modo pensamiento (ollama)
   ${GREEN}assistant lang${RESET} [en|pt-br|es|status]       Gestionar el idioma del asistente
 
 ${BOLD}Notas:${RESET}
-  - Los modelos se guardan por motor; cambiar el motor no hace perder el modelo anterior.
-  - Si el modelo de opencode está vacío, se utiliza el configurado por defecto en opencode.
+  - Motores nativos: ollama, opencode, agy.
+  - Crea motores personalizados en custom/engines/<nombre>.sh.
+  - Los modelos se guardan por motor; cambiar el motor no hace perder los modelos anteriores.
 
 ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
   ${YELLOW}--think${RESET}                           Habilitar modo pensamiento (y guardar)
@@ -349,29 +344,11 @@ ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
 ${BOLD}Ejemplos:${RESET}
   assistant \"Explica qué es un closure en JS\"
   assistant commit
-  assistant commit --no-think
-  assistant \"Resume este texto\" --think
-  assistant readme --lang es --name README-ES
-  assistant create skill deploy ./deploy.md
-  assistant deploy \"crear una configuración de docker\"
-  assistant model --list
-  assistant model status
+  assistant engine agy
   assistant engine opencode
   assistant engine ollama
   assistant engine --list
   assistant engine status
   assistant status
-  assistant think off
-  assistant think status
-  assistant think clear
-  assistant lang es
-  assistant lang status
-
-${BOLD}Motor actual:${RESET} ${MAGENTA}${BOLD}${1:-}${RESET}
-${BOLD}Modelo actual:${RESET} ${GREEN}${BOLD}${2:-}${RESET}
-${BOLD}Modelo de Ollama:${RESET} ${GREEN}${BOLD}${3:-}${RESET}
-${BOLD}Modelo de OpenCode:${RESET} ${GREEN}${BOLD}${4:-}${RESET}
-${BOLD}Flag de pensamiento:${RESET} ${YELLOW}${5:-(predeterminado del modelo)}${RESET}
-${BOLD}Idioma:${RESET}       ${CYAN}${BOLD}${6:-}${RESET}
 "
 }

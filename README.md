@@ -4,11 +4,9 @@
 
 **English** | [Português](README-PTBR.md) | [Español](README-ES.md)
 
-  <p>A lightweight, modular, and localized shell wrapper for Ollama and OpenCode, supporting interactive chat, commit generation, README generation, project summaries, and more.</p>
+  <p>A lightweight, modular, and localized shell wrapper for Ollama, OpenCode, Antigravity (agy), and Custom Engines, supporting interactive chat, repository analysis, README generation, project summaries, and more.</p>
     <div style="margin-bottom: 10px">
-    <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Language: Zsh/Bash"/>
-    <img src="https://img.shields.io/badge/Engines-Ollama%20%7C%20OpenCode-blue.svg" alt="Engines: Ollama & OpenCode"/>
-    <img src="https://img.shields.io/badge/Think_Mode-Supported-yellow.svg" alt="Think Mode"/>
+    <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
     <br>
 </div>
@@ -25,9 +23,9 @@
 
 ## Description
 
-The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Bash. It allows users to interact with local Large Language Models (LLMs) orchestrated via **Ollama** or **OpenCode** directly from the terminal. 
+The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Bash. It allows users to interact with local or cloud Large Language Models (LLMs) orchestrated via **Ollama**, **OpenCode**, **Antigravity**, or **Custom Engines** (`custom/engines/`) directly from the terminal.
 
-All configuration choices (such as active engine, selected model, language, and think mode) are saved locally and persist across terminal sessions.
+All configuration choices (such as active engine, saved models per engine, language, and think mode) are saved locally and persist across terminal sessions.
 
 ## Installation & Setup
 
@@ -61,7 +59,40 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 ```
 
 > [!NOTE]
-> Also ensure that Git Bash is included in your system's Environment Variables (usually located at `C:\Program Files\Git\bin`).
+> Also ensure that Git Bash is added to your system's Environment Variables (usually in `C:\Program Files\Git\bin`).
+
+<details>
+<summary> <b>How to add or fix Git Bash in Windows Environment Variables (PATH)</b></summary>
+
+### Step-by-Step:
+
+1. **Verify if it is already configured:**
+   - Open **PowerShell** or **Command Prompt (CMD)**.
+   - Type `bash --version` or `where bash` and press Enter.
+   - If the command returns the Bash version or the executable path, it is already configured! Otherwise, follow the steps below.
+
+2. **Locate the Git Bash installation path:**
+   - By default, Git Bash is installed at: `C:\Program Files\Git\bin` (or `C:\Program Files (x86)\Git\bin`).
+   - Open Windows File Explorer, navigate to this folder, and make sure the `bash.exe` file is there. Copy the folder path (`C:\Program Files\Git\bin`).
+
+3. **Open Environment Variables:**
+   - Press the `Windows` key, type **"environment variables"**, and select the option **"Edit the system environment variables"**.
+   - In the window that opens, click the **"Environment Variables..."** button (located in the bottom right corner).
+
+4. **Edit the PATH variable:**
+   - Under **"User variables"** (to apply only to your user) or **"System variables"** (to apply to all users), locate the variable named **`Path`** and select it.
+   - Click the **"Edit..."** button.
+
+5. **Add the path:**
+   - Click the **"New"** button on the right side.
+   - Paste the path copied in Step 2 (e.g., `C:\Program Files\Git\bin`).
+   - Click **"OK"** in all open windows to save and apply the changes.
+
+6. **Validate the configuration:**
+   - **Important:** Close all open PowerShell or CMD windows and open a new terminal to load the new environment variables.
+   - Type `bash --version` in the new terminal. If the Bash version is successfully displayed, the setup is complete!
+</details>
+
 
 **On Windows, the interactive installer will:**
 1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
@@ -83,9 +114,11 @@ assistant update
 - Run `assistant` to start an interactive chat session with your currently selected model.
 - Run `assistant "your prompt here"` to quickly send a single query to the model and receive the output.
 
-### Multi-Engine Support
-- Seamless switching between **Ollama** and **OpenCode**.
+### Modular & Custom Engine Support
+- Built-in support for **Ollama**, **OpenCode**, and **Antigravity**.
+- Create your own **Custom Engines** by saving `.sh` scripts in `custom/engines/` (e.g., `custom/engines/my_engine.sh`).
 - The assistant stores preferred models per engine, meaning you won't lose your selected model configurations when switching between engines.
+- Switch between engines interactively with `assistant engine --list` or directly using `assistant engine <name>`.
 
 ### Built-in Skills (Default Skills)
 The assistant comes with several built-in skills to boost your workflow:
@@ -96,13 +129,6 @@ The assistant comes with several built-in skills to boost your workflow:
 ### Custom Skills
 You can create your own custom skills using Markdown files that define guidelines for the LLM.
 
-#### Creating a Custom Skill
-```bash
-assistant create skill <name> <path-to-markdown-file>
-```
-This will save your custom skill rules in `custom/skills/<name>-assistant.md`.
-
-#### Overwriting Default Skills
 If you try to create a custom skill with the same name as a default/built-in skill (e.g., `commit`), the CLI will ask for confirmation:
 ```
 ⚠ The skill 'commit' is a default assistant skill.
@@ -175,7 +201,7 @@ When running `assistant`, you have access to the following commands:
 | `assistant lang [<lang>\|--list\|status]` | Changes active language, lists available languages, or shows current language |
 | `assistant model --list` | Interactively lists available models for the current engine to switch them |
 | `assistant model status` | Shows currently configured models for all engines |
-| `assistant engine [ollama\|opencode]` | Switches the active model orchestration engine |
+| `assistant engine [<name>\|--list\|status]` | Changes active engine |
 | `assistant think [on\|off\|hide\|clear]` | Toggles thinking/reasoning modes on Ollama models |
 
 ### Examples
@@ -187,10 +213,15 @@ assistant "How do I implement a debouncer in vanilla JS?"
 # Generate git commits from staged changes
 assistant commit
 
-# Create project summary docs in parallel for two folders
-assistant resume ./backend-service ./frontend-app
+# Switch active engine to Antigravity (agy), Ollama, or OpenCode
+assistant engine agy
+assistant engine ollama
+assistant engine opencode
 
-# Interactively change model
+# Interactively switch engines
+assistant engine --list
+
+# Interactively change model for the current engine
 assistant model --list
 ```
 
@@ -198,13 +229,17 @@ assistant model --list
 
 ```
 assistant/
-├── custom/                  # User-defined custom skills and locales
+├── custom/                  # User custom engines, skills, and locales
+│   ├── engines/             # Custom engine scripts (.sh)
+│   ├── skills/              # Custom markdown skills (.md)
+│   └── locales/             # Custom locale translations (.sh)
 ├── data/                    # Persistent configuration store (engine, model, lang)
-├── lib/                     # Paths constants,Translates and Handles command routes.
-├── locales/                 # Text translations
-├── skills/                  # Assistant tools
+├── lib/                     # Modular engines (lib/engines/), core routes, utilities
+├── locales/                 # Text translations (pt-br, en, es)
+├── skills/                  # Built-in skills (commit, resume, readme)
 ├── utils/                   # Utility scripts and helpers
 ├── init.sh                  # Main entry point to source in shell config files
+├── LICENSE.txt              # License
 └── README.md                # Documentation
 ```
 

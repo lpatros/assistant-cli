@@ -3,60 +3,43 @@ _llm_run_prompt() {
   local output_file="${2:-}"
   shift 2 || true
 
-  local current_engine current_model
+  local current_engine current_model clean_eng func_name
   current_engine=$(_get_engine)
   current_model=$(_get_model)
+  clean_eng=$(_sanitize_engine_name "$current_engine")
+  func_name="_engine_${clean_eng}_run_prompt"
 
   _ensure_engine_installed "$current_engine" || return 1
 
-  if [[ "$current_engine" == "opencode" ]]; then
-    _llm_run_prompt_opencode "$prompt" "$current_model" "$output_file"
-  else
-    _llm_run_prompt_ollama "$prompt" "$current_model" "$output_file" "$@"
+  if command -v "$func_name" &>/dev/null; then
+    "$func_name" "$prompt" "$output_file" "$@"
+    return $?
   fi
-}
 
-_llm_run_prompt_opencode() {
-  local prompt="$1"
-  local model="$2"
-  local output_file="$3"
+  # Generic fallback execution if engine module function doesn't exist
+  local binary="$current_engine"
+  if command -v "_engine_${clean_eng}_binary" &>/dev/null; then
+    binary=$("_engine_${clean_eng}_binary")
+  fi
 
-  local args=("run")
-  [[ -n "$model" ]] && args+=("--model" "$model")
+  local args=()
+  [[ -n "$current_model" ]] && args+=("--model" "$current_model")
   args+=("--" "$prompt")
 
   if [[ -n "$output_file" ]]; then
-    opencode "${args[@]}" > "$output_file" 2>/dev/null
+    "$binary" "${args[@]}" > "$output_file" 2>/dev/null
   else
-    opencode "${args[@]}"
-  fi
-}
-
-_llm_run_prompt_ollama() {
-  local prompt="$1"
-  local model="$2"
-  local output_file="$3"
-  shift 3 || true
-
-  local think_flag
-  think_flag=$(_get_think_flag "$@")
-
-  if [[ -z "$output_file" && -n "$think_flag" ]]; then
-    t_think_flag_display "$think_flag"
-  fi
-
-  if [[ -n "$output_file" ]]; then
-    echo "$prompt" | ollama run "$model" $think_flag --nowordwrap > "$output_file" 2>/dev/null
-  else
-    echo "$prompt" | ollama run "$model" $think_flag --nowordwrap
+    "$binary" "${args[@]}"
   fi
 }
 
 _llm_run_interactive() {
-  local current_engine current_model current_model_display
+  local current_engine current_model current_model_display clean_eng func_name
   current_engine=$(_get_engine)
   current_model=$(_get_model)
   current_model_display=$(_model_display "$current_model")
+  clean_eng=$(_sanitize_engine_name "$current_engine")
+  func_name="_engine_${clean_eng}_run_interactive"
 
   _ensure_engine_installed "$current_engine" || return 1
 
@@ -65,39 +48,26 @@ _llm_run_interactive() {
 
   _parse_args_for_llm "$@"
 
-  if [[ "$current_engine" == "opencode" ]]; then
-    _llm_run_interactive_opencode "$current_model"
-  else
-    _llm_run_interactive_ollama "$current_model"
+  if command -v "$func_name" &>/dev/null; then
+    "$func_name" "$current_model"
+    return $?
   fi
-}
 
-_llm_run_interactive_opencode() {
-  local model="$1"
+  # Generic fallback execution if engine module function doesn't exist
+  local binary="$current_engine"
+  if command -v "_engine_${clean_eng}_binary" &>/dev/null; then
+    binary=$("_engine_${clean_eng}_binary")
+  fi
+
   echo ""
   if [[ ${#LLM_CLEAN_ARGS[@]} -gt 0 ]]; then
-    local args=("run")
-    [[ -n "$model" ]] && args+=("--model" "$model")
+    local args=()
+    [[ -n "$current_model" ]] && args+=("--model" "$current_model")
     args+=("--" "${LLM_CLEAN_ARGS[@]}")
-    opencode "${args[@]}"
-  elif [[ -n "$model" ]]; then
-    opencode --model "$model"
+    "$binary" "${args[@]}"
+  elif [[ -n "$current_model" ]]; then
+    "$binary" --model "$current_model"
   else
-    opencode
-  fi
-}
-
-_llm_run_interactive_ollama() {
-  local model="$1"
-  local think_flag
-  think_flag=$(_get_think_flag "${LLM_THINK_FLAGS[@]}")
-
-  [[ -n "$think_flag" ]] && t_think_mode_display "$think_flag"
-  echo ""
-
-  if [[ ${#LLM_CLEAN_ARGS[@]} -gt 0 ]]; then
-    ollama run "$model" $think_flag --nowordwrap "${LLM_CLEAN_ARGS[@]}"
-  else
-    ollama run "$model" $think_flag
+    "$binary"
   fi
 }

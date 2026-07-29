@@ -4,7 +4,7 @@ t_engine_changed() {
 }
 
 t_engine_usage() {
-  _error "Uso: assistant engine [ollama|opencode|--list|status]"
+  _error "Uso: assistant engine [<engine>|--list|status]"
 }
 
 t_engine_status() {
@@ -28,20 +28,14 @@ t_engine_not_installed_aborted() {
 t_model_status_detailed() {
   _info "Engine atual: ${MAGENTA}${BOLD}$1${RESET}"
   _info "Modelo atual: ${GREEN}${BOLD}$2${RESET}"
-  _info "Modelo ollama: ${GREEN}${BOLD}$3${RESET}"
-  _info "Modelo opencode: ${GREEN}${BOLD}$4${RESET}"
 }
 
 t_models_available_header() {
   _header "Modelos disponíveis — engine: $1"
 }
 
-t_no_models_found_ollama() {
-  _error "Nenhum modelo encontrado. O Ollama está rodando?"
-}
-
-t_no_models_found_opencode() {
-  _error "Nenhum modelo encontrado. O opencode está instalado e configurado?"
+t_no_models_found() {
+  _error "Nenhum modelo encontrado para a engine '$1'. O CLI está instalado e configurado?"
 }
 
 t_menu_switch_engine() {
@@ -118,7 +112,7 @@ t_think_status_default() {
 }
 
 t_think_status_current() {
-  _info "Think mode atual: ${YELLOW}${BOLD}$1${RESET}"
+  _info "Ollama think mode atual: ${YELLOW}${BOLD}$1${RESET}"
 }
 
 t_think_usage() {
@@ -318,7 +312,7 @@ t_create_skill_aborted() {
 
 t_help_output() {
   echo -e "
-${BOLD}${BLUE}assistant${RESET} — CLI wrapper para Ollama e OpenCode
+${BOLD}${BLUE}assistant${RESET} — CLI wrapper para LLMs e engines modulares (Ollama, OpenCode, Antigravity (AGY) e custom)
 
 ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                  Chat interativo com o modelo atual
@@ -332,14 +326,15 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant <skill-customizada>${RESET} [argumentos]   Executa uma skill customizada
   ${GREEN}assistant model --list${RESET}                     Lista modelos e permite trocar
   ${GREEN}assistant model status${RESET}                     Mostra modelo da engine atual e modelos salvos
-  ${GREEN}assistant engine${RESET} [ollama|opencode|--list|status]  Troca a engine ativa
+  ${GREEN}assistant engine${RESET} [<engine>|--list|status]  Troca a engine ativa
   ${GREEN}assistant engine status${RESET}                    Mostra engine atual e modelo ativo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status] Gerencia o think mode (ollama)
   ${GREEN}assistant lang${RESET} [en|pt-br|es|status]       Gerencia o idioma do assistente
 
 ${BOLD}Notas:${RESET}
-  - Modelos sao salvos por engine; trocar a engine nao perde o modelo anterior.
-  - Se o modelo do opencode estiver vazio, ele usa o padrao configurado no opencode.
+  - Engines nativas: ollama, opencode, agy.
+  - Crie engines customizadas em custom/engines/<nome>.sh.
+  - Modelos são salvos por engine; trocar a engine não perde os modelos anteriores.
 
 ${BOLD}Flags de thinking — apenas Ollama (por sessão ou persistente):${RESET}
   ${YELLOW}--think${RESET}                           Ativa o modo thinking (e salva)
@@ -349,29 +344,11 @@ ${BOLD}Flags de thinking — apenas Ollama (por sessão ou persistente):${RESET}
 ${BOLD}Exemplos:${RESET}
   assistant \"Explica o que é um closure em JS\"
   assistant commit
-  assistant commit --no-think
-  assistant \"Resuma esse texto\" --think
-  assistant readme --lang pt-br --name README-PTBR
-  assistant create skill deploy ./deploy.md
-  assistant deploy \"crie uma configuração do docker\"
-  assistant model --list
-  assistant model status
+  assistant engine agy
   assistant engine opencode
   assistant engine ollama
   assistant engine --list
   assistant engine status
   assistant status
-  assistant think off
-  assistant think status
-  assistant think clear
-  assistant lang pt-br
-  assistant lang status
-
-${BOLD}Engine atual:${RESET} ${MAGENTA}${BOLD}${1:-}${RESET}
-${BOLD}Modelo atual:${RESET} ${GREEN}${BOLD}${2:-}${RESET}
-${BOLD}Modelo ollama:${RESET} ${GREEN}${BOLD}${3:-}${RESET}
-${BOLD}Modelo opencode:${RESET} ${GREEN}${BOLD}${4:-}${RESET}
-${BOLD}Think flag:${RESET}   ${YELLOW}${5:-(padrão do modelo)}${RESET}
-${BOLD}Idioma:${RESET}       ${CYAN}${BOLD}${6:-}${RESET}
 "
 }

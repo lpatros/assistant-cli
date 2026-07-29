@@ -1,3 +1,14 @@
+_sanitize_engine_name() {
+  echo "$1" | tr '-' '_' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_]//g'
+}
+
+_get_model_var_name() {
+  local engine="$1"
+  local clean_name
+  clean_name=$(echo "$engine" | tr '-' '_' | tr '[:lower:]' '[:upper:]' | sed 's/[^A-Z0-9_]//g')
+  echo "ASSISTANT_MODEL_${clean_name}"
+}
+
 _get_model_for_engine() {
   local engine="${1:-}"
   _load_config
@@ -5,12 +16,23 @@ _get_model_for_engine() {
     engine="$ASSISTANT_ENGINE"
   fi
 
-  if [[ "$engine" == "opencode" ]]; then
-    echo "$ASSISTANT_MODEL_OPENCODE"
-    return 0
+  local var_name
+  var_name=$(_get_model_var_name "$engine")
+  local val
+  eval "val=\"\${${var_name}:-}\""
+
+  if [[ -z "$val" ]]; then
+    local func_name="_engine_$(_sanitize_engine_name "$engine")_default_model"
+    if command -v "$func_name" &>/dev/null; then
+      val=$("$func_name")
+    elif [[ "$engine" == "ollama" ]]; then
+      val="${ASSISTANT_DEFAULT_MODEL_OLLAMA:-gemma4:e2b}"
+    elif [[ "$engine" == "opencode" ]]; then
+      val="${ASSISTANT_DEFAULT_MODEL_OPENCODE:-}"
+    fi
   fi
 
-  echo "$ASSISTANT_MODEL_OLLAMA"
+  echo "$val"
 }
 
 _get_model() { _get_model_for_engine; }
@@ -21,10 +43,8 @@ _get_engine() {
 }
 
 _load_config() {
-  ASSISTANT_MODEL_OLLAMA=""
-  ASSISTANT_MODEL_OPENCODE=""
   ASSISTANT_ENGINE="$ASSISTANT_DEFAULT_ENGINE"
-  ASSISTANT_THINK_FLAG=""
+  ASSISTANT_MODEL_OLLAMA_THINK_FLAG=""
   ASSISTANT_LANG="$ASSISTANT_DEFAULT_LANG"
   ASSISTANT_MODEL=""
 
@@ -32,31 +52,46 @@ _load_config() {
     source "$ASSISTANT_CONFIG_FILE"
   fi
 
-  if [[ -n "${ASSISTANT_MODEL:-}" && -z "$ASSISTANT_MODEL_OLLAMA" && -z "$ASSISTANT_MODEL_OPENCODE" && "$ASSISTANT_ENGINE" == "opencode" ]]; then
-    ASSISTANT_MODEL_OPENCODE="$ASSISTANT_MODEL"
-  fi
-
-  if [[ -n "${ASSISTANT_MODEL:-}" && -z "$ASSISTANT_MODEL_OLLAMA" && -z "$ASSISTANT_MODEL_OPENCODE" && "$ASSISTANT_ENGINE" != "opencode" ]]; then
-    ASSISTANT_MODEL_OLLAMA="$ASSISTANT_MODEL"
-  fi
-
-  if [[ -z "$ASSISTANT_MODEL_OLLAMA" ]]; then
-    ASSISTANT_MODEL_OLLAMA="$ASSISTANT_DEFAULT_MODEL_OLLAMA"
-  fi
-  
-  if [[ -z "$ASSISTANT_MODEL_OPENCODE" ]]; then
-    ASSISTANT_MODEL_OPENCODE="$ASSISTANT_DEFAULT_MODEL_OPENCODE"
+  # Legacy fallback for old config format using ASSISTANT_MODEL
+  if [[ -n "${ASSISTANT_MODEL:-}" ]]; then
+    local legacy_var
+    legacy_var=$(_get_model_var_name "$ASSISTANT_ENGINE")
+    eval "if [[ -z \"\${${legacy_var}:-}\" ]]; then ${legacy_var}=\"\$ASSISTANT_MODEL\"; fi"
   fi
 }
 
 _write_config() {
   mkdir -p "$ASSISTANT_CONFIG_DIR"
   {
-    echo "ASSISTANT_MODEL_OLLAMA=\"$ASSISTANT_MODEL_OLLAMA\""
-    echo "ASSISTANT_MODEL_OPENCODE=\"$ASSISTANT_MODEL_OPENCODE\""
     echo "ASSISTANT_ENGINE=\"$ASSISTANT_ENGINE\""
-    echo "ASSISTANT_THINK_FLAG=\"$ASSISTANT_THINK_FLAG\""
+    echo "ASSISTANT_MODEL_OLLAMA_THINK_FLAG=\"$ASSISTANT_MODEL_OLLAMA_THINK_FLAG\""
     echo "ASSISTANT_LANG=\"$ASSISTANT_LANG\""
+
+    local vars=()
+    local eng var_name
+    if command -v _get_available_engines &>/dev/null; then
+      while IFS= read -r eng || [[ -n "$eng" ]]; do
+        [[ -n "$eng" ]] && vars+=("$(_get_model_var_name "$eng")")
+      done <<< "$(_get_available_engines)"
+    fi
+
+    if [[ -f "$ASSISTANT_CONFIG_FILE" ]]; then
+      while IFS= read -r line; do
+        if [[ "$line" == ASSISTANT_MODEL_* ]]; then
+          vars+=("${line%%=*}")
+        fi
+      done < "$ASSISTANT_CONFIG_FILE"
+    fi
+
+    local unique_vars
+    unique_vars=$(printf "%s\n" "${vars[@]}" | sort -u)
+
+    local var val
+    while IFS= read -r var || [[ -n "$var" ]]; do
+      [[ -z "$var" ]] && continue
+      eval "val=\"\${${var}:-}\""
+      echo "${var}=\"${val}\""
+    done <<< "$unique_vars"
   } > "$ASSISTANT_CONFIG_FILE"
 }
 
@@ -64,12 +99,9 @@ _set_model() {
   _load_config
   local new_model="$1"
   local engine="${2:-$ASSISTANT_ENGINE}"
-
-  if [[ "$engine" == "opencode" ]]; then
-    ASSISTANT_MODEL_OPENCODE="$new_model"
-  else
-    ASSISTANT_MODEL_OLLAMA="$new_model"
-  fi
+  local var_name
+  var_name=$(_get_model_var_name "$engine")
+  eval "${var_name}=\"\$new_model\""
   _write_config
 }
 
@@ -81,7 +113,7 @@ _set_engine() {
 
 _save_think_flag() {
   _load_config
-  ASSISTANT_THINK_FLAG="$1"
+  ASSISTANT_MODEL_OLLAMA_THINK_FLAG="$1"
   _write_config
 }
 
