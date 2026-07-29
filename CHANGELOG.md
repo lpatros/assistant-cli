@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/lpatros/assistant-cli/compare/v1.0.0...v1.1.0) (2026-07-29)
+
+
+### Features
+
+* **update:** improve update flow with progress bar, conflict handling, and changelog viewer ([3fdb3e1](https://github.com/lpatros/assistant-cli/commit/3fdb3e19804096b10f4f202d125b50d10c03748c))
+* **version:** add --version command ([2a2dea3](https://github.com/lpatros/assistant-cli/commit/2a2dea393dc4fcd4fdd8b6a36c6c82f12c1c5fcf))
+
 ## 1.0.0 (2026-07-29)
 
 
