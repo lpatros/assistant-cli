@@ -1,7 +1,56 @@
+_get_available_engines() {
+  local engines=()
+  local file name
+
+  if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
+    for file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
+      if [[ -f "$file" ]]; then
+        name=$(basename "$file" .sh)
+        engines+=("$name")
+      fi
+    done
+  fi
+
+  if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
+    for file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh; do
+      if [[ -f "$file" ]]; then
+        name=$(basename "$file" .sh)
+        engines+=("$name")
+      fi
+    done
+    for file in "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
+      if [[ -f "$file" ]]; then
+        name=$(basename "$(dirname "$file")")
+        engines+=("$name")
+      fi
+    done
+  fi
+
+  printf "%s\n" "${engines[@]}" | sort -u | grep -Ev '^\*$'
+}
+
+_is_engine_installed() {
+  local engine="${1:-$(_get_engine)}"
+  local clean_eng
+  clean_eng=$(_sanitize_engine_name "$engine")
+
+  if command -v "_engine_${clean_eng}_is_installed" &>/dev/null; then
+    "_engine_${clean_eng}_is_installed"
+    return $?
+  fi
+
+  local binary="$engine"
+  if command -v "_engine_${clean_eng}_binary" &>/dev/null; then
+    binary=$("_engine_${clean_eng}_binary")
+  fi
+
+  _is_installed "$binary"
+}
+
 _ensure_engine_installed() {
   local engine="${1:-$(_get_engine)}"
 
-  if _is_installed "$engine"; then
+  if _is_engine_installed "$engine"; then
     return 0
   fi
 
@@ -30,25 +79,16 @@ _cmd_engine() {
   local action="${1:-status}"
 
   case "$action" in
-    ollama)
-      _set_engine "ollama"
-      t_engine_changed "ollama"
-      _ensure_engine_installed "ollama"
-      ;;
-    opencode)
-      _set_engine "opencode"
-      t_engine_changed "opencode"
-      _ensure_engine_installed "opencode"
-      ;;
     status|"")
       _cmd_engine_status
       ;;
-    --list)
-      _cmd_model_list
+    --list|list)
+      _cmd_engine_switch
       ;;
     *)
-      t_engine_usage
-      return 1
+      _set_engine "$action"
+      t_engine_changed "$action"
+      _ensure_engine_installed "$action"
       ;;
   esac
 }
@@ -59,10 +99,12 @@ _cmd_engine_status() {
 
 _get_available_models() {
   local engine="$1"
-  if [[ "$engine" == "ollama" ]]; then
-    ollama list 2>/dev/null | tail -n +2 | awk '{print $1}'
-  elif [[ "$engine" == "opencode" ]]; then
-    opencode models 2>/dev/null | grep -v '^$' | grep '/'
+  local clean_eng
+  clean_eng=$(_sanitize_engine_name "$engine")
+
+  if command -v "_engine_${clean_eng}_list_models" &>/dev/null; then
+    "_engine_${clean_eng}_list_models"
+    return 0
   fi
 }
 
@@ -81,16 +123,14 @@ _cmd_model_list() {
   models=$(_get_available_models "$current_engine")
 
   if [[ -z "$models" ]]; then
-    if [[ "$current_engine" == "ollama" ]]; then
-      t_no_models_found_ollama
-    else
-      t_no_models_found_opencode
+    if command -v t_no_models_found &>/dev/null; then
+      t_no_models_found "$current_engine"
     fi
     return 1
   fi
 
   while IFS= read -r line; do
-    model_array+=("$line")
+    [[ -n "$line" ]] && model_array+=("$line")
   done <<< "$models"
 
   local switch_label cancel_label
@@ -121,11 +161,7 @@ _cmd_model_list() {
 
 _cmd_model_status() {
   _load_config
-  t_model_status_detailed \
-    "$ASSISTANT_ENGINE" \
-    "$(_model_display "$(_get_model)")" \
-    "$(_model_display "$ASSISTANT_MODEL_OLLAMA")" \
-    "$(_model_display "$ASSISTANT_MODEL_OPENCODE")"
+  t_model_status_detailed "$ASSISTANT_ENGINE" "$(_model_display "$(_get_model)")"
 }
 
 _cmd_engine_switch() {
@@ -134,18 +170,26 @@ _cmd_engine_switch() {
   current_engine=$(_get_engine)
   t_current_engine_label "$current_engine"
 
+  local available_engines=()
+  local eng
+  while IFS= read -r eng; do
+    [[ -n "$eng" ]] && available_engines+=("$eng")
+  done <<< "$(_get_available_engines)"
+
   local cancel_label
   cancel_label=$(t_menu_cancel)
+  available_engines+=("$cancel_label")
 
   PS3=$'\n'"$(t_choose_engine_prompt)"
-  select chosen in "ollama" "opencode" "$cancel_label"; do
-    if [[ "$chosen" == "$cancel_label" ]]; then
+  select chosen in "${available_engines[@]}"; do
+    if [[ "$chosen" == "$cancel_label" || -z "$chosen" ]]; then
       t_cancelled
       return 0
     fi
     if [[ -n "$chosen" ]]; then
       _set_engine "$chosen"
       t_engine_changed "$chosen"
+      _ensure_engine_installed "$chosen"
       t_use_model_list_to_choose
       return 0
     fi

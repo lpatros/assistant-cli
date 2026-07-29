@@ -33,6 +33,20 @@ source "$ASSISTANT_ROOT_DIR/skills/commit/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
 
+if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
+  for _engine_file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
+    [[ -f "$_engine_file" ]] && source "$_engine_file"
+  done
+  unset _engine_file
+fi
+
+if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
+  for _custom_engine_file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
+    [[ -f "$_custom_engine_file" ]] && source "$_custom_engine_file"
+  done
+  unset _custom_engine_file
+fi
+
 if [[ -f "$ASSISTANT_ROOT_DIR/custom/init.sh" ]]; then
   source "$ASSISTANT_ROOT_DIR/custom/init.sh"
 fi

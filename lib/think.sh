@@ -11,7 +11,7 @@ _get_think_flag() {
 
   if [[ -z "$think_flag" && -f "$ASSISTANT_CONFIG_FILE" ]]; then
     source "$ASSISTANT_CONFIG_FILE"
-    think_flag="${ASSISTANT_THINK_FLAG:-}"
+    think_flag="${ASSISTANT_MODEL_OLLAMA_THINK_FLAG:-}"
   fi
 
   if [[ -n "$think_flag" ]]; then
@@ -45,7 +45,7 @@ _cmd_think() {
       local current_flag=""
       if [[ -f "$ASSISTANT_CONFIG_FILE" ]]; then
         source "$ASSISTANT_CONFIG_FILE"
-        current_flag="${ASSISTANT_THINK_FLAG:-}"
+        current_flag="${ASSISTANT_MODEL_OLLAMA_THINK_FLAG:-}"
       fi
       if [[ -z "$current_flag" ]]; then
         t_think_status_default

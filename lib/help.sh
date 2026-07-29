@@ -9,13 +9,15 @@ _cmd_help() {
     "$current_model_display" \
     "$(_model_display "$ASSISTANT_MODEL_OLLAMA")" \
     "$(_model_display "$ASSISTANT_MODEL_OPENCODE")" \
-    "$ASSISTANT_THINK_FLAG" \
+    "$ASSISTANT_MODEL_OLLAMA_THINK_FLAG" \
     "${ASSISTANT_LANG:-$ASSISTANT_DEFAULT_LANG}"
 }
 
 _cmd_status() {
   _header "Status"
   _cmd_model_status
-  _cmd_think status
+  if [[ "$(_get_engine)" == "ollama" ]]; then
+    _cmd_think status
+  fi
   _cmd_lang status
 }
