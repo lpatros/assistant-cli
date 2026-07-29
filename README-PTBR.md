@@ -4,11 +4,9 @@
 
 [English](README.md) | **Português** | [Español](README-ES.md)
 
-  <p>Um wrapper de terminal leve, modular e localizado para Ollama e OpenCode, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
+  <p>Um wrapper de terminal leve, modular e localizado para Ollama, OpenCode, Antigravity (agy) e Custom Engines, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
     <div style="margin-bottom: 10px">
-    <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Linguagem: Zsh/Bash"/>
-    <img src="https://img.shields.io/badge/Engines-Ollama%20%7C%20OpenCode-blue.svg" alt="Engines: Ollama & OpenCode"/>
-    <img src="https://img.shields.io/badge/Think_Mode-Suportado-yellow.svg" alt="Modo Think"/>
+    <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
     <br>
 </div>
@@ -25,9 +23,9 @@
 
 ## Descrição
 
-O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais orquestrados via **Ollama** ou **OpenCode** diretamente a partir do terminal.
+O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais ou em nuvem orquestrados via **Ollama**, **OpenCode**, **Antigravity** ou **Engines Customizadas** (`custom/engines/`) diretamente a partir do terminal.
 
-Todas as escolhas de configuração (como engine ativa, modelo selecionado, idioma e modo de pensamento) são salvas localmente e persistem entre as sessões do terminal.
+Todas as escolhas de configuração (como engine ativa, modelos salvos por engine, idioma e modo de pensamento) são salvas localmente e persistem entre as sessões do terminal.
 
 ## Instalação e Configuração
 
@@ -84,9 +82,11 @@ assistant update
 - Execute `assistant` para iniciar uma sessão de chat interativo com o seu modelo selecionado.
 - Execute `assistant "sua pergunta aqui"` para enviar uma pergunta rápida e obter a resposta diretamente no terminal.
 
-### Suporte a Múltiplas Engines
-- Alternância rápida entre **Ollama** e **OpenCode**.
+### Suporte a Engines Modulares e Customizadas
+- Suporte nativo para **Ollama**, **OpenCode** e **Antigravity**.
+- Crie suas próprias **Custom Engines** salvando scripts `.sh` em `custom/engines/` (ex: `custom/engines/minha_engine.sh`).
 - O assistente salva os modelos de preferência por engine. Desta forma, você não perde as configurações de modelo ao alternar de engine.
+- Alterne entre as engines de forma interativa com `assistant engine --list` ou diretamente com `assistant engine <nome>`.
 
 ### Habilidades Padrão (Built-in Skills)
 O assistente vem com várias habilidades prontas para acelerar o seu fluxo de trabalho:
@@ -161,22 +161,20 @@ assistant lang --list
 
 ## Uso
 
-Ao rodar `assistant`, você tem acesso aos seguintes comandos:
-
 | Comando | Descrição |
 | :--- | :--- |
 | `assistant` | Inicia o chat interativo com o modelo atual |
 | `assistant "<mensagem>"` | Envia uma mensagem direta para o modelo atual |
-| `assistant status` | Mostra a engine ativa, modelos ativos, modo think e idioma |
-| `assistant commit` | Analisa a área de staging do git e sugere commits estruturados |
-| `assistant resume [caminhos...]` | Escaneia diretórios e gera resumos de projeto em arquivos markdown |
-| `assistant readme --lang <lang> --name <name>` | Escaneia a estrutura do projeto e gera um arquivo README |
-| `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um template Markdown |
+| `assistant status` | Mostra engine ativa, modelos ativos, modo think e idioma |
+| `assistant commit` | Analisa a staging do git e sugere commits estruturados |
+| `assistant resume [caminhos...]` | Escaneia diretórios e gera arquivos markdown de resumo de projeto |
+| `assistant readme --lang <idioma> --name <nome>` | Escaneia a estrutura do projeto e gera um arquivo README |
+| `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um modelo Markdown |
 | `assistant <skill-customizada> [args]` | Executa uma skill personalizada |
 | `assistant lang [<idioma>\|--list\|status]` | Altera o idioma ativo, lista idiomas disponíveis ou mostra o idioma atual |
 | `assistant model --list` | Lista de forma interativa os modelos disponíveis na engine ativa para seleção |
 | `assistant model status` | Mostra os modelos configurados para todas as engines |
-| `assistant engine [ollama\|opencode]` | Altera a engine de orquestração de modelo ativa |
+| `assistant engine [<nome>\|--list\|status]` | Altera a engine ativa |
 | `assistant think [on\|off\|hide\|clear]` | Gerencia as opções de pensamento/raciocínio nos modelos Ollama |
 
 ### Exemplos
@@ -188,10 +186,15 @@ assistant "Como eu implemento um debouncer em JS puro?"
 # Gerar mensagens de commit a partir das alterações no git staging
 assistant commit
 
-# Criar resumos de projeto em paralelo para duas pastas
-assistant resume ./backend-service ./frontend-app
+# Trocar a engine ativa para Antigravity (agy), Ollama ou Opencode
+assistant engine agy
+assistant engine ollama
+assistant engine opencode
 
-# Alterar o modelo de forma interativa
+# Alterar a engine de forma interativa
+assistant engine --list
+
+# Alterar o modelo da engine atual de forma interativa
 assistant model --list
 ```
 
@@ -199,13 +202,17 @@ assistant model --list
 
 ```
 assistant/
-├── custom/                  # Habilidades e idiomas personalizados do usuário
+├── custom/                  # Engines, habilidades e idiomas personalizados do usuário
+│   ├── engines/             # Engines customizadas (scripts .sh)
+│   ├── skills/              # Habilidades customizadas (.md)
+│   └── locales/             # Idiomas customizados (.sh)
 ├── data/                    # Armazena configurações e metadados do sistema.
-├── lib/                     # Caminhos constantes, traduções e rotas de comandos.
+├── lib/                     # Motores (lib/engines/), rotas e utilitários do sistema.
 ├── locales/                 # Traduções usadas pelo CLI
 ├── skills/                  # Habilidades do Assistant
 ├── utils/                   # Funções utilitárias auxiliares
 ├── init.sh                  # Ponto de entrada principal para carregar no shell
+├── LICENSE.txt              # Licença
 └── README.md                # Documentação
 ```
 

@@ -4,11 +4,9 @@
 
 [English](README.md) | [Português](README-PTBR.md) | **Español**
 
-  <p>Una envoltura (wrapper) de terminal ligera, modular y localizada para Ollama y OpenCode, con soporte para chat interactivo, generación de commits, generación de README, resúmenes de proyectos y más.</p>
+  <p>Una envoltura (wrapper) de terminal ligera, modular y localizada para Ollama, OpenCode, Antigravity (agy) y Custom Engines, con soporte para chat interactivo, análisis de repositorios, generación de README, resúmenes de proyectos y más.</p>
     <div style="margin-bottom: 10px">
-    <img src="https://img.shields.io/badge/Language-Shell-orange.svg" alt="Lenguaje: Zsh/Bash"/>
-    <img src="https://img.shields.io/badge/Engines-Ollama%20%7C%20OpenCode-blue.svg" alt="Motores: Ollama & OpenCode"/>
-    <img src="https://img.shields.io/badge/Think_Mode-Supported-yellow.svg" alt="Modo Pensamiento"/>
+    <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
     <br>
 </div>
@@ -25,9 +23,9 @@
 
 ## Descripción
 
-El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) potente y ligera escrita en Bash. Permite a los usuarios interactuar con Modelos de Lenguaje Grande (LLMs) locales organizados a través de **Ollama** o **OpenCode** directamente desde la terminal.
+El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) potente y ligera escrita en Bash. Permite a los usuarios interactuar con Modelos de Lenguaje Grande (LLMs) locales o en la nube organizados a través de **Ollama**, **OpenCode**, **Antigravity** o **Motores Personalizados** (`custom/engines/`) directamente desde la terminal.
 
-Todas las opciones de configuración (como el motor activo, el modelo seleccionado, el idioma y el modo de pensamiento) se guardan localmente y persisten entre sesiones de terminal.
+Todas las opciones de configuración (como el motor activo, los modelos guardados por motor, el idioma y el modo de pensamiento) se guardan localmente y persisten entre sesiones de terminal.
 
 ## Instalación y Configuración
 
@@ -83,9 +81,11 @@ assistant update
 - Ejecuta `assistant` para iniciar una sesión de chat interactiva con el modelo seleccionado actualmente.
 - Ejecuta `assistant "tu consulta aquí"` para enviar rápidamente una sola pregunta al modelo y recibir el resultado.
 
-### Soporte Multi-Motor
-- Transición fluida entre **Ollama** y **OpenCode**.
-- El asistente almacena los modelos preferidos por motor, lo que significa que no perderás las configuraciones del modelo seleccionado al cambiar de motor.
+### Soporte Modular y Motores Personalizados
+- Soporte nativo para **Ollama**, **OpenCode** y **Antigravity**.
+- Crea tus propios **Motores Personalizados** guardando scripts `.sh` en `custom/engines/` (ej: `custom/engines/mi_motor.sh`).
+- El asistente almacena los modelos de preferencia por motor. De esta forma, no perderás las configuraciones del modelo seleccionado al cambiar de motor.
+- Cambia entre motores de forma interactiva con `assistant engine --list` o directamente con `assistant engine <nombre>`.
 
 ### Habilidades Integradas (Habilidades Predeterminadas)
 El asistente viene con varias habilidades integradas para potenciar tu flujo de trabajo:
@@ -175,7 +175,7 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant lang [<idioma>\|--list\|status]` | Cambia el idioma activo, lista idiomas disponibles o muestra el idioma actual |
 | `assistant model --list` | Muestra de forma interactiva los modelos disponibles para el motor actual para cambiarlos |
 | `assistant model status` | Muestra los modelos configurados actualmente para todos los motores |
-| `assistant engine [ollama\|opencode]` | Cambia el motor de orquestación de modelos activo |
+| `assistant engine [<nombre>\|--list\|status]` | Cambia el motor activo |
 | `assistant think [on\|off\|hide\|clear]` | Alterna los modos de pensamiento/razonamiento en modelos de Ollama |
 
 ### Ejemplos
@@ -187,10 +187,15 @@ assistant "¿Cómo implemento un debouncer en JS vainilla?"
 # Generar commits de git a partir de los cambios preparados
 assistant commit
 
-# Crear documentos de resumen del proyecto en paralelo para dos carpetas
-assistant resume ./backend-service ./frontend-app
+# Cambiar el motor activo a Antigravity (agy), Ollama u OpenCode
+assistant engine agy
+assistant engine ollama
+assistant engine opencode
 
-# Cambiar el modelo de forma interactiva
+# Cambiar de motor de forma interactiva
+assistant engine --list
+
+# Cambiar el modelo del motor actual de forma interactiva
 assistant model --list
 ```
 
@@ -198,13 +203,17 @@ assistant model --list
 
 ```
 assistant/
-├── custom/                  # Habilidades e idiomas personalizados del usuario
+├── custom/                  # Motores, habilidades e idiomas personalizados del usuario
+│   ├── engines/             # Motores personalizados (scripts .sh)
+│   ├── skills/              # Habilidades personalizadas (.md)
+│   └── locales/             # Idiomas personalizados (.sh)
 ├── data/                    # Almacenamiento persistente de la configuración (motor, modelo, idioma)
-├── lib/                     # Constantes de rutas, traducciones y enrutamiento de comandos
-├── locales/                 # Traducciones de texto
-├── skills/                  # Herramientas del asistente
+├── lib/                     # Motores (lib/engines/), rutas y utilidades del sistema
+├── locales/                 # Traducciones de texto (pt-br, en, es)
+├── skills/                  # Herramientas del asistente (commit, resume, readme)
 ├── utils/                   # Scripts de utilidad y ayudantes
 ├── init.sh                  # Punto de entrada principal para cargar en los archivos de configuración del shell
+├── LICENSE.txt              # Licencia
 └── README.md                # Documentación
 ```
 
