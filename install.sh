@@ -95,14 +95,6 @@ if ! _is_installed git; then
   exit 1
 fi
 
-if ! _is_installed ollama; then
-  warn "ollama is not installed. It is recommended for running local models."
-fi
-
-if ! _is_installed opencode; then
-  warn "opencode is not installed. It is recommended for coding models."
-fi
-
 DETECTED_SHELL=$(detect_shell)
 
 echo ""

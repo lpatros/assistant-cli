@@ -61,14 +61,6 @@ if (!(_is_installed "bash")) {
     exit 1
 }
 
-if (!(_is_installed "ollama")) {
-    Write-Color "  ollama is not installed. It is recommended for running local models." -Color Yellow
-}
-
-if (!(_is_installed "opencode")) {
-    Write-Color "  opencode is not installed. It is recommended for coding models." -Color Yellow
-}
-
 if (Test-Path "$InstallDir\.git") {
     Write-Color "  Installation directory already exists: $InstallDir" -Color Cyan
     Write-Color "  Do you want to update it? [y/N]: " -NoNewline
