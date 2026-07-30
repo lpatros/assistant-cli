@@ -15,7 +15,7 @@
 
 - [Description](#description)
 - [Installation & Setup](#installation--setup)
-- [Update](#update)
+- [Update & Version](#update--version)
 - [Features](#features)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
@@ -241,8 +241,8 @@ assistant/
 │   └── locales/             # Custom locale translations (.sh)
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── lib/                     # Modular engines (lib/engines/), core routes, utilities
-├── locales/                 # Text translations (pt-br, en, es)
-├── skills/                  # Built-in skills (commit, resume, readme)
+├── locales/                 # Text translations
+├── skills/                  # Built-in skills
 ├── utils/                   # Utility scripts and helpers
 ├── init.sh                  # Main entry point to source in shell config files
 ├── LICENSE.txt              # License

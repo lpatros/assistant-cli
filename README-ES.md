@@ -15,7 +15,7 @@
 
 - [Descripción](#descripción)
 - [Instalación y Configuración](#instalación-y-configuración)
-- [Actualización](#actualización)
+- [Actualización y Versión](#actualización-y-versión)
 - [Características](#características)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
@@ -247,8 +247,8 @@ assistant/
 │   └── locales/             # Idiomas personalizados (.sh)
 ├── data/                    # Almacenamiento persistente de la configuración (motor, modelo, idioma)
 ├── lib/                     # Motores (lib/engines/), rutas y utilidades del sistema
-├── locales/                 # Traducciones de texto (pt-br, en, es)
-├── skills/                  # Herramientas del asistente (commit, resume, readme)
+├── locales/                 # Traducciones de texto
+├── skills/                  # Herramientas del asistente
 ├── utils/                   # Scripts de utilidad y ayudantes
 ├── init.sh                  # Punto de entrada principal para cargar en los archivos de configuración del shell
 ├── LICENSE.txt              # Licencia

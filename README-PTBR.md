@@ -15,7 +15,7 @@
 
 - [Descrição](#descrição)
 - [Instalação e Configuração](#instalação-e-configuração)
-- [Atualização](#atualização)
+- [Atualização e Versão](#atualização-e-versão)
 - [Funcionalidades](#funcionalidades)
 - [Uso](#uso)
 - [Estrutura do Projeto](#estrutura-do-projeto)
