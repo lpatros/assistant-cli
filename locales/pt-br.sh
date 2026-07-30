@@ -346,22 +346,22 @@ t_help_output() {
 ${BOLD}${BLUE}assistant${RESET} — CLI wrapper para LLMs e engines modulares (Ollama, OpenCode, Antigravity (AGY) e custom)
 
 ${BOLD}Uso:${RESET}
-  ${GREEN}assistant${RESET}                                  Chat interativo com o modelo atual
-  ${GREEN}assistant${RESET} \"<mensagem>\"                    Envia uma mensagem direta
-  ${GREEN}assistant status${RESET}                           Mostra engine, modelos, think mode e idioma
-  ${GREEN}assistant update${RESET}                           Atualiza o assistente para a última versão
-  ${GREEN}assistant --version${RESET}                        Mostra a versão atual do assistente
-  ${GREEN}assistant commit${RESET}                           Analisa o repo git e sugere commits
-  ${GREEN}assistant resume${RESET} [caminhos...]             Gera resumos de projetos em markdown
+  ${GREEN}assistant${RESET}                                     Chat interativo com o modelo atual
+  ${GREEN}assistant${RESET} \"<mensagem>\"                        Envia uma mensagem direta
+  ${GREEN}assistant status${RESET}                              Mostra engine, modelos, think mode e idioma
+  ${GREEN}assistant update${RESET}                              Atualiza o assistente para a última versão
+  ${GREEN}assistant --version${RESET}                           Mostra a versão atual do assistente
+  ${GREEN}assistant commit${RESET}                              Analisa o repo git e sugere commits
+  ${GREEN}assistant resume${RESET} [caminhos...]                Gera resumos de projetos em markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <nome>  Gera o README do projeto
-  ${GREEN}assistant create skill${RESET} <nome> <caminho.md>  Cria uma nova skill customizada
-  ${GREEN}assistant <skill-customizada>${RESET} [argumentos]   Executa uma skill customizada
-  ${GREEN}assistant model --list${RESET}                     Lista modelos e permite trocar
-  ${GREEN}assistant model status${RESET}                     Mostra modelo da engine atual e modelos salvos
-  ${GREEN}assistant engine${RESET} [<engine>|--list|status]  Troca a engine ativa
-  ${GREEN}assistant engine status${RESET}                    Mostra engine atual e modelo ativo
-  ${GREEN}assistant think${RESET} [on|off|hide|clear|status] Gerencia o think mode (ollama)
-  ${GREEN}assistant lang${RESET} [en|pt-br|es|status]       Gerencia o idioma do assistente
+  ${GREEN}assistant create skill${RESET} <nome> <caminho.md>    Cria uma nova skill customizada
+  ${GREEN}assistant <skill-customizada>${RESET} [argumentos]    Executa uma skill customizada
+  ${GREEN}assistant model --list${RESET}                        Lista modelos e permite trocar
+  ${GREEN}assistant model status${RESET}                        Mostra modelo da engine atual e modelos salvos
+  ${GREEN}assistant engine${RESET} [<engine>|--list|status]     Troca a engine ativa
+  ${GREEN}assistant engine status${RESET}                       Mostra engine atual e modelo ativo
+  ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Gerencia o think mode (ollama)
+  ${GREEN}assistant lang${RESET} [<idioma>|--list|status]       Gerencia o idioma do assistente
 
 ${BOLD}Notas:${RESET}
   - Engines nativas: ollama, opencode, agy.

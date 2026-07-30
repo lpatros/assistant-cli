@@ -346,22 +346,22 @@ t_help_output() {
 ${BOLD}${BLUE}assistant${RESET} — Envoltura CLI para LLMs y motores modulares (Ollama, OpenCode, Antigravity (AGY) y personalizados)
 
 ${BOLD}Uso:${RESET}
-  ${GREEN}assistant${RESET}                                  Chat interactivo con el modelo actual
-  ${GREEN}assistant${RESET} \"<mensaje>\"                    Enviar un mensaje directo
-  ${GREEN}assistant status${RESET}                           Mostrar motor, modelos, modo pensamiento e idioma
-  ${GREEN}assistant update${RESET}                           Actualizar el asistente a la última versión
-  ${GREEN}assistant --version${RESET}                        Mostrar la versión actual del asistente
-  ${GREEN}assistant commit${RESET}                           Analizar repositorio git y sugerir commits
-  ${GREEN}assistant resume${RESET} [rutas...]                 Generar resúmenes de proyectos en markdown
+  ${GREEN}assistant${RESET}                                     Chat interactivo con el modelo actual
+  ${GREEN}assistant${RESET} \"<mensaje>\"                         Enviar un mensaje directo
+  ${GREEN}assistant status${RESET}                              Mostrar motor, modelos, modo pensamiento e idioma
+  ${GREEN}assistant update${RESET}                              Actualizar el asistente a la última versión
+  ${GREEN}assistant --version${RESET}                           Mostrar la versión actual del asistente
+  ${GREEN}assistant commit${RESET}                              Analizar repositorio git y sugerir commits
+  ${GREEN}assistant resume${RESET} [rutas...]                   Generar resúmenes de proyectos en markdown
   ${GREEN}assistant readme${RESET} --lang <código> --name <nom> Generar archivo README del proyecto
-  ${GREEN}assistant create skill${RESET} <nom> <ruta.md>     Crear una nueva habilidad personalizada
-  ${GREEN}assistant <habilidad-personalizada>${RESET} [args]  Ejecutar una habilidad personalizada
-  ${GREEN}assistant model --list${RESET}                     Listar modelos y permitir cambiar de modelo
-  ${GREEN}assistant model status${RESET}                     Mostrar el modelo del motor actual y guardados
-  ${GREEN}assistant engine${RESET} [<motor>|--list|status]   Cambiar el motor activo
-  ${GREEN}assistant engine status${RESET}                    Mostrar motor actual y modelo activo
-  ${GREEN}assistant think${RESET} [on|off|hide|clear|status] Gestionar modo pensamiento (ollama)
-  ${GREEN}assistant lang${RESET} [en|pt-br|es|status]       Gestionar el idioma del asistente
+  ${GREEN}assistant create skill${RESET} <nom> <ruta.md>        Crear una nueva habilidad personalizada
+  ${GREEN}assistant <habilidad-personalizada>${RESET} [args]    Ejecutar una habilidad personalizada
+  ${GREEN}assistant model --list${RESET}                        Listar modelos y permitir cambiar de modelo
+  ${GREEN}assistant model status${RESET}                        Mostrar el modelo del motor actual y guardados
+  ${GREEN}assistant engine${RESET} [<motor>|--list|status]      Cambiar el motor activo
+  ${GREEN}assistant engine status${RESET}                       Mostrar motor actual y modelo activo
+  ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Gestionar modo pensamiento (ollama)
+  ${GREEN}assistant lang${RESET} [<idioma>|--list|status]       Gestionar el idioma del asistente
 
 ${BOLD}Notas:${RESET}
   - Motores nativos: ollama, opencode, agy.
