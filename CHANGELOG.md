@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/lpatros/assistant-cli/compare/v1.1.0...v1.2.0) (2026-08-06)
+
+
+### Features
+
+* **channel:** add release channel switch command ([99e1905](https://github.com/lpatros/assistant-cli/commit/99e1905da1c9ae43a1ce696c7b1827ba924b01d8))
+
+
+### Bug Fixes
+
+* **version:** parse prerelease suffixes in changelog version ([8a84750](https://github.com/lpatros/assistant-cli/commit/8a84750094dd60253477886f2137e6b0b9c3d3bd))
+
 ## [1.1.0](https://github.com/lpatros/assistant-cli/compare/v1.0.0...v1.1.0) (2026-07-29)
 
 
