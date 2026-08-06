@@ -1,5 +1,3 @@
-# Modular Antigravity (agy) Engine implementation for Assistant CLI
-
 _engine_agy_binary() {
   echo "agy"
 }

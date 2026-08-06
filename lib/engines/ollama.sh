@@ -1,5 +1,3 @@
-# Modular Ollama Engine implementation for Assistant CLI
-
 _engine_ollama_binary() {
   echo "ollama"
 }
