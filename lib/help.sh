@@ -20,4 +20,6 @@ _cmd_status() {
     _cmd_think status
   fi
   _cmd_lang status
+  _cmd_channel status
+  _cmd_version
 }

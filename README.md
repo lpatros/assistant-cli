@@ -114,6 +114,14 @@ You can easily update your Assistant CLI to the latest version by running:
 assistant update
 ```
 
+You can also switch release channels (between stable and beta):
+
+```bash
+assistant channel status  # Show current release channel
+assistant channel beta    # Switch to beta channel (dev branch) and update
+assistant channel stable  # Switch to stable channel (main branch) and update
+```
+
 ## Features
 
 ### Interactive & Direct Chat

@@ -6,7 +6,7 @@ _get_assistant_version() {
   fi
 
   if [[ -z "$version" ]] && [[ -f "$ASSISTANT_ROOT_DIR/CHANGELOG.md" ]]; then
-    version="$(grep -m1 -E '^## \[?[0-9]+\.[0-9]+\.[0-9]+' "$ASSISTANT_ROOT_DIR/CHANGELOG.md" 2>/dev/null | sed -E 's/^## \[?([0-9]+\.[0-9]+\.[0-9]+).*/\1/' || true)"
+    version="$(grep -m1 -E '^## \[?[0-9]+\.[0-9]+\.[0-9]+' "$ASSISTANT_ROOT_DIR/CHANGELOG.md" 2>/dev/null | sed -E 's/^## \[?([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?).*/\1/' || true)"
   fi
 
   if [[ -n "$version" ]]; then

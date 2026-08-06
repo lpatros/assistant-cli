@@ -113,6 +113,14 @@ Puedes actualizar fácilmente tu Assistant CLI a la versión más reciente ejecu
 assistant update
 ```
 
+También puedes cambiar entre canales de lanzamiento (estable y beta):
+
+```bash
+assistant channel status  # Muestra el canal de lanzamiento actual
+assistant channel beta    # Cambia al canal beta (rama dev) y actualiza
+assistant channel stable  # Cambia al canal estable (rama main) y actualiza
+```
+
 ## Características
 
 ### Chat Interactivo y Directo

@@ -341,6 +341,31 @@ t_create_skill_aborted() {
   _warn "Operation aborted. The skill was not created."
 }
 
+# Channel commands
+t_channel_status() {
+  _info "Current release channel: ${CYAN}${BOLD}$1${RESET}"
+}
+
+t_channel_switching() {
+  _info "Switching to release channel: ${CYAN}${BOLD}$1${RESET}..."
+}
+
+t_channel_already_active() {
+  _info "You are already on channel: ${CYAN}${BOLD}$1${RESET}."
+  _info "Checking for latest updates..."
+}
+
+t_channel_switch_failed() {
+  _error "Failed to switch to channel '$1'."
+  if [[ -n "$2" ]]; then
+    echo -e "${RED}$2${RESET}"
+  fi
+}
+
+t_channel_usage() {
+  _error "Usage: assistant channel [stable|beta|status]"
+}
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}assistant${RESET} — CLI wrapper for LLMs and modular engines (Ollama, OpenCode, Antigravity (AGY), and custom)
@@ -349,6 +374,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant${RESET}                                     Interactive chat with current model
   ${GREEN}assistant${RESET} \"<message>\"                         Send a direct message
   ${GREEN}assistant status${RESET}                              Show engine, models, think mode, and language
+  ${GREEN}assistant channel${RESET} [<stable|beta|status>]       Manage release channel (stable/beta)
   ${GREEN}assistant update${RESET}                              Update the assistant to the latest version
   ${GREEN}assistant --version${RESET}                           Show current assistant version
   ${GREEN}assistant commit${RESET}                              Analyze git repo and suggest commits
@@ -376,6 +402,7 @@ ${BOLD}Thinking flags — Ollama only (per session or persistent):${RESET}
 ${BOLD}Examples:${RESET}
   assistant \"Explain what a closure is in JS\"
   assistant commit
+  assistant channel beta
   assistant engine agy
   assistant engine opencode
   assistant engine ollama

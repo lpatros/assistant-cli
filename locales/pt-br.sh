@@ -341,6 +341,31 @@ t_create_skill_aborted() {
   _warn "Operação cancelada. A skill não foi criada."
 }
 
+# Channel commands
+t_channel_status() {
+  _info "Canal de release atual: ${CYAN}${BOLD}$1${RESET}"
+}
+
+t_channel_switching() {
+  _info "Alternando para o canal de release: ${CYAN}${BOLD}$1${RESET}..."
+}
+
+t_channel_already_active() {
+  _info "Você já está utilizando o canal: ${CYAN}${BOLD}$1${RESET}."
+  _info "Buscando atualizações mais recentes..."
+}
+
+t_channel_switch_failed() {
+  _error "Falha ao alternar para o canal '$1'."
+  if [[ -n "$2" ]]; then
+    echo -e "${RED}$2${RESET}"
+  fi
+}
+
+t_channel_usage() {
+  _error "Uso: assistant channel [stable|beta|status]"
+}
+
 t_help_output() {
   echo -e "
 ${BOLD}${BLUE}assistant${RESET} — CLI wrapper para LLMs e engines modulares (Ollama, OpenCode, Antigravity (AGY) e custom)
@@ -349,6 +374,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interativo com o modelo atual
   ${GREEN}assistant${RESET} \"<mensagem>\"                        Envia uma mensagem direta
   ${GREEN}assistant status${RESET}                              Mostra engine, modelos, think mode e idioma
+  ${GREEN}assistant channel${RESET} [<stable|beta|status>]       Gerencia o canal de release (estável/beta)
   ${GREEN}assistant update${RESET}                              Atualiza o assistente para a última versão
   ${GREEN}assistant --version${RESET}                           Mostra a versão atual do assistente
   ${GREEN}assistant commit${RESET}                              Analisa o repo git e sugere commits
@@ -376,6 +402,7 @@ ${BOLD}Flags de thinking — apenas Ollama (por sessão ou persistente):${RESET}
 ${BOLD}Exemplos:${RESET}
   assistant \"Explica o que é um closure em JS\"
   assistant commit
+  assistant channel beta
   assistant engine agy
   assistant engine opencode
   assistant engine ollama
