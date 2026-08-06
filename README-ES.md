@@ -196,6 +196,11 @@ assistant lang fr
 assistant lang --list
 ```
 
+#### Guía Completa de Personalización y Plantillas
+Para documentación detallada, especificaciones del contrato de funciones y ejemplos avanzados sobre cómo crear motores de IA, idiomas, habilidades (skills) y comandos dinámicos de shell, consulte la **[Guía de Personalización y Extensiones (docs/README-ES.md)](docs/README-ES.md)**.
+
+También puede utilizar las plantillas de referencia disponibles en el directorio [`docs/templates/`](docs/templates/)
+
 ## Uso
 
 Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
@@ -243,9 +248,12 @@ assistant model --list
 assistant/
 ├── custom/                  # Motores, habilidades e idiomas personalizados del usuario
 │   ├── engines/             # Motores personalizados (scripts .sh)
-│   ├── skills/              # Habilidades personalizadas (.md)
-│   └── locales/             # Idiomas personalizados (.sh)
+│   ├── locales/             # Idiomas personalizados (.sh)
+│   └── skills/              # Habilidades personalizadas (.md)
 ├── data/                    # Almacenamiento persistente de la configuración (motor, modelo, idioma)
+├── docs/                    # Guía de personalización y plantillas de extensión
+│   ├── templates/           # Plantillas de referencia (engine, locales, skills)
+│   └── README.md            # Guía de personalización
 ├── lib/                     # Motores (lib/engines/), rutas y utilidades del sistema
 ├── locales/                 # Traducciones de texto
 ├── skills/                  # Herramientas del asistente

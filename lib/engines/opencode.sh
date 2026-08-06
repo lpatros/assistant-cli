@@ -1,5 +1,3 @@
-# Modular OpenCode Engine implementation for Assistant CLI
-
 _engine_opencode_binary() {
   echo "opencode"
 }

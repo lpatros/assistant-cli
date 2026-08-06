@@ -190,6 +190,12 @@ assistant lang fr
 assistant lang --list
 ```
 
+#### Complete Customization Guide & Templates
+
+For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/README.md)](docs/README.md)**.
+
+Starter templates are also available inside the [`docs/templates/`](docs/templates/)
+
 ## Usage
 
 When running `assistant`, you have access to the following commands:
@@ -237,9 +243,12 @@ assistant model --list
 assistant/
 ├── custom/                  # User custom engines, skills, and locales
 │   ├── engines/             # Custom engine scripts (.sh)
-│   ├── skills/              # Custom markdown skills (.md)
-│   └── locales/             # Custom locale translations (.sh)
+│   ├── locales/             # Custom locale translations (.sh)
+│   └── skills/              # Custom markdown skills (.md)
 ├── data/                    # Persistent configuration store (engine, model, lang)
+├── docs/                    # Customization guides and extension templates
+│   ├── templates/           # Starter templates (engine, locales, skills)
+│   └── README.md            # Customization guide
 ├── lib/                     # Modular engines (lib/engines/), core routes, utilities
 ├── locales/                 # Text translations
 ├── skills/                  # Built-in skills

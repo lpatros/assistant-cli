@@ -1,0 +1,42 @@
+# custom/engines/kimi.sh
+
+_engine_kimi_binary() {
+  echo "kimi"
+}
+
+_engine_kimi_is_installed() {
+  _is_installed "kimi"
+}
+
+_engine_kimi_list_models() {
+  echo "k3"
+}
+
+_engine_kimi_run_prompt() {
+  local prompt="$1"
+  local output_file="$2"
+  shift 2 || true
+
+  local model
+  model=$(_get_model_for_engine "kimi")
+
+  if [[ -n "$output_file" ]]; then
+    kimi --model "$model" --prompt "$prompt" > "$output_file" 2>/dev/null
+  else
+    kimi --model "$model" --prompt "$prompt"
+  fi
+}
+
+_engine_kimi_run_interactive() {
+  local model="$1"
+  echo ""
+  if [[ ${#LLM_CLEAN_ARGS[@]} -gt 0 ]]; then
+    kimi --model "$model" --prompt "${LLM_CLEAN_ARGS[*]}"
+  else
+    kimi --model "$model"
+  fi
+}
+
+_engine_kimi_default_model() {
+  echo ""
+}
