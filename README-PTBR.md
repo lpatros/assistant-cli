@@ -197,6 +197,10 @@ assistant lang fr
 assistant lang --list
 ```
 
+#### Guia Completo de Customização e Templates
+Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/README-PTBR.md)](docs/README-PTBR.md)**.
+
+Você também pode utilizar os modelos de referência disponíveis em [`docs/templates/`](docs/templates/)
 ## Uso
 
 | Comando | Descrição |
@@ -242,10 +246,13 @@ assistant model --list
 assistant/
 ├── custom/                  # Engines, habilidades e idiomas personalizados do usuário
 │   ├── engines/             # Engines customizadas (scripts .sh)
-│   ├── skills/              # Habilidades customizadas (.md)
-│   └── locales/             # Idiomas customizados (.sh)
-├── data/                    # Armazena configurações e metadados do sistema.
-├── lib/                     # Motores (lib/engines/), rotas e utilitários do sistema.
+│   ├── locales/             # Idiomas customizados (.sh)
+│   └── skills/              # Habilidades customizadas (.md)
+├── data/                    # Armazena configurações e metadados do sistema
+├── docs/                    # Guias de customização e templates de extensão
+│   ├── templates/           # Modelos de referência (engine, locales, skills)
+│   └── README.md            # Guia de customização
+├── lib/                     # Motores (lib/engines/), rotas e utilitários do sistema
 ├── locales/                 # Traduções usadas pelo CLI
 ├── skills/                  # Habilidades do Assistant
 ├── utils/                   # Funções utilitárias auxiliares
