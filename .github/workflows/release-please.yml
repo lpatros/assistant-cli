@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 permissions:
   contents: write
@@ -18,3 +19,6 @@ jobs:
         with:
           token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
           release-type: simple
+          target-branch: ${{ github.ref_name }}
+          prerelease: ${{ github.ref_name == 'dev' }}
+          prerelease-type: beta
