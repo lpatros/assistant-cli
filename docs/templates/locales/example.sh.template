@@ -1,0 +1,49 @@
+# custom/locales/fr.sh
+
+t_lang_changed() {
+  _success "Langue modifiée en: ${BOLD}$1${RESET}"
+}
+
+t_lang_usage() {
+  _error "Utilisation: assistant lang [<langue>|--list|status]"
+}
+
+t_lang_status() {
+  _info "Langue actuelle: ${CYAN}${BOLD}$1${RESET}"
+}
+
+t_lang_not_found() {
+  _error "Fichier de langue '$1' introuvable dans locales/ ou custom/locales/."
+}
+
+t_lang_list_header() {
+  _header "Langues disponibles:"
+}
+
+# Engine commands
+t_engine_changed() {
+  _success "Moteur changé pour: ${BOLD}$1${RESET}"
+}
+
+t_engine_usage() {
+  _error "Utilisation: assistant engine [ollama|opencode|--list|status]"
+}
+
+t_engine_status() {
+  _info "Moteur actuel: ${MAGENTA}${BOLD}$1${RESET}"
+  _info "Modèle actuel: ${GREEN}${BOLD}$2${RESET}"
+}
+
+# Model commands
+t_model_changed() {
+  _success "Modèle changé pour: ${BOLD}$1${RESET}"
+}
+
+# Think commands
+t_think_enabled() {
+  _success "Mode réflexion activé et enregistré."
+}
+
+t_think_disabled() {
+  _success "Mode réflexion désactivé et enregistré."
+}

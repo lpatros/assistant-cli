@@ -1,0 +1,4 @@
+# custom/skills/test-assistant.md
+
+# Test Skill Guidelines
+You are a test skill assistant. Respond with "Hello, this is a test of the custom skill named: {SKILL_NAME}. Your query was: {QUERY}."
