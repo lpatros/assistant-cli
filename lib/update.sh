@@ -19,19 +19,6 @@ _draw_progress_bar() {
   printf "\r[%s%s] %3d%%" "$filled_bar" "$empty_bar" "$percent"
 }
 
-_view_changelog() {
-  local changelog_file="$ASSISTANT_ROOT_DIR/CHANGELOG.md"
-  if [[ -f "$changelog_file" ]]; then
-    if _is_installed "less"; then
-      less -FRX "$changelog_file"
-    else
-      cat "$changelog_file"
-    fi
-  else
-    t_changelog_not_found "$changelog_file"
-  fi
-}
-
 _ask_and_show_changelog() {
   local confirm=""
   t_update_changelog_prompt
@@ -42,9 +29,13 @@ _ask_and_show_changelog() {
   fi
 
   case "$confirm" in
-    [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM])
+    "-t"|"--terminal"|[tT]|[tT][eE][rR][mM][iI][nN][aA][lL])
       echo ""
-      _view_changelog
+      _view_changelog "terminal"
+      ;;
+    [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM]|"-w"|"--web"|[wW]|[wW][eE][bB])
+      echo ""
+      _view_changelog "web"
       ;;
   esac
 }
@@ -77,8 +68,19 @@ _cmd_update() {
   if [[ $pull_status -eq 0 ]]; then
     _draw_progress_bar 100
     echo ""
-    t_update_success
-    _ask_and_show_changelog
+    case "$pull_output" in
+      *[Aa]lready*up*to*date*|*[Aa]lready*up-to-date*)
+        t_update_already_up_to_date
+        ;;
+      *)
+        t_update_success
+        _ask_and_show_changelog
+        ;;
+    esac
+
+    local assistant_version
+    assistant_version="$(_get_assistant_version)"
+    t_version "$assistant_version"
     return 0
   fi
 
@@ -103,8 +105,19 @@ _cmd_update() {
       if [[ $rebase_status -eq 0 ]]; then
         _draw_progress_bar 100
         echo ""
-        t_update_success
-        _ask_and_show_changelog
+        case "$rebase_output" in
+          *[Aa]lready*up*to*date*|*[Aa]lready*up-to-date*)
+            t_update_already_up_to_date
+            ;;
+          *)
+            t_update_success
+            _ask_and_show_changelog
+            ;;
+        esac
+
+        local assistant_version
+        assistant_version="$(_get_assistant_version)"
+        t_version "$assistant_version"
         return 0
       else
         git -C "$ASSISTANT_ROOT_DIR" rebase --abort &>/dev/null || true
