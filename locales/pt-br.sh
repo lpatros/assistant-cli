@@ -297,6 +297,34 @@ t_update_aborted() {
   _warn "Atualização cancelada."
 }
 
+t_update_list_header() {
+  _header "Versões disponíveis:"
+}
+
+t_update_list_tip() {
+  _info "Use ${CYAN}assistant update @<versão>${RESET} ou ${CYAN}assistant update --version <versão>${RESET} para trocar de versão."
+}
+
+t_update_version_starting() {
+  _header "Atualizando o assistente para a versão v$1..."
+}
+
+t_update_version_success() {
+  _success "Assistente alterado para a versão v$1 com sucesso!"
+}
+
+t_update_version_not_found() {
+  _error "Versão '$1' não encontrada. Use ${CYAN}assistant update --list${RESET} para ver as versões disponíveis."
+}
+
+t_update_already_on_version() {
+  _info "Você já está na versão v$1."
+}
+
+t_update_usage() {
+  _error "Uso: assistant update [@<versão>|--version <versão>|--list]"
+}
+
 t_changelog_not_found() {
   _warn "Arquivo $1 não encontrado."
 }
@@ -392,7 +420,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant status${RESET}                              Mostra engine, modelos, think mode e idioma
   ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Gerencia o canal de release (estável/beta)
   ${GREEN}assistant changelog${RESET} [--terminal|-t]           Exibe o changelog no navegador (ou terminal com -t)
-  ${GREEN}assistant update${RESET}                              Atualiza o assistente para a última versão
+  ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Atualiza o assistente para a versão mais recente ou específica
   ${GREEN}assistant --version${RESET}                           Mostra a versão atual do assistente
   ${GREEN}assistant commit${RESET}                              Analisa o repo git e sugere commits
   ${GREEN}assistant resume${RESET} [caminhos...]                Gera resumos de projetos em markdown

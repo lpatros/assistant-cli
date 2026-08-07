@@ -297,6 +297,34 @@ t_update_aborted() {
   _warn "Update cancelled."
 }
 
+t_update_list_header() {
+  _header "Available versions:"
+}
+
+t_update_list_tip() {
+  _info "Use ${CYAN}assistant update @<version>${RESET} or ${CYAN}assistant update --version <version>${RESET} to change version."
+}
+
+t_update_version_starting() {
+  _header "Updating assistant to version v$1..."
+}
+
+t_update_version_success() {
+  _success "Assistant successfully changed to version v$1!"
+}
+
+t_update_version_not_found() {
+  _error "Version '$1' not found. Use ${CYAN}assistant update --list${RESET} to view available versions."
+}
+
+t_update_already_on_version() {
+  _info "You are already on version v$1."
+}
+
+t_update_usage() {
+  _error "Usage: assistant update [@<version>|--version <version>|--list]"
+}
+
 t_changelog_not_found() {
   _warn "$1 file not found."
 }
@@ -392,7 +420,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant status${RESET}                              Show engine, models, think mode, and language
   ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Manage release channel (stable/beta)
   ${GREEN}assistant changelog${RESET} [--terminal|-t]           View changelog in browser (or terminal with -t)
-  ${GREEN}assistant update${RESET}                              Update assistant to latest version
+  ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Update assistant to latest or specific version
   ${GREEN}assistant --version${RESET}                           Show current assistant version
   ${GREEN}assistant commit${RESET}                              Analyze git repo and suggest commits
   ${GREEN}assistant resume${RESET} [paths...]                   Generate project resumes in markdown

@@ -40,7 +40,193 @@ _ask_and_show_changelog() {
   esac
 }
 
+_update_list_versions() {
+  if ! _is_installed "git"; then
+    t_git_not_installed
+    return 1
+  fi
+
+  if [[ ! -d "$ASSISTANT_ROOT_DIR/.git" ]]; then
+    t_update_failed
+    return 1
+  fi
+
+  git -C "$ASSISTANT_ROOT_DIR" fetch --tags origin &>/dev/null || true
+
+  local current_version
+  current_version="$(_get_assistant_version)"
+
+  local tags
+  tags="$(git -C "$ASSISTANT_ROOT_DIR" tag -l | sort -V -r 2>/dev/null || git -C "$ASSISTANT_ROOT_DIR" tag -l)"
+
+  t_update_list_header
+  if [[ -z "$tags" ]]; then
+    if [[ -n "$current_version" && "$current_version" != "desconhecida" && "$current_version" != "unknown" && "$current_version" != "desconocida" ]]; then
+      echo -e "  ${GREEN}* v${current_version}${RESET} (atual)"
+    fi
+  else
+    local tag clean_tag
+    while IFS= read -r tag; do
+      [[ -z "$tag" ]] && continue
+      clean_tag="${tag#v}"
+      if [[ "$clean_tag" == "$current_version" || "$tag" == "$current_version" ]]; then
+        echo -e "  ${GREEN}* ${tag}${RESET} (atual)"
+      else
+        echo -e "    ${tag}"
+      fi
+    done <<< "$tags"
+  fi
+
+  echo ""
+  t_update_list_tip
+}
+
+_update_to_version() {
+  local raw_target="$1"
+  local clean_target="${raw_target#@}"
+  clean_target="${clean_target#v}"
+
+  if ! _is_installed "git"; then
+    t_git_not_installed
+    t_update_failed
+    return 1
+  fi
+
+  if [[ ! -d "$ASSISTANT_ROOT_DIR/.git" ]]; then
+    t_update_failed
+    return 1
+  fi
+
+  t_update_version_starting "$clean_target"
+
+  _draw_progress_bar 15
+  git -C "$ASSISTANT_ROOT_DIR" fetch --tags origin &>/dev/null || true
+
+  _draw_progress_bar 40
+
+  local matched_tag=""
+  if git -C "$ASSISTANT_ROOT_DIR" rev-parse -q --verify "refs/tags/v${clean_target}" &>/dev/null; then
+    matched_tag="v${clean_target}"
+  elif git -C "$ASSISTANT_ROOT_DIR" rev-parse -q --verify "refs/tags/${clean_target}" &>/dev/null; then
+    matched_tag="${clean_target}"
+  fi
+
+  if [[ -z "$matched_tag" ]]; then
+    _draw_progress_bar 100
+    echo ""
+    t_update_version_not_found "$raw_target"
+    return 1
+  fi
+
+  local current_version
+  current_version="$(_get_assistant_version)"
+  if [[ "$clean_target" == "$current_version" ]]; then
+    _draw_progress_bar 100
+    echo ""
+    t_update_already_on_version "$clean_target"
+    return 0
+  fi
+
+  _draw_progress_bar 65
+  local checkout_output
+  checkout_output="$(git -C "$ASSISTANT_ROOT_DIR" checkout "$matched_tag" 2>&1)"
+  local checkout_status=$?
+
+  if [[ $checkout_status -eq 0 ]]; then
+    _draw_progress_bar 100
+    echo ""
+    t_update_version_success "$clean_target"
+    _ask_and_show_changelog
+    local assistant_version
+    assistant_version="$(_get_assistant_version)"
+    t_version "$assistant_version"
+    return 0
+  fi
+
+  echo ""
+  t_update_conflict_warning
+
+  local confirm=""
+  t_update_conflict_prompt
+  if [ -c /dev/tty ]; then
+    read -r confirm </dev/tty || true
+  else
+    read -r confirm || true
+  fi
+
+  case "$confirm" in
+    [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM])
+      _draw_progress_bar 50
+      local force_checkout_output
+      force_checkout_output="$(git -C "$ASSISTANT_ROOT_DIR" checkout -f "$matched_tag" 2>&1)"
+      local force_checkout_status=$?
+
+      if [[ $force_checkout_status -eq 0 ]]; then
+        _draw_progress_bar 100
+        echo ""
+        t_update_version_success "$clean_target"
+        _ask_and_show_changelog
+        local assistant_version
+        assistant_version="$(_get_assistant_version)"
+        t_version "$assistant_version"
+        return 0
+      else
+        echo ""
+        t_update_failed
+        return 1
+      fi
+      ;;
+    *)
+      t_update_aborted
+      return 1
+      ;;
+  esac
+}
+
 _cmd_update() {
+  local arg1="${1:-}"
+  local target_ver=""
+
+  case "$arg1" in
+    "--list"|"-l")
+      _update_list_versions
+      return $?
+      ;;
+    @*)
+      target_ver="$arg1"
+      _update_to_version "$target_ver"
+      return $?
+      ;;
+    "--version"|"-v")
+      if [[ -z "${2:-}" ]]; then
+        t_update_usage
+        return 1
+      fi
+      target_ver="$2"
+      _update_to_version "$target_ver"
+      return $?
+      ;;
+    --version=*)
+      target_ver="${arg1#*=}"
+      if [[ -z "$target_ver" ]]; then
+        t_update_usage
+        return 1
+      fi
+      _update_to_version "$target_ver"
+      return $?
+      ;;
+    "--help"|"-h")
+      t_update_usage
+      return 0
+      ;;
+    "")
+      ;;
+    *)
+      t_update_usage
+      return 1
+      ;;
+  esac
+
   t_update_starting
 
   if ! _is_installed "git"; then

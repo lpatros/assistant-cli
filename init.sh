@@ -123,7 +123,8 @@ function assistant() {
       _cmd_status
       ;;
     "update")
-      _cmd_update
+      shift
+      _cmd_update "$@"
       ;;
     "channel")
       shift
