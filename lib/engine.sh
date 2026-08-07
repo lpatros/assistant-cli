@@ -77,11 +77,7 @@ _ensure_engine_installed() {
   t_engine_not_installed_prompt
 
   local answer
-  if [ -c /dev/tty ]; then
-    read -r answer </dev/tty || true
-  else
-    read -r answer || true
-  fi
+  _prompt_read answer
 
   case "$answer" in
     [yY]|[yY][eE][sS])
@@ -251,11 +247,7 @@ _cmd_engine_switch() {
   local answer chosen=""
   while true; do
     echo -n "$(t_choose_engine_prompt)"
-    if [ -c /dev/tty ]; then
-      read -r answer </dev/tty || true
-    else
-      read -r answer || true
-    fi
+    _prompt_read answer
 
     answer="$(echo "$answer" | xargs 2>/dev/null || echo "$answer" | tr -d '[:space:]')"
 

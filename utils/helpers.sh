@@ -3,6 +3,26 @@ _is_installed() {
   [[ -n "$cmd" ]] && command -v "$cmd" &>/dev/null
 }
 
+_get_indirect_var() {
+  local _src_var="$1"
+  local _dst_var="$2"
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    eval "${_dst_var}=\"\${(P)_src_var:-}\""
+  else
+    eval "${_dst_var}=\"\${!_src_var:-}\""
+  fi
+}
+
+
+_prompt_read() {
+  local var_name="$1"
+  if [ -c /dev/tty ]; then
+    read -r "$var_name" </dev/tty || true
+  else
+    read -r "$var_name" || true
+  fi
+}
+
 _info()    { echo -e "${CYAN}ℹ${RESET}  $*"; }
 _success() { echo -e "${GREEN}✓${RESET}  $*"; }
 _warn()    { echo -e "${YELLOW}⚠${RESET}  $*"; }

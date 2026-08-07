@@ -55,7 +55,7 @@ _cmd_create_skill() {
     t_create_skill_warning_default_override "$skill_name"
     local answer
     t_create_skill_prompt_override
-    read -r answer
+    _prompt_read answer
     if [[ ! "$answer" =~ ^[yY](es)?$ ]]; then
       t_create_skill_aborted
       return 1

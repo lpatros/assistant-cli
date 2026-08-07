@@ -22,11 +22,7 @@ _draw_progress_bar() {
 _ask_and_show_changelog() {
   local confirm=""
   t_update_changelog_prompt
-  if [ -c /dev/tty ]; then
-    read -r confirm </dev/tty || true
-  else
-    read -r confirm || true
-  fi
+  _prompt_read confirm
 
   case "$confirm" in
     "-t"|"--terminal"|[tT]|[tT][eE][rR][mM][iI][nN][aA][lL])
@@ -156,11 +152,7 @@ _update_to_version() {
 
   local confirm=""
   t_update_conflict_prompt
-  if [ -c /dev/tty ]; then
-    read -r confirm </dev/tty || true
-  else
-    read -r confirm || true
-  fi
+  _prompt_read confirm
 
   case "$confirm" in
     [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM])
@@ -279,11 +271,7 @@ _cmd_update() {
 
       local confirm=""
       t_update_conflict_prompt
-      if [ -c /dev/tty ]; then
-        read -r confirm </dev/tty || true
-      else
-        read -r confirm || true
-      fi
+      _prompt_read confirm
 
       case "$confirm" in
         [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM])
@@ -338,11 +326,7 @@ _cmd_update() {
 
   local confirm=""
   t_update_conflict_prompt
-  if [ -c /dev/tty ]; then
-    read -r confirm </dev/tty || true
-  else
-    read -r confirm || true
-  fi
+  _prompt_read confirm
 
   case "$confirm" in
     [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM])
