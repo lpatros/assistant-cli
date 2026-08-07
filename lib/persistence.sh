@@ -46,6 +46,7 @@ _load_config() {
   ASSISTANT_ENGINE="$ASSISTANT_DEFAULT_ENGINE"
   ASSISTANT_MODEL_OLLAMA_THINK_FLAG=""
   ASSISTANT_LANG="$ASSISTANT_DEFAULT_LANG"
+  ASSISTANT_CHANNEL="${ASSISTANT_CHANNEL:-}"
   ASSISTANT_MODEL=""
 
   if [[ -f "$ASSISTANT_CONFIG_FILE" ]]; then
@@ -66,6 +67,7 @@ _write_config() {
     echo "ASSISTANT_ENGINE=\"$ASSISTANT_ENGINE\""
     echo "ASSISTANT_MODEL_OLLAMA_THINK_FLAG=\"$ASSISTANT_MODEL_OLLAMA_THINK_FLAG\""
     echo "ASSISTANT_LANG=\"$ASSISTANT_LANG\""
+    echo "ASSISTANT_CHANNEL=\"$ASSISTANT_CHANNEL\""
 
     local vars=()
     local eng var_name
@@ -121,4 +123,29 @@ _set_lang() {
   _load_config
   ASSISTANT_LANG="$1"
   _write_config
+}
+
+_set_channel() {
+  _load_config
+  ASSISTANT_CHANNEL="$1"
+  _write_config
+}
+
+_get_configured_channel() {
+  _load_config
+  if [[ -n "${ASSISTANT_CHANNEL:-}" ]]; then
+    echo "$ASSISTANT_CHANNEL"
+    return 0
+  fi
+
+  local current_version
+  current_version="$(_get_assistant_version 2>/dev/null || true)"
+  case "$current_version" in
+    *-beta*|*-alpha*|*-rc*|*-dev*)
+      echo "beta"
+      ;;
+    *)
+      echo "stable"
+      ;;
+  esac
 }
