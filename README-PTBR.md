@@ -108,10 +108,13 @@ Você pode verificar a versão atual do assistente com:
 assistant --version
 ```
 
-Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente executando:
+Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente ou alternar para uma versão específica:
 
 ```bash
-assistant update
+assistant update                     # Atualiza para a versão mais recente do canal ativo
+assistant update --list              # Lista as versões disponíveis (ou -l)
+assistant update @1.2.0              # Atualiza/alterna para a versão 1.2.0
+assistant update --version 1.2.0     # Forma alternativa para definir a versão
 ```
 
 Você também pode alternar entre canais de release (estável e beta):

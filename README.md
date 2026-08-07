@@ -108,10 +108,13 @@ You can check the current version of the assistant with:
 assistant --version
 ```
 
-You can easily update your Assistant CLI to the latest version by running:
+You can easily update your Assistant CLI to the latest version or switch to a specific version:
 
 ```bash
-assistant update
+assistant update                     # Update to the latest version on current channel
+assistant update --list              # List available versions (or -l)
+assistant update @1.2.0              # Update/switch to version 1.2.0
+assistant update --version 1.2.0     # Alternative syntax to set target version
 ```
 
 You can also switch release channels (between stable and beta):
