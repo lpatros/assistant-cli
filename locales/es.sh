@@ -325,6 +325,10 @@ t_update_usage() {
   _error "Uso: assistant update [@<versión>|--version <versión>|--list]"
 }
 
+t_update_returning_to_branch() {
+  _info "Saliendo de la versión específica y regresando a la rama '${CYAN}${BOLD}$1${RESET}'..."
+}
+
 t_changelog_not_found() {
   _warn "Archivo $1 no encontrado."
 }

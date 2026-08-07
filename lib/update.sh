@@ -133,6 +133,14 @@ _update_to_version() {
   local checkout_status=$?
 
   if [[ $checkout_status -eq 0 ]]; then
+    case "$clean_target" in
+      *-beta*|*-alpha*|*-rc*|*-dev*)
+        _set_channel "beta"
+        ;;
+      *)
+        _set_channel "stable"
+        ;;
+    esac
     _draw_progress_bar 100
     echo ""
     t_update_version_success "$clean_target"
@@ -162,6 +170,14 @@ _update_to_version() {
       local force_checkout_status=$?
 
       if [[ $force_checkout_status -eq 0 ]]; then
+        case "$clean_target" in
+          *-beta*|*-alpha*|*-rc*|*-dev*)
+            _set_channel "beta"
+            ;;
+          *)
+            _set_channel "stable"
+            ;;
+        esac
         _draw_progress_bar 100
         echo ""
         t_update_version_success "$clean_target"
@@ -238,6 +254,53 @@ _cmd_update() {
   if [[ ! -d "$ASSISTANT_ROOT_DIR/.git" ]]; then
     t_update_failed
     return 1
+  fi
+
+  local current_branch=""
+  current_branch="$(git -C "$ASSISTANT_ROOT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+
+  if [[ "$current_branch" == "HEAD" || -z "$current_branch" ]]; then
+    local target_channel target_branch
+    target_channel="$(_get_configured_channel)"
+    if [[ "$target_channel" == "beta" || "$target_channel" == "dev" ]]; then
+      target_branch="dev"
+    else
+      target_branch="main"
+    fi
+
+    t_update_returning_to_branch "$target_branch"
+    local switch_output
+    switch_output="$(git -C "$ASSISTANT_ROOT_DIR" switch "$target_branch" 2>&1 || git -C "$ASSISTANT_ROOT_DIR" switch -c "$target_branch" "origin/$target_branch" 2>&1)"
+    local switch_status=$?
+
+    if [[ $switch_status -ne 0 ]]; then
+      echo ""
+      t_update_conflict_warning
+
+      local confirm=""
+      t_update_conflict_prompt
+      if [ -c /dev/tty ]; then
+        read -r confirm </dev/tty || true
+      else
+        read -r confirm || true
+      fi
+
+      case "$confirm" in
+        [yY]|[sS]|[yY][eE][sS]|[sS][iI][mM])
+          local force_switch_output
+          force_switch_output="$(git -C "$ASSISTANT_ROOT_DIR" checkout -f "$target_branch" 2>&1)"
+          if [[ $? -ne 0 ]]; then
+            echo ""
+            t_update_failed
+            return 1
+          fi
+          ;;
+        *)
+          t_update_aborted
+          return 1
+          ;;
+      esac
+    fi
   fi
 
   _draw_progress_bar 15

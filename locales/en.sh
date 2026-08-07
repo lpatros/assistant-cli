@@ -325,6 +325,10 @@ t_update_usage() {
   _error "Usage: assistant update [@<version>|--version <version>|--list]"
 }
 
+t_update_returning_to_branch() {
+  _info "Leaving specific version and returning to branch '${CYAN}${BOLD}$1${RESET}'..."
+}
+
 t_changelog_not_found() {
   _warn "$1 file not found."
 }
