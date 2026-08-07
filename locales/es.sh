@@ -55,7 +55,7 @@ t_choose_model_prompt() {
 }
 
 t_choose_engine_prompt() {
-  echo "  Elige el motor: "
+  echo "  Ingresa el número para seleccionar: "
 }
 
 t_cancelled() {
@@ -74,8 +74,20 @@ t_invalid_option_simple() {
   _warn "Opción inválida."
 }
 
-t_choose_engine_header() {
-  _header "Elige el motor"
+t_engines_configured_header() {
+  _info "${BOLD}Motores instalados:${RESET}"
+}
+
+t_engines_not_installed_header() {
+  _info "${BOLD}Motores no instalados:${RESET}"
+}
+
+t_no_engines_configured() {
+  echo -e "  ${DIM}(ningún motor instalado)${RESET}"
+}
+
+t_no_engines_uninstalled() {
+  echo -e "  ${DIM}(ninguno)${RESET}"
 }
 
 t_use_model_list_to_choose() {

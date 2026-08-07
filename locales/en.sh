@@ -55,7 +55,7 @@ t_choose_model_prompt() {
 }
 
 t_choose_engine_prompt() {
-  echo "  Choose the engine: "
+  echo "  Enter number to select: "
 }
 
 t_cancelled() {
@@ -74,8 +74,20 @@ t_invalid_option_simple() {
   _warn "Invalid option."
 }
 
-t_choose_engine_header() {
-  _header "Choose the engine"
+t_engines_configured_header() {
+  _info "${BOLD}Installed engines:${RESET}"
+}
+
+t_engines_not_installed_header() {
+  _info "${BOLD}Not installed engines:${RESET}"
+}
+
+t_no_engines_configured() {
+  echo -e "  ${DIM}(no installed engines)${RESET}"
+}
+
+t_no_engines_uninstalled() {
+  echo -e "  ${DIM}(none)${RESET}"
 }
 
 t_use_model_list_to_choose() {
