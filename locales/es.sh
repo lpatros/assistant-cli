@@ -271,6 +271,10 @@ t_update_success() {
   _success "¡Asistente actualizado con éxito!"
 }
 
+t_update_already_up_to_date() {
+  _info "Ya estás en la versión más reciente."
+}
+
 t_update_failed() {
   _error "No se pudo actualizar el asistente."
 }
@@ -294,7 +298,19 @@ t_update_aborted() {
 }
 
 t_changelog_not_found() {
-  _warn "Archivo CHANGELOG.md no encontrado en: $1"
+  _warn "Archivo $1 no encontrado."
+}
+
+t_changelog_web_link() {
+  _info "Ver release en GitHub: ${CYAN}$1${RESET}"
+}
+
+t_changelog_opening_web() {
+  _info "Abriendo registro de cambios en el navegador: ${CYAN}$1${RESET}"
+}
+
+t_changelog_usage() {
+  _error "Uso: assistant changelog [--web|-w|--terminal|-t]"
 }
 
 t_unknown_command() {
@@ -374,7 +390,8 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interactivo con el modelo actual
   ${GREEN}assistant${RESET} \"<mensaje>\"                         Enviar un mensaje directo
   ${GREEN}assistant status${RESET}                              Mostrar motor, modelos, modo pensamiento e idioma
-  ${GREEN}assistant channel${RESET} [<stable|beta|status>]       Gestionar el canal de lanzamiento (estable/beta)
+  ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Gestionar el canal de lanzamiento (estable/beta)
+  ${GREEN}assistant changelog${RESET} [--terminal|-t]           Muestra el registro de cambios en el navegador (o terminal con -t)
   ${GREEN}assistant update${RESET}                              Actualizar el asistente a la última versión
   ${GREEN}assistant --version${RESET}                           Mostrar la versión actual del asistente
   ${GREEN}assistant commit${RESET}                              Analizar repositorio git y sugerir commits

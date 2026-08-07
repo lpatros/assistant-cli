@@ -5,8 +5,10 @@ _get_assistant_version() {
     version="$(git -C "$ASSISTANT_ROOT_DIR" describe --tags --abbrev=0 2>/dev/null || true)"
   fi
 
-  if [[ -z "$version" ]] && [[ -f "$ASSISTANT_ROOT_DIR/CHANGELOG.md" ]]; then
-    version="$(grep -m1 -E '^## \[?[0-9]+\.[0-9]+\.[0-9]+' "$ASSISTANT_ROOT_DIR/CHANGELOG.md" 2>/dev/null | sed -E 's/^## \[?([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?).*/\1/' || true)"
+  local changelog_file
+  changelog_file="$(_get_changelog_file)"
+  if [[ -z "$version" ]] && [[ -f "$changelog_file" ]]; then
+    version="$(grep -m1 -E '^## \[?[0-9]+\.[0-9]+\.[0-9]+' "$changelog_file" 2>/dev/null | sed -E 's/^## \[?([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?).*/\1/' || true)"
   fi
 
   if [[ -n "$version" ]]; then

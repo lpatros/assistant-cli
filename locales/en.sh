@@ -271,6 +271,10 @@ t_update_success() {
   _success "Assistant updated successfully!"
 }
 
+t_update_already_up_to_date() {
+  _info "You are already on the latest version."
+}
+
 t_update_failed() {
   _error "Failed to update the assistant."
 }
@@ -294,7 +298,19 @@ t_update_aborted() {
 }
 
 t_changelog_not_found() {
-  _warn "CHANGELOG.md file not found at: $1"
+  _warn "$1 file not found."
+}
+
+t_changelog_web_link() {
+  _info "View release on GitHub: ${CYAN}$1${RESET}"
+}
+
+t_changelog_opening_web() {
+  _info "Opening changelog in browser: ${CYAN}$1${RESET}"
+}
+
+t_changelog_usage() {
+  _error "Usage: assistant changelog [--web|-w|--terminal|-t]"
 }
 
 t_unknown_command() {
@@ -374,8 +390,9 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant${RESET}                                     Interactive chat with current model
   ${GREEN}assistant${RESET} \"<message>\"                         Send a direct message
   ${GREEN}assistant status${RESET}                              Show engine, models, think mode, and language
-  ${GREEN}assistant channel${RESET} [<stable|beta|status>]       Manage release channel (stable/beta)
-  ${GREEN}assistant update${RESET}                              Update the assistant to the latest version
+  ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Manage release channel (stable/beta)
+  ${GREEN}assistant changelog${RESET} [--terminal|-t]           View changelog in browser (or terminal with -t)
+  ${GREEN}assistant update${RESET}                              Update assistant to latest version
   ${GREEN}assistant --version${RESET}                           Show current assistant version
   ${GREEN}assistant commit${RESET}                              Analyze git repo and suggest commits
   ${GREEN}assistant resume${RESET} [paths...]                   Generate project resumes in markdown
