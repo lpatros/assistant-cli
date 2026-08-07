@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0-beta.1](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta...v1.3.0-beta.1) (2026-08-07)
+
+
+### Features
+
+* **update:** add update to a specific version ([bd5ba3c](https://github.com/lpatros/assistant-cli/commit/bd5ba3c2f08301c46418d1eaec5da2da007df5c9))
+
 ## [1.3.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.2.0...v1.3.0-beta) (2026-08-07)
 
 
