@@ -2,7 +2,7 @@
 
 # Customization and Extensions Guide
 
-**English** | [Português](README-PTBR.md) | [Español](README-ES.md)
+**English** | [Português](CUSTOMIZATION-PTBR.md) | [Español](CUSTOMIZATION-ES.md)
 
 <p>Learn how to extend <b>Assistant CLI</b> by configuring the AI engines you use, custom languages, custom skills, and dynamic custom commands.</p>
 

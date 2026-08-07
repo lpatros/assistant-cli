@@ -209,7 +209,7 @@ assistant lang --list
 ```
 
 #### Guia Completo de Customização e Templates
-Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/README-PTBR.md)](docs/README-PTBR.md)**.
+Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/CUSTOMIZATION-PTBR.md)](docs/CUSTOMIZATION-PTBR.md)**.
 
 Você também pode utilizar os modelos de referência disponíveis em [`docs/templates/`](docs/templates/)
 ## Uso

@@ -208,7 +208,7 @@ assistant lang --list
 ```
 
 #### Guía Completa de Personalización y Plantillas
-Para documentación detallada, especificaciones del contrato de funciones y ejemplos avanzados sobre cómo crear motores de IA, idiomas, habilidades (skills) y comandos dinámicos de shell, consulte la **[Guía de Personalización y Extensiones (docs/README-ES.md)](docs/README-ES.md)**.
+Para documentación detallada, especificaciones del contrato de funciones y ejemplos avanzados sobre cómo crear motores de IA, idiomas, habilidades (skills) y comandos dinámicos de shell, consulte la **[Guía de Personalización y Extensiones (docs/CUSTOMIZATION-ES.md)](docs/CUSTOMIZATION-ES.md)**.
 
 También puede utilizar las plantillas de referencia disponibles en el directorio [`docs/templates/`](docs/templates/)
 

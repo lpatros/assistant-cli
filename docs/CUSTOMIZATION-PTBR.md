@@ -2,7 +2,7 @@
 
 # Guia de Customização e Extensões
 
-[English](README.md) | **Português** | [Español](README-ES.md)
+[English](CUSTOMIZATION.md) | **Português** | [Español](CUSTOMIZATION-ES.md)
 
 <p>Aprenda a estender o <b>Assistant CLI</b> configurando as engines de IA que você utiliza, idiomas customizados, habilidades (skills) e comandos dinâmicos.</p>
 

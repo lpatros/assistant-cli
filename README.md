@@ -203,7 +203,7 @@ assistant lang --list
 
 #### Complete Customization Guide & Templates
 
-For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/README.md)](docs/README.md)**.
+For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/CUSTOMIZATION.md)](docs/CUSTOMIZATION.md)**.
 
 Starter templates are also available inside the [`docs/templates/`](docs/templates/)
 
