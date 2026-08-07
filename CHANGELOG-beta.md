@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0-beta.5](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.4...v1.3.0-beta.5) (2026-08-07)
+
+
+### Features
+
+* **custom:** add command to inspect custom components ([204eed1](https://github.com/lpatros/assistant-cli/commit/204eed19a8dbc4d5d638836cb25833f18c1590db))
+
 ## [1.3.0-beta.4](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.3...v1.3.0-beta.4) (2026-08-07)
 
 
