@@ -47,6 +47,25 @@ _is_engine_installed() {
   _is_installed "$binary"
 }
 
+_get_engine_binary_path() {
+  local engine="${1:-$(_get_engine)}"
+  local clean_eng
+  clean_eng=$(_sanitize_engine_name "$engine")
+
+  local binary="$engine"
+  if command -v "_engine_${clean_eng}_binary" &>/dev/null; then
+    binary=$("_engine_${clean_eng}_binary")
+  fi
+
+  if command -v "$binary" &>/dev/null; then
+    command -v "$binary"
+  elif command -v "$engine" &>/dev/null; then
+    command -v "$engine"
+  else
+    echo ""
+  fi
+}
+
 _ensure_engine_installed() {
   local engine="${1:-$(_get_engine)}"
 
@@ -88,7 +107,6 @@ _cmd_engine() {
     *)
       _set_engine "$action"
       t_engine_changed "$action"
-      _ensure_engine_installed "$action"
       ;;
   esac
 }
@@ -164,35 +182,109 @@ _cmd_model_status() {
   t_model_status_detailed "$ASSISTANT_ENGINE" "$(_model_display "$(_get_model)")"
 }
 
+_get_nth() {
+  local target_n="$1"
+  shift
+  if [[ "$target_n" =~ ^[0-9]+$ ]] && [ "$target_n" -ge 1 ] && [ "$target_n" -le "$#" ]; then
+    shift $((target_n - 1))
+    echo "$1"
+  fi
+}
+
+_engine_menu_item() {
+  local num="$1"
+  local eng="$2"
+  echo -e "  ${CYAN}${num})${RESET} ${BOLD}${eng}${RESET}"
+}
+
 _cmd_engine_switch() {
-  t_choose_engine_header
+  local configured_engines=()
+  local uninstalled_engines=()
+  local all_engines=()
+
+  local eng bin_path
+  while IFS= read -r eng; do
+    [[ -z "$eng" ]] && continue
+    if _is_engine_installed "$eng"; then
+      configured_engines+=("$eng")
+    else
+      uninstalled_engines+=("$eng")
+    fi
+  done <<< "$(_get_available_engines)"
+
+  local idx=1
+
+  t_engines_configured_header
+  if [[ ${#configured_engines[@]} -gt 0 ]]; then
+    for eng in "${configured_engines[@]}"; do
+      _engine_menu_item "$idx" "$eng"
+      all_engines+=("$eng")
+      ((idx++))
+    done
+  else
+    t_no_engines_configured
+  fi
+  echo ""
+
+  t_engines_not_installed_header
+  if [[ ${#uninstalled_engines[@]} -gt 0 ]]; then
+    for eng in "${uninstalled_engines[@]}"; do
+      _engine_menu_item "$idx" "$eng"
+      all_engines+=("$eng")
+      ((idx++))
+    done
+  else
+    t_no_engines_uninstalled
+  fi
+  echo ""
+
+  local cancel_num=$idx
+  local cancel_label
+  cancel_label=$(t_menu_cancel)
+  echo -e "  ${YELLOW}${cancel_num})${RESET} ${cancel_label}"
+  echo ""
+
   local current_engine
   current_engine=$(_get_engine)
   t_current_engine_label "$current_engine"
 
-  local available_engines=()
-  local eng
-  while IFS= read -r eng; do
-    [[ -n "$eng" ]] && available_engines+=("$eng")
-  done <<< "$(_get_available_engines)"
+  local answer chosen=""
+  while true; do
+    echo -n "$(t_choose_engine_prompt)"
+    if [ -c /dev/tty ]; then
+      read -r answer </dev/tty || true
+    else
+      read -r answer || true
+    fi
 
-  local cancel_label
-  cancel_label=$(t_menu_cancel)
-  available_engines+=("$cancel_label")
+    answer="$(echo "$answer" | xargs 2>/dev/null || echo "$answer" | tr -d '[:space:]')"
 
-  PS3=$'\n'"$(t_choose_engine_prompt)"
-  select chosen in "${available_engines[@]}"; do
-    if [[ "$chosen" == "$cancel_label" || -z "$chosen" ]]; then
+    if [[ -z "$answer" || "$answer" == "$cancel_num" || "$answer" == "$cancel_label" ]]; then
       t_cancelled
       return 0
     fi
-    if [[ -n "$chosen" ]]; then
-      _set_engine "$chosen"
-      t_engine_changed "$chosen"
-      _ensure_engine_installed "$chosen"
-      t_use_model_list_to_choose
-      return 0
+
+    if [[ "$answer" =~ ^[0-9]+$ ]]; then
+      chosen=$(_get_nth "$answer" "${all_engines[@]}")
+      if [[ -n "$chosen" ]]; then
+        break
+      fi
+    else
+      for eng in "${all_engines[@]}"; do
+        if [[ "$answer" == "$eng" ]]; then
+          chosen="$eng"
+          break 2
+        fi
+      done
     fi
+
     t_invalid_option_simple
   done
+
+  if [[ -n "$chosen" ]]; then
+    _set_engine "$chosen"
+    t_engine_changed "$chosen"
+    t_use_model_list_to_choose
+    return 0
+  fi
 }
