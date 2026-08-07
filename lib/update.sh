@@ -268,7 +268,7 @@ _cmd_update() {
       target_branch="main"
     fi
 
-    t_update_returning_to_branch "$target_branch"
+    t_update_returning_to_channel "$target_channel"
     local switch_output
     switch_output="$(git -C "$ASSISTANT_ROOT_DIR" switch "$target_branch" 2>&1 || git -C "$ASSISTANT_ROOT_DIR" switch -c "$target_branch" "origin/$target_branch" 2>&1)"
     local switch_status=$?

@@ -272,7 +272,7 @@ t_update_success() {
 }
 
 t_update_already_up_to_date() {
-  _info "You are already on the latest version."
+  _info "You are on the latest version."
 }
 
 t_update_failed() {
@@ -325,8 +325,8 @@ t_update_usage() {
   _error "Usage: assistant update [@<version>|--version <version>|--list]"
 }
 
-t_update_returning_to_branch() {
-  _info "Leaving specific version and returning to branch '${CYAN}${BOLD}$1${RESET}'..."
+t_update_returning_to_channel() {
+  _info "Leaving specific version and returning to ${CYAN}${BOLD}$1${RESET} channel..."
 }
 
 t_changelog_not_found() {
