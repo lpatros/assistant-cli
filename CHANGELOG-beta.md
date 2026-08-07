@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0-beta.2](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.1...v1.3.0-beta.2) (2026-08-07)
+
+
+### Features
+
+* **channel:** save channel preference on switch ([a043b34](https://github.com/lpatros/assistant-cli/commit/a043b34a3687dd78a1c98d719305d25600bee11c))
+* **persistence:** persist update channel in config ([42a0c94](https://github.com/lpatros/assistant-cli/commit/42a0c9433d00f57adb1835884e2b994aa24508a8))
+* **update:** return to configured branch and persist channel ([0de71ab](https://github.com/lpatros/assistant-cli/commit/0de71ab1a30eab12ba0b620343ca7098c4a63348))
+
 ## [1.3.0-beta.1](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta...v1.3.0-beta.1) (2026-08-07)
 
 
