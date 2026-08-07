@@ -119,6 +119,10 @@ function assistant() {
       shift
       _cmd_lang "$@"
       ;;
+    "custom")
+      shift
+      _cmd_custom "$@"
+      ;;
     "status")
       _cmd_status
       ;;

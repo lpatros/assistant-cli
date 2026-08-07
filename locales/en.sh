@@ -401,6 +401,51 @@ t_create_skill_aborted() {
   _warn "Operation aborted. The skill was not created."
 }
 
+# Custom commands
+t_custom_engines_status_header() {
+  _header "Custom Engines:"
+}
+
+t_no_custom_engines_found() {
+  echo -e "  ${DIM}(no custom engines found)${RESET}"
+}
+
+t_custom_skills_status_header() {
+  _header "Custom Skills:"
+}
+
+t_no_custom_skills_found() {
+  echo -e "  ${DIM}(no custom skills found)${RESET}"
+}
+
+t_custom_locales_status_header() {
+  _header "Custom Locales:"
+}
+
+t_no_custom_locales_found() {
+  echo -e "  ${DIM}(no custom locales found)${RESET}"
+}
+
+t_custom_status_header() {
+  _header "Custom Component Status:"
+}
+
+t_custom_usage() {
+  _error "Usage: assistant custom [engines|skills|locales|status] [status]"
+}
+
+t_custom_engines_usage() {
+  _error "Usage: assistant custom engines [status]"
+}
+
+t_custom_skills_usage() {
+  _error "Usage: assistant custom skills [status]"
+}
+
+t_custom_locales_usage() {
+  _error "Usage: assistant custom locales [status]"
+}
+
 # Channel commands
 t_channel_status() {
   _info "Current release channel: ${CYAN}${BOLD}$1${RESET}"
@@ -434,6 +479,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant${RESET}                                     Interactive chat with current model
   ${GREEN}assistant${RESET} \"<message>\"                         Send a direct message
   ${GREEN}assistant status${RESET}                              Show engine, models, think mode, and language
+  ${GREEN}assistant custom${RESET} [engines|skills|locales|status] Show identified custom components
   ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Manage release channel (stable/beta)
   ${GREEN}assistant changelog${RESET} [--terminal|-t]           View changelog in browser (or terminal with -t)
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Update assistant to latest or specific version
@@ -463,6 +509,8 @@ ${BOLD}Thinking flags — Ollama only (per session or persistent):${RESET}
 ${BOLD}Examples:${RESET}
   assistant \"Explain what a closure is in JS\"
   assistant commit
+  assistant custom status
+  assistant custom engines status
   assistant channel beta
   assistant engine agy
   assistant engine opencode

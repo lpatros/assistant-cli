@@ -401,6 +401,51 @@ t_create_skill_aborted() {
   _warn "Operação cancelada. A skill não foi criada."
 }
 
+# Custom commands
+t_custom_engines_status_header() {
+  _header "Engines Customizadas:"
+}
+
+t_no_custom_engines_found() {
+  echo -e "  ${DIM}(nenhuma engine customizada encontrada)${RESET}"
+}
+
+t_custom_skills_status_header() {
+  _header "Skills Customizadas:"
+}
+
+t_no_custom_skills_found() {
+  echo -e "  ${DIM}(nenhuma skill customizada encontrada)${RESET}"
+}
+
+t_custom_locales_status_header() {
+  _header "Locales Customizados:"
+}
+
+t_no_custom_locales_found() {
+  echo -e "  ${DIM}(nenhum locale customizado encontrado)${RESET}"
+}
+
+t_custom_status_header() {
+  _header "Status de Customizações:"
+}
+
+t_custom_usage() {
+  _error "Uso: assistant custom [engines|skills|locales|status] [status]"
+}
+
+t_custom_engines_usage() {
+  _error "Uso: assistant custom engines [status]"
+}
+
+t_custom_skills_usage() {
+  _error "Uso: assistant custom skills [status]"
+}
+
+t_custom_locales_usage() {
+  _error "Uso: assistant custom locales [status]"
+}
+
 # Channel commands
 t_channel_status() {
   _info "Canal de release atual: ${CYAN}${BOLD}$1${RESET}"
@@ -434,8 +479,9 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interativo com o modelo atual
   ${GREEN}assistant${RESET} \"<mensagem>\"                        Envia uma mensagem direta
   ${GREEN}assistant status${RESET}                              Mostra engine, modelos, think mode e idioma
+  ${GREEN}assistant custom${RESET} [engines|skills|locales|status] Mostra componentes customizados identificados
   ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Gerencia o canal de release (estável/beta)
-  ${GREEN}assistant changelog${RESET} [--terminal|-t]           Exibe o changelog no navegador (ou terminal com -t)
+  ${GREEN}assistant changelog${RESET} [--terminal|-t]           Exibe o changelog no navegador (or terminal com -t)
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Atualiza o assistente para a versão mais recente ou específica
   ${GREEN}assistant --version${RESET}                           Mostra a versão atual do assistente
   ${GREEN}assistant commit${RESET}                              Analisa o repo git e sugere commits
@@ -463,6 +509,8 @@ ${BOLD}Flags de thinking — apenas Ollama (por sessão ou persistente):${RESET}
 ${BOLD}Exemplos:${RESET}
   assistant \"Explica o que é um closure em JS\"
   assistant commit
+  assistant custom status
+  assistant custom engines status
   assistant channel beta
   assistant engine agy
   assistant engine opencode

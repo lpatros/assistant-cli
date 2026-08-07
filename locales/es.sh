@@ -401,6 +401,51 @@ t_create_skill_aborted() {
   _warn "Operación abortada. La habilidad no fue creada."
 }
 
+# Custom commands
+t_custom_engines_status_header() {
+  _header "Motores Personalizados:"
+}
+
+t_no_custom_engines_found() {
+  echo -e "  ${DIM}(ningún motor personalizado encontrado)${RESET}"
+}
+
+t_custom_skills_status_header() {
+  _header "Habilidades Personalizadas:"
+}
+
+t_no_custom_skills_found() {
+  echo -e "  ${DIM}(ninguna habilidad personalizada encontrada)${RESET}"
+}
+
+t_custom_locales_status_header() {
+  _header "Idiomas Personalizados:"
+}
+
+t_no_custom_locales_found() {
+  echo -e "  ${DIM}(ningún idioma personalizado encontrado)${RESET}"
+}
+
+t_custom_status_header() {
+  _header "Estado de Personalizaciones:"
+}
+
+t_custom_usage() {
+  _error "Uso: assistant custom [engines|skills|locales|status] [status]"
+}
+
+t_custom_engines_usage() {
+  _error "Uso: assistant custom engines [status]"
+}
+
+t_custom_skills_usage() {
+  _error "Uso: assistant custom skills [status]"
+}
+
+t_custom_locales_usage() {
+  _error "Uso: assistant custom locales [status]"
+}
+
 # Channel commands
 t_channel_status() {
   _info "Canal de lanzamiento actual: ${CYAN}${BOLD}$1${RESET}"
@@ -434,6 +479,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interactivo con el modelo actual
   ${GREEN}assistant${RESET} \"<mensaje>\"                         Enviar un mensaje directo
   ${GREEN}assistant status${RESET}                              Mostrar motor, modelos, modo pensamiento e idioma
+  ${GREEN}assistant custom${RESET} [engines|skills|locales|status] Mostrar componentes personalizados identificados
   ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Gestionar el canal de lanzamiento (estable/beta)
   ${GREEN}assistant changelog${RESET} [--terminal|-t]           Muestra el registro de cambios en el navegador (o terminal con -t)
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Actualizar el asistente a la última versión o a una específica
@@ -463,6 +509,8 @@ ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
 ${BOLD}Ejemplos:${RESET}
   assistant \"Explica qué es un closure in JS\"
   assistant commit
+  assistant custom status
+  assistant custom engines status
   assistant channel beta
   assistant engine agy
   assistant engine opencode
