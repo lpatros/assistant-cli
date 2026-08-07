@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0-beta.4](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.3...v1.3.0-beta.4) (2026-08-07)
+
+
+### Bug Fixes
+
+* **engines:** surface stderr and exit status on output-file errors ([bee4110](https://github.com/lpatros/assistant-cli/commit/bee411040fd011978af7417d751ddd7ef149461a))
+
 ## [1.3.0-beta.3](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.2...v1.3.0-beta.3) (2026-08-07)
 
 
