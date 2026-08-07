@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0-beta.3](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.2...v1.3.0-beta.3) (2026-08-07)
+
+
+### Features
+
+* **engine:** update engine execution logic ([e4eb16f](https://github.com/lpatros/assistant-cli/commit/e4eb16f971f012576a1e481e7b1ac83fb1ab629f))
+* **locales:** update i18n translation keys ([8f7ee0c](https://github.com/lpatros/assistant-cli/commit/8f7ee0c70dbd88d02c88f6ee93409fb9e4eae779))
+
 ## [1.3.0-beta.2](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.1...v1.3.0-beta.2) (2026-08-07)
 
 
