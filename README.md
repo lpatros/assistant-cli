@@ -46,7 +46,9 @@ curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.
 
 ### Windows
 
-For **Windows** users, you can install it using PowerShell. Open your PowerShell and run:
+#### PowerShell
+
+For **Windows** users using PowerShell, you can install it by running:
 
 > [!IMPORTANT]
 > Make sure your script execution policy is enabled before running the installer. You can set it by running:
@@ -94,11 +96,24 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 </details>
 
 
-**On Windows, the interactive installer will:**
+**On Windows via PowerShell, the interactive installer will:**
 1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
 2. Verify if `bash` is available in your system (e.g., Git Bash or WSL) since the core project uses `.sh` scripts.
 3. Add a wrapper function directly into your PowerShell profile (`$PROFILE`) that transparently calls `bash`. **This means you don't need to open Git Bash manually; the assistant will work seamlessly right inside your standard PowerShell!**
 4. Guide you on how to reload your terminal.
+
+#### Bash (Git Bash / WSL)
+
+If you use **Bash** as your terminal on Windows, you can install Assistant CLI directly using `curl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
+
+**On Bash, the interactive installer will:**
+1. Clone the repository to the installation directory (`%LOCALAPPDATA%\assistant-cli` or `~/.config/assistant-cli`).
+2. Automatically add the configuration to your shell profile (`~/.bashrc`, `~/.zshrc`, or `config.fish`).
+3. Guide you on how to reload your terminal to start using the assistant.
 
 ## Update & Version
 

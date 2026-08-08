@@ -46,7 +46,9 @@ curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.
 
 ### Windows
 
-Para usuarios de **Windows**, se puede instalar usando PowerShell. Abre tu PowerShell y ejecuta:
+#### PowerShell
+
+Para usuarios de **Windows** usando PowerShell, puedes instalarlo ejecutando:
 
 > [!IMPORTANT]
 > Asegúrate de que la política de ejecución de scripts esté habilitada antes de ejecutar el instalador. Puedes configurarla ejecutando:
@@ -93,11 +95,24 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
    - Escribe `bash --version` en la nueva terminal. Si la versión de Bash se muestra con éxito, ¡la configuración se ha completado!
 </details>
 
-**En Windows, el instalador interactivo:**
+**En Windows vía PowerShell, el instalador interactivo:**
 1. Clonará el repositorio en `%LOCALAPPDATA%\assistant-cli` (o un directorio personalizado de tu elección).
 2. Verificará si `bash` está disponible en tu sistema (por ejemplo, Git Bash o WSL), ya que el núcleo del proyecto utiliza scripts `.sh`.
 3. Agregará una función contenedora (wrapper) directamente en tu perfil de PowerShell (`$PROFILE`) que llama a `bash` de manera transparente. **¡Esto significa que no necesitas abrir Git Bash manualmente; el asistente funcionará perfectamente dentro de tu PowerShell estándar!**
 4. Te guiará sobre cómo recargar tu terminal.
+
+#### Bash (Git Bash / WSL)
+
+Si usas **Bash** como tu terminal en Windows, puedes instalar Assistant CLI directamente usando `curl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
+
+**En Bash, el instalador interactivo:**
+1. Clonará el repositorio en el directorio de instalación (`%LOCALAPPDATA%\assistant-cli` o `~/.config/assistant-cli`).
+2. Agregará automáticamente la configuración a tu perfil de shell (`~/.bashrc`, `~/.zshrc` o `config.fish`).
+3. Te guiará sobre cómo recargar tu terminal para comenzar a usar el asistente.
 
 ## Actualización y Versión
 
