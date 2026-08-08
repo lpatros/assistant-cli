@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0-beta.7](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.6...v1.3.0-beta.7) (2026-08-08)
+
+
+### Features
+
+* **engine:** add codex and copilot engines ([05db4f8](https://github.com/lpatros/assistant-cli/commit/05db4f82db8d65651b98f5fba17bb3fe46b547d3))
+* **model:** add model set subcommand ([dbff66f](https://github.com/lpatros/assistant-cli/commit/dbff66f004ba007b4191629609412435d2ac85fd))
+
 ## [1.3.0-beta.6](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.5...v1.3.0-beta.6) (2026-08-08)
 
 
