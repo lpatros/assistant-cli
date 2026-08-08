@@ -38,6 +38,11 @@ t_no_models_found() {
   _error "No se encontraron modelos para el motor '$1'. ¿Está la CLI instalada y configurada?"
 }
 
+t_engine_no_model_listing() {
+  _info "El motor '$1' no soporta listado de modelos."
+  echo -e "  Use ${BOLD}assistant model set <modelo>${RESET} para definir el modelo manualmente."
+}
+
 t_menu_switch_engine() {
   echo "[ Cambiar motor ]"
 }
@@ -91,7 +96,7 @@ t_no_engines_uninstalled() {
 }
 
 t_use_model_list_to_choose() {
-  _info "Usa ${CYAN}assistant model --list${RESET} para elegir un modelo para este motor."
+  _info "Usa ${CYAN}assistant model --list${RESET} o ${CYAN}assistant model set <modelo>${RESET} para elegir un modelo."
 }
 
 t_current_engine_label() {
@@ -99,7 +104,11 @@ t_current_engine_label() {
 }
 
 t_model_usage() {
-  _error "Uso: assistant model --list|status"
+  _error "Uso: assistant model --list|set <modelo>|status"
+}
+
+t_model_set_usage() {
+  _error "Uso: assistant model set <modelo>"
 }
 
 # Think commands
@@ -473,7 +482,7 @@ t_channel_usage() {
 
 t_help_output() {
   echo -e "
-${BOLD}${BLUE}assistant${RESET} — Envoltura CLI para LLMs y motores modulares (Ollama, OpenCode, Antigravity (AGY) y personalizados)
+${BOLD}${BLUE}assistant${RESET} — Envoltura CLI para LLMs y motores modulares
 
 ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interactivo con el modelo actual
@@ -489,15 +498,13 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant readme${RESET} --lang <código> --name <nom> Generar archivo README del proyecto
   ${GREEN}assistant create skill${RESET} <nom> <ruta.md>        Crear una nueva habilidad personalizada
   ${GREEN}assistant <habilidad-personalizada>${RESET} [args]    Ejecutar una habilidad personalizada
-  ${GREEN}assistant model --list${RESET}                        Listar modelos y permitir cambiar de modelo
-  ${GREEN}assistant model status${RESET}                        Mostrar el modelo del motor actual y guardados
+  ${GREEN}assistant model${RESET} [--list|set <modelo>|status]  Gestionar los modelos del motor activo
   ${GREEN}assistant engine${RESET} [<motor>|--list|status]      Cambiar el motor activo
   ${GREEN}assistant engine status${RESET}                       Mostrar motor actual y modelo activo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Gestionar modo pensamiento (ollama)
   ${GREEN}assistant lang${RESET} [<idioma>|--list|status]       Gestionar el idioma del asistente
 
 ${BOLD}Notas:${RESET}
-  - Motores nativos: ollama, opencode, agy.
   - Crea motores personalizados en custom/engines/<nombre>.sh.
   - Los modelos se guardan por motor; cambiar el motor no hace perder los modelos anteriores.
 

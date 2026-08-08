@@ -130,6 +130,16 @@ _cmd_model_list() {
 
   _ensure_engine_installed "$current_engine" || return 1
 
+  local clean_eng
+  clean_eng=$(_sanitize_engine_name "$current_engine")
+
+  if ! command -v "_engine_${clean_eng}_list_models" &>/dev/null; then
+    if command -v t_engine_no_model_listing &>/dev/null; then
+      t_engine_no_model_listing "$current_engine"
+    fi
+    return 0
+  fi
+
   t_models_available_header "$current_engine"
 
   local model_array=()
@@ -176,6 +186,18 @@ _cmd_model_list() {
 _cmd_model_status() {
   _load_config
   t_model_status_detailed "$ASSISTANT_ENGINE" "$(_model_display "$(_get_model)")"
+}
+
+_cmd_model_set() {
+  local model_name="$1"
+
+  if [[ -z "$model_name" ]]; then
+    t_model_set_usage
+    return 1
+  fi
+
+  _set_model "$model_name"
+  t_model_changed "$model_name"
 }
 
 _get_nth() {

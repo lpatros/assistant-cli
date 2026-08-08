@@ -98,6 +98,10 @@ function assistant() {
         "--list")
           _cmd_model_list
           ;;
+        "set")
+          shift
+          _cmd_model_set "$@"
+          ;;
         "status"|"")
           _cmd_model_status
           ;;
