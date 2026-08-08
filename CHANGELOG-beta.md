@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0-beta.6](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.5...v1.3.0-beta.6) (2026-08-08)
+
+
+### Bug Fixes
+
+* **install:** properly escape args in assistant wrapper for windows ([d2b5c64](https://github.com/lpatros/assistant-cli/commit/d2b5c646b120efe28d1e0417a10e63279d5bca44))
+
 ## [1.3.0-beta.5](https://github.com/lpatros/assistant-cli/compare/v1.3.0-beta.4...v1.3.0-beta.5) (2026-08-07)
 
 
