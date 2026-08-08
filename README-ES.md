@@ -4,7 +4,7 @@
 
 [English](README.md) | [Português](README-PTBR.md) | **Español**
 
-  <p>Una envoltura (wrapper) de terminal ligera, modular y localizada para Ollama, OpenCode, Antigravity (agy) y Custom Engines, con soporte para chat interactivo, análisis de repositorios, generación de README, resúmenes de proyectos y más.</p>
+  <p>Una envoltura (wrapper) de terminal ligera, modular y localizada para Antigravity (agy), Codex, Copilot, Ollama, OpenCode y Custom Engines, con soporte para chat interactivo, análisis de repositorios, generación de README, resúmenes de proyectos y más.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
@@ -23,7 +23,7 @@
 
 ## Descripción
 
-El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) potente y ligera escrita en Bash. Permite a los usuarios interactuar con Modelos de Lenguaje Grande (LLMs) locales o en la nube organizados a través de **Ollama**, **OpenCode**, **Antigravity** o **Motores Personalizados** (`custom/engines/`) directamente desde la terminal.
+El **Assistant CLI** (`assistant`) es una interfaz de línea de comandos (CLI) potente y ligera escrita en Bash. Permite a los usuarios interactuar con Modelos de Lenguaje Grande (LLMs) locales o en la nube organizados a través de **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode** o **Motores Personalizados** (`custom/engines/`) directamente desde la terminal.
 
 Todas las opciones de configuración (como el motor activo, los modelos guardados por motor, el idioma y el modo de pensamiento) se guardan localmente y persisten entre sesiones de terminal.
 
@@ -146,7 +146,7 @@ assistant channel stable  # Cambia al canal estable (rama main) y actualiza
 - Ejecuta `assistant "tu consulta aquí"` para enviar rápidamente una sola pregunta al modelo y recibir el resultado.
 
 ### Soporte Modular y Motores Personalizados
-- Soporte nativo para **Ollama**, **OpenCode** y **Antigravity**.
+- Soporte nativo para **Antigravity**, **Codex**, **Copilot**, **Ollama** y **OpenCode**.
 - Crea tus propios **Motores Personalizados** guardando scripts `.sh` en `custom/engines/` (ej: `custom/engines/mi_motor.sh`).
 - El asistente almacena los modelos de preferencia por motor. De esta forma, no perderás las configuraciones del modelo seleccionado al cambiar de motor.
 - Cambia entre motores de forma interactiva con `assistant engine --list` o directamente con `assistant engine <nombre>`.
@@ -256,8 +256,10 @@ assistant "¿Cómo implemento un debouncer en JS vainilla?"
 # Generar commits de git a partir de los cambios preparados
 assistant commit
 
-# Cambiar el motor activo a Antigravity (agy), Ollama u OpenCode
+# Cambiar el motor activo a Antigravity (agy), Codex, Copilot, Ollama u OpenCode
 assistant engine agy
+assistant engine codex
+assistant engine copilot
 assistant engine ollama
 assistant engine opencode
 
