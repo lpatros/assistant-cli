@@ -36,6 +36,7 @@ _cmd_channel() {
       t_channel_status "$current_channel"
       ;;
     "beta"|"dev")
+      _set_channel "beta"
       if [[ "$current_channel" == "beta" ]]; then
         t_channel_already_active "beta"
         _cmd_update
@@ -55,6 +56,7 @@ _cmd_channel() {
       _cmd_update
       ;;
     "stable"|"main")
+      _set_channel "stable"
       if [[ "$current_channel" == "stable" ]]; then
         t_channel_already_active "stable"
         _cmd_update

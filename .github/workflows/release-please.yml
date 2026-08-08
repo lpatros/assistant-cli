@@ -3,7 +3,6 @@ on:
     branches:
       - main
       - dev
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,10 +15,9 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5.0.0
         with:
           token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
-          release-type: simple
+          config-file: ${{ github.ref_name == 'dev' && 'release-please-config-dev.json' || 'release-please-config.json' }}
+          manifest-file: ${{ github.ref_name == 'dev' && '.release-please-manifest-dev.json' || '.release-please-manifest.json' }}
           target-branch: ${{ github.ref_name }}
-          prerelease: ${{ github.ref_name == 'dev' }}
-          prerelease-type: beta

@@ -55,7 +55,7 @@ t_choose_model_prompt() {
 }
 
 t_choose_engine_prompt() {
-  echo "  Elige el motor: "
+  echo "  Ingresa el número para seleccionar: "
 }
 
 t_cancelled() {
@@ -74,8 +74,20 @@ t_invalid_option_simple() {
   _warn "Opción inválida."
 }
 
-t_choose_engine_header() {
-  _header "Elige el motor"
+t_engines_configured_header() {
+  _info "${BOLD}Motores instalados:${RESET}"
+}
+
+t_engines_not_installed_header() {
+  _info "${BOLD}Motores no instalados:${RESET}"
+}
+
+t_no_engines_configured() {
+  echo -e "  ${DIM}(ningún motor instalado)${RESET}"
+}
+
+t_no_engines_uninstalled() {
+  echo -e "  ${DIM}(ninguno)${RESET}"
 }
 
 t_use_model_list_to_choose() {
@@ -271,6 +283,10 @@ t_update_success() {
   _success "¡Asistente actualizado con éxito!"
 }
 
+t_update_already_up_to_date() {
+  _info "Estás en la versión más reciente."
+}
+
 t_update_failed() {
   _error "No se pudo actualizar el asistente."
 }
@@ -293,8 +309,52 @@ t_update_aborted() {
   _warn "Actualización cancelada."
 }
 
+t_update_list_header() {
+  _header "Versiones disponibles:"
+}
+
+t_update_list_tip() {
+  _info "Usa ${CYAN}assistant update @<versión>${RESET} o ${CYAN}assistant update --version <versión>${RESET} para cambiar de versión."
+}
+
+t_update_version_starting() {
+  _header "Actualizando el asistente a la versión v$1..."
+}
+
+t_update_version_success() {
+  _success "¡Asistente cambiado a la versión v$1 con éxito!"
+}
+
+t_update_version_not_found() {
+  _error "Versión '$1' no encontrada. Usa ${CYAN}assistant update --list${RESET} para ver las versiones disponibles."
+}
+
+t_update_already_on_version() {
+  _info "Ya estás en la versión v$1."
+}
+
+t_update_usage() {
+  _error "Uso: assistant update [@<versión>|--version <versión>|--list]"
+}
+
+t_update_returning_to_channel() {
+  _info "Saliendo de la versión específica y regresando al canal ${CYAN}${BOLD}$1${RESET}..."
+}
+
 t_changelog_not_found() {
-  _warn "Archivo CHANGELOG.md no encontrado en: $1"
+  _warn "Archivo $1 no encontrado."
+}
+
+t_changelog_web_link() {
+  _info "Ver release en GitHub: ${CYAN}$1${RESET}"
+}
+
+t_changelog_opening_web() {
+  _info "Abriendo registro de cambios en el navegador: ${CYAN}$1${RESET}"
+}
+
+t_changelog_usage() {
+  _error "Uso: assistant changelog [--web|-w|--terminal|-t]"
 }
 
 t_unknown_command() {
@@ -341,6 +401,51 @@ t_create_skill_aborted() {
   _warn "Operación abortada. La habilidad no fue creada."
 }
 
+# Custom commands
+t_custom_engines_status_header() {
+  _header "Motores Personalizados:"
+}
+
+t_no_custom_engines_found() {
+  echo -e "  ${DIM}(ningún motor personalizado encontrado)${RESET}"
+}
+
+t_custom_skills_status_header() {
+  _header "Habilidades Personalizadas:"
+}
+
+t_no_custom_skills_found() {
+  echo -e "  ${DIM}(ninguna habilidad personalizada encontrada)${RESET}"
+}
+
+t_custom_locales_status_header() {
+  _header "Idiomas Personalizados:"
+}
+
+t_no_custom_locales_found() {
+  echo -e "  ${DIM}(ningún idioma personalizado encontrado)${RESET}"
+}
+
+t_custom_status_header() {
+  _header "Estado de Personalizaciones:"
+}
+
+t_custom_usage() {
+  _error "Uso: assistant custom [engines|skills|locales|status] [status]"
+}
+
+t_custom_engines_usage() {
+  _error "Uso: assistant custom engines [status]"
+}
+
+t_custom_skills_usage() {
+  _error "Uso: assistant custom skills [status]"
+}
+
+t_custom_locales_usage() {
+  _error "Uso: assistant custom locales [status]"
+}
+
 # Channel commands
 t_channel_status() {
   _info "Canal de lanzamiento actual: ${CYAN}${BOLD}$1${RESET}"
@@ -374,8 +479,10 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interactivo con el modelo actual
   ${GREEN}assistant${RESET} \"<mensaje>\"                         Enviar un mensaje directo
   ${GREEN}assistant status${RESET}                              Mostrar motor, modelos, modo pensamiento e idioma
-  ${GREEN}assistant channel${RESET} [<stable|beta|status>]       Gestionar el canal de lanzamiento (estable/beta)
-  ${GREEN}assistant update${RESET}                              Actualizar el asistente a la última versión
+  ${GREEN}assistant custom${RESET} [engines|skills|locales|status] Mostrar componentes personalizados identificados
+  ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Gestionar el canal de lanzamiento (estable/beta)
+  ${GREEN}assistant changelog${RESET} [--terminal|-t]           Muestra el registro de cambios en el navegador (o terminal con -t)
+  ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Actualizar el asistente a la última versión o a una específica
   ${GREEN}assistant --version${RESET}                           Mostrar la versión actual del asistente
   ${GREEN}assistant commit${RESET}                              Analizar repositorio git y sugerir commits
   ${GREEN}assistant resume${RESET} [rutas...]                   Generar resúmenes de proyectos en markdown
@@ -402,6 +509,8 @@ ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
 ${BOLD}Ejemplos:${RESET}
   assistant \"Explica qué es un closure in JS\"
   assistant commit
+  assistant custom status
+  assistant custom engines status
   assistant channel beta
   assistant engine agy
   assistant engine opencode

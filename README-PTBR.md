@@ -46,8 +46,9 @@ curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.
 
 ### Windows
 
-Para usuários do **Windows**, você pode instalar utilizando o PowerShell. Abra o seu PowerShell e execute:
+#### PowerShell
 
+Para usuários do **Windows** utilizando o PowerShell, você pode instalar executando:
 
 > [!IMPORTANT] 
 > Certifique-se de que a política de execução de scripts esteja ativada antes de executar o instalador. Você pode ativá-la rodando:
@@ -94,11 +95,24 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
    - Digite `bash --version` no novo terminal. Se a versão do Bash for exibida com sucesso, a configuração foi concluída!
 </details>
 
-**No Windows, o instalador interativo irá:**
+**No Windows via PowerShell, o instalador interativo irá:**
 1. Clonar o repositório para `%LOCALAPPDATA%\assistant-cli` (ou outro diretório de sua escolha).
 2. Verificar se o sistema possui o `bash` instalado (via Git Bash ou WSL), que é necessário para rodar os scripts `.sh`.
 3. Adicionar uma função wrapper ao seu perfil do PowerShell (`$PROFILE`) que chamará o `bash` silenciosamente. **Isso significa que você não precisa abrir o Git Bash para usar o assistente; ele funcionará perfeitamente direto no seu PowerShell!**
 4. Fornecer instruções de como recarregar o seu terminal.
+
+#### Bash (Git Bash / WSL)
+
+Se você utiliza o **Bash** como seu terminal no Windows, pode instalar o Assistant CLI diretamente usando o `curl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
+
+**No Bash, o instalador interativo irá:**
+1. Clonar o repositório para a pasta de instalação (`%LOCALAPPDATA%\assistant-cli` ou `~/.config/assistant-cli`).
+2. Adicionar automaticamente a configuração ao seu perfil do shell (`~/.bashrc`, `~/.zshrc` ou `config.fish`).
+3. Fornecer instruções de como recarregar o seu terminal para começar a usar o assistente.
 
 ## Atualização e Versão
 
@@ -108,10 +122,13 @@ Você pode verificar a versão atual do assistente com:
 assistant --version
 ```
 
-Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente executando:
+Você pode atualizar facilmente o seu Assistant CLI para a versão mais recente ou alternar para uma versão específica:
 
 ```bash
-assistant update
+assistant update                     # Atualiza para a versão mais recente do canal ativo
+assistant update --list              # Lista as versões disponíveis (ou -l)
+assistant update @1.2.0              # Atualiza/alterna para a versão 1.2.0
+assistant update --version 1.2.0     # Forma alternativa para definir a versão
 ```
 
 Você também pode alternar entre canais de release (estável e beta):
@@ -206,7 +223,7 @@ assistant lang --list
 ```
 
 #### Guia Completo de Customização e Templates
-Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/README-PTBR.md)](docs/README-PTBR.md)**.
+Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/CUSTOMIZATION-PTBR.md)](docs/CUSTOMIZATION-PTBR.md)**.
 
 Você também pode utilizar os modelos de referência disponíveis em [`docs/templates/`](docs/templates/)
 ## Uso
@@ -259,7 +276,7 @@ assistant/
 ├── data/                    # Armazena configurações e metadados do sistema
 ├── docs/                    # Guias de customização e templates de extensão
 │   ├── templates/           # Modelos de referência (engine, locales, skills)
-│   └── README.md            # Guia de customização
+│   └── CUSTOMIZATION.md     # Guia de customização
 ├── lib/                     # Motores (lib/engines/), rotas e utilitários do sistema
 ├── locales/                 # Traduções usadas pelo CLI
 ├── skills/                  # Habilidades do Assistant

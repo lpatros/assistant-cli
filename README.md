@@ -46,7 +46,9 @@ curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.
 
 ### Windows
 
-For **Windows** users, you can install it using PowerShell. Open your PowerShell and run:
+#### PowerShell
+
+For **Windows** users using PowerShell, you can install it by running:
 
 > [!IMPORTANT]
 > Make sure your script execution policy is enabled before running the installer. You can set it by running:
@@ -94,11 +96,24 @@ irm https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.ps1 | i
 </details>
 
 
-**On Windows, the interactive installer will:**
+**On Windows via PowerShell, the interactive installer will:**
 1. Clone the repository to `%LOCALAPPDATA%\assistant-cli` (or a custom directory of your choice).
 2. Verify if `bash` is available in your system (e.g., Git Bash or WSL) since the core project uses `.sh` scripts.
 3. Add a wrapper function directly into your PowerShell profile (`$PROFILE`) that transparently calls `bash`. **This means you don't need to open Git Bash manually; the assistant will work seamlessly right inside your standard PowerShell!**
 4. Guide you on how to reload your terminal.
+
+#### Bash (Git Bash / WSL)
+
+If you use **Bash** as your terminal on Windows, you can install Assistant CLI directly using `curl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lpatros/assistant-cli/main/install.sh | bash
+```
+
+**On Bash, the interactive installer will:**
+1. Clone the repository to the installation directory (`%LOCALAPPDATA%\assistant-cli` or `~/.config/assistant-cli`).
+2. Automatically add the configuration to your shell profile (`~/.bashrc`, `~/.zshrc`, or `config.fish`).
+3. Guide you on how to reload your terminal to start using the assistant.
 
 ## Update & Version
 
@@ -108,10 +123,13 @@ You can check the current version of the assistant with:
 assistant --version
 ```
 
-You can easily update your Assistant CLI to the latest version by running:
+You can easily update your Assistant CLI to the latest version or switch to a specific version:
 
 ```bash
-assistant update
+assistant update                     # Update to the latest version on current channel
+assistant update --list              # List available versions (or -l)
+assistant update @1.2.0              # Update/switch to version 1.2.0
+assistant update --version 1.2.0     # Alternative syntax to set target version
 ```
 
 You can also switch release channels (between stable and beta):
@@ -200,7 +218,7 @@ assistant lang --list
 
 #### Complete Customization Guide & Templates
 
-For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/README.md)](docs/README.md)**.
+For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/CUSTOMIZATION.md)](docs/CUSTOMIZATION.md)**.
 
 Starter templates are also available inside the [`docs/templates/`](docs/templates/)
 
@@ -256,7 +274,7 @@ assistant/
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── docs/                    # Customization guides and extension templates
 │   ├── templates/           # Starter templates (engine, locales, skills)
-│   └── README.md            # Customization guide
+│   └── CUSTOMIZATION.md     # Customization guide
 ├── lib/                     # Modular engines (lib/engines/), core routes, utilities
 ├── locales/                 # Text translations
 ├── skills/                  # Built-in skills

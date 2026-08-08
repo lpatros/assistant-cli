@@ -114,12 +114,19 @@ if ([string]::IsNullOrWhiteSpace($ProfileChoice) -or $ProfileChoice -eq "1") {
 
 # Assistant CLI
 function assistant {
-    bash -c "source '{{DIR}}/init.sh'; assistant `"`$@`"" -- $args
+    if ($args.Count -eq 0) {
+        bash -c "source '{{DIR}}/init.sh'; assistant"
+    } else {
+        $escapedArgs = ($args | ForEach-Object { "'" + ($_ -replace "'", "'\''") + "'" }) -join " "
+        bash -c "source '{{DIR}}/init.sh'; assistant $escapedArgs"
+    }
 }
 '@ -replace '\{\{DIR\}\}', $InstallDirPosix
 
     if ($ProfileContent -match "# Assistant CLI") {
-        Write-Color "`n  Already configured in $PROFILE" -Color Cyan
+        $UpdatedContent = [regex]::Replace($ProfileContent, "(?s)# Assistant CLI\s+function assistant\s*\{.*?\n\}", $WrapperCode.Trim())
+        Set-Content -Path $PROFILE -Value $UpdatedContent -NoNewline
+        Write-Color "`n  Updated configuration in $PROFILE" -Color Green
     } else {
         Add-Content -Path $PROFILE -Value $WrapperCode
         Write-Color "`n  Added to $PROFILE" -Color Green
@@ -130,7 +137,12 @@ function assistant {
     
     $ManualConfig = @'
     function assistant {
-        bash -c "source '{{DIR}}/init.sh'; assistant `"`$@`"" -- $args
+        if ($args.Count -eq 0) {
+            bash -c "source '{{DIR}}/init.sh'; assistant"
+        } else {
+            $escapedArgs = ($args | ForEach-Object { "'" + ($_ -replace "'", "'\''") + "'" }) -join " "
+            bash -c "source '{{DIR}}/init.sh'; assistant $escapedArgs"
+        }
     }
 '@ -replace '\{\{DIR\}\}', $InstallDirPosix
 

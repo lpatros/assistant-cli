@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "versioning": "prerelease",
+  "prerelease": true,
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "versioning": "prerelease",
+      "prerelease": true,
+      "prerelease-type": "beta",
+      "changelog-path": "CHANGELOG-beta.md"
+    }
+  }
+}

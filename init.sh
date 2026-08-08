@@ -27,6 +27,7 @@ source "$ASSISTANT_LIB_DIR/help.sh"
 source "$ASSISTANT_LIB_DIR/update.sh"
 source "$ASSISTANT_LIB_DIR/version.sh"
 source "$ASSISTANT_LIB_DIR/channel.sh"
+source "$ASSISTANT_LIB_DIR/changelog.sh"
 source "$ASSISTANT_LIB_DIR/custom.sh"
 
 _load_locale
@@ -118,15 +119,24 @@ function assistant() {
       shift
       _cmd_lang "$@"
       ;;
+    "custom")
+      shift
+      _cmd_custom "$@"
+      ;;
     "status")
       _cmd_status
       ;;
     "update")
-      _cmd_update
+      shift
+      _cmd_update "$@"
       ;;
     "channel")
       shift
       _cmd_channel "$@"
+      ;;
+    "changelog")
+      shift
+      _cmd_changelog "$@"
       ;;
     "version"|"--version"|"-v")
       _cmd_version

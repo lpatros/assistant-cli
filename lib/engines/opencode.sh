@@ -23,7 +23,15 @@ _engine_opencode_run_prompt() {
   args+=("--" "$prompt")
 
   if [[ -n "$output_file" ]]; then
-    opencode "${args[@]}" > "$output_file" 2>/dev/null
+    local err_file status
+    err_file=$(mktemp 2>/dev/null || echo "/tmp/assistant_opencode_err_$$")
+    opencode "${args[@]}" > "$output_file" 2>"$err_file"
+    status=$?
+    if [[ $status -ne 0 && -f "$err_file" ]]; then
+      cat "$err_file" >&2
+    fi
+    rm -f "$err_file" 2>/dev/null
+    return $status
   else
     opencode "${args[@]}"
   fi

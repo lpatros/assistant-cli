@@ -55,7 +55,7 @@ t_choose_model_prompt() {
 }
 
 t_choose_engine_prompt() {
-  echo "  Choose the engine: "
+  echo "  Enter number to select: "
 }
 
 t_cancelled() {
@@ -74,8 +74,20 @@ t_invalid_option_simple() {
   _warn "Invalid option."
 }
 
-t_choose_engine_header() {
-  _header "Choose the engine"
+t_engines_configured_header() {
+  _info "${BOLD}Installed engines:${RESET}"
+}
+
+t_engines_not_installed_header() {
+  _info "${BOLD}Not installed engines:${RESET}"
+}
+
+t_no_engines_configured() {
+  echo -e "  ${DIM}(no installed engines)${RESET}"
+}
+
+t_no_engines_uninstalled() {
+  echo -e "  ${DIM}(none)${RESET}"
 }
 
 t_use_model_list_to_choose() {
@@ -271,6 +283,10 @@ t_update_success() {
   _success "Assistant updated successfully!"
 }
 
+t_update_already_up_to_date() {
+  _info "You are on the latest version."
+}
+
 t_update_failed() {
   _error "Failed to update the assistant."
 }
@@ -293,8 +309,52 @@ t_update_aborted() {
   _warn "Update cancelled."
 }
 
+t_update_list_header() {
+  _header "Available versions:"
+}
+
+t_update_list_tip() {
+  _info "Use ${CYAN}assistant update @<version>${RESET} or ${CYAN}assistant update --version <version>${RESET} to change version."
+}
+
+t_update_version_starting() {
+  _header "Updating assistant to version v$1..."
+}
+
+t_update_version_success() {
+  _success "Assistant successfully changed to version v$1!"
+}
+
+t_update_version_not_found() {
+  _error "Version '$1' not found. Use ${CYAN}assistant update --list${RESET} to view available versions."
+}
+
+t_update_already_on_version() {
+  _info "You are already on version v$1."
+}
+
+t_update_usage() {
+  _error "Usage: assistant update [@<version>|--version <version>|--list]"
+}
+
+t_update_returning_to_channel() {
+  _info "Leaving specific version and returning to ${CYAN}${BOLD}$1${RESET} channel..."
+}
+
 t_changelog_not_found() {
-  _warn "CHANGELOG.md file not found at: $1"
+  _warn "$1 file not found."
+}
+
+t_changelog_web_link() {
+  _info "View release on GitHub: ${CYAN}$1${RESET}"
+}
+
+t_changelog_opening_web() {
+  _info "Opening changelog in browser: ${CYAN}$1${RESET}"
+}
+
+t_changelog_usage() {
+  _error "Usage: assistant changelog [--web|-w|--terminal|-t]"
 }
 
 t_unknown_command() {
@@ -341,6 +401,51 @@ t_create_skill_aborted() {
   _warn "Operation aborted. The skill was not created."
 }
 
+# Custom commands
+t_custom_engines_status_header() {
+  _header "Custom Engines:"
+}
+
+t_no_custom_engines_found() {
+  echo -e "  ${DIM}(no custom engines found)${RESET}"
+}
+
+t_custom_skills_status_header() {
+  _header "Custom Skills:"
+}
+
+t_no_custom_skills_found() {
+  echo -e "  ${DIM}(no custom skills found)${RESET}"
+}
+
+t_custom_locales_status_header() {
+  _header "Custom Locales:"
+}
+
+t_no_custom_locales_found() {
+  echo -e "  ${DIM}(no custom locales found)${RESET}"
+}
+
+t_custom_status_header() {
+  _header "Custom Component Status:"
+}
+
+t_custom_usage() {
+  _error "Usage: assistant custom [engines|skills|locales|status] [status]"
+}
+
+t_custom_engines_usage() {
+  _error "Usage: assistant custom engines [status]"
+}
+
+t_custom_skills_usage() {
+  _error "Usage: assistant custom skills [status]"
+}
+
+t_custom_locales_usage() {
+  _error "Usage: assistant custom locales [status]"
+}
+
 # Channel commands
 t_channel_status() {
   _info "Current release channel: ${CYAN}${BOLD}$1${RESET}"
@@ -374,8 +479,10 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant${RESET}                                     Interactive chat with current model
   ${GREEN}assistant${RESET} \"<message>\"                         Send a direct message
   ${GREEN}assistant status${RESET}                              Show engine, models, think mode, and language
-  ${GREEN}assistant channel${RESET} [<stable|beta|status>]       Manage release channel (stable/beta)
-  ${GREEN}assistant update${RESET}                              Update the assistant to the latest version
+  ${GREEN}assistant custom${RESET} [engines|skills|locales|status] Show identified custom components
+  ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Manage release channel (stable/beta)
+  ${GREEN}assistant changelog${RESET} [--terminal|-t]           View changelog in browser (or terminal with -t)
+  ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Update assistant to latest or specific version
   ${GREEN}assistant --version${RESET}                           Show current assistant version
   ${GREEN}assistant commit${RESET}                              Analyze git repo and suggest commits
   ${GREEN}assistant resume${RESET} [paths...]                   Generate project resumes in markdown
@@ -402,6 +509,8 @@ ${BOLD}Thinking flags — Ollama only (per session or persistent):${RESET}
 ${BOLD}Examples:${RESET}
   assistant \"Explain what a closure is in JS\"
   assistant commit
+  assistant custom status
+  assistant custom engines status
   assistant channel beta
   assistant engine agy
   assistant engine opencode

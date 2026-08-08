@@ -18,8 +18,8 @@ _get_model_for_engine() {
 
   local var_name
   var_name=$(_get_model_var_name "$engine")
-  local val
-  eval "val=\"\${${var_name}:-}\""
+  local val=""
+  _get_indirect_var "$var_name" val
 
   if [[ -z "$val" ]]; then
     local func_name="_engine_$(_sanitize_engine_name "$engine")_default_model"
@@ -46,6 +46,7 @@ _load_config() {
   ASSISTANT_ENGINE="$ASSISTANT_DEFAULT_ENGINE"
   ASSISTANT_MODEL_OLLAMA_THINK_FLAG=""
   ASSISTANT_LANG="$ASSISTANT_DEFAULT_LANG"
+  ASSISTANT_CHANNEL="${ASSISTANT_CHANNEL:-}"
   ASSISTANT_MODEL=""
 
   if [[ -f "$ASSISTANT_CONFIG_FILE" ]]; then
@@ -54,9 +55,12 @@ _load_config() {
 
   # Legacy fallback for old config format using ASSISTANT_MODEL
   if [[ -n "${ASSISTANT_MODEL:-}" ]]; then
-    local legacy_var
+    local legacy_var legacy_val=""
     legacy_var=$(_get_model_var_name "$ASSISTANT_ENGINE")
-    eval "if [[ -z \"\${${legacy_var}:-}\" ]]; then ${legacy_var}=\"\$ASSISTANT_MODEL\"; fi"
+    _get_indirect_var "$legacy_var" legacy_val
+    if [[ -z "$legacy_val" ]]; then
+      printf -v "$legacy_var" "%s" "$ASSISTANT_MODEL"
+    fi
   fi
 }
 
@@ -66,6 +70,7 @@ _write_config() {
     echo "ASSISTANT_ENGINE=\"$ASSISTANT_ENGINE\""
     echo "ASSISTANT_MODEL_OLLAMA_THINK_FLAG=\"$ASSISTANT_MODEL_OLLAMA_THINK_FLAG\""
     echo "ASSISTANT_LANG=\"$ASSISTANT_LANG\""
+    echo "ASSISTANT_CHANNEL=\"$ASSISTANT_CHANNEL\""
 
     local vars=()
     local eng var_name
@@ -86,10 +91,10 @@ _write_config() {
     local unique_vars
     unique_vars=$(printf "%s\n" "${vars[@]}" | sort -u)
 
-    local var val
+    local var val=""
     while IFS= read -r var || [[ -n "$var" ]]; do
       [[ -z "$var" ]] && continue
-      eval "val=\"\${${var}:-}\""
+      _get_indirect_var "$var" val
       echo "${var}=\"${val}\""
     done <<< "$unique_vars"
   } > "$ASSISTANT_CONFIG_FILE"
@@ -101,7 +106,7 @@ _set_model() {
   local engine="${2:-$ASSISTANT_ENGINE}"
   local var_name
   var_name=$(_get_model_var_name "$engine")
-  eval "${var_name}=\"\$new_model\""
+  printf -v "$var_name" "%s" "$new_model"
   _write_config
 }
 
@@ -121,4 +126,29 @@ _set_lang() {
   _load_config
   ASSISTANT_LANG="$1"
   _write_config
+}
+
+_set_channel() {
+  _load_config
+  ASSISTANT_CHANNEL="$1"
+  _write_config
+}
+
+_get_configured_channel() {
+  _load_config
+  if [[ -n "${ASSISTANT_CHANNEL:-}" ]]; then
+    echo "$ASSISTANT_CHANNEL"
+    return 0
+  fi
+
+  local current_version
+  current_version="$(_get_assistant_version 2>/dev/null || true)"
+  case "$current_version" in
+    *-beta*|*-alpha*|*-rc*|*-dev*)
+      echo "beta"
+      ;;
+    *)
+      echo "stable"
+      ;;
+  esac
 }

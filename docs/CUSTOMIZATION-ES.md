@@ -2,7 +2,7 @@
 
 # Guía de Personalización y Extensiones
 
-[English](README.md) | [Português](README-PTBR.md) | **Español**
+[English](CUSTOMIZATION.md) | [Português](CUSTOMIZATION-PTBR.md) | **Español**
 
 <p>Aprende a extender el <b>Assistant CLI</b> configurando los motores de IA que utilizas, idiomas personalizados, habilidades (skills) y comandos dinámicos.</p>
 
