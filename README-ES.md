@@ -279,7 +279,7 @@ assistant/
 ├── data/                    # Almacenamiento persistente de la configuración (motor, modelo, idioma)
 ├── docs/                    # Guía de personalización y plantillas de extensión
 │   ├── templates/           # Plantillas de referencia (engine, locales, skills)
-│   └── README.md            # Guía de personalización
+│   └── CUSTOMIZATION.md     # Guía de personalización
 ├── lib/                     # Motores (lib/engines/), rutas y utilidades del sistema
 ├── locales/                 # Traducciones de texto
 ├── skills/                  # Herramientas del asistente

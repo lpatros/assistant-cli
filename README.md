@@ -274,7 +274,7 @@ assistant/
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── docs/                    # Customization guides and extension templates
 │   ├── templates/           # Starter templates (engine, locales, skills)
-│   └── README.md            # Customization guide
+│   └── CUSTOMIZATION.md     # Customization guide
 ├── lib/                     # Modular engines (lib/engines/), core routes, utilities
 ├── locales/                 # Text translations
 ├── skills/                  # Built-in skills

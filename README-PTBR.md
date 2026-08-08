@@ -276,7 +276,7 @@ assistant/
 ├── data/                    # Armazena configurações e metadados do sistema
 ├── docs/                    # Guias de customização e templates de extensão
 │   ├── templates/           # Modelos de referência (engine, locales, skills)
-│   └── README.md            # Guia de customização
+│   └── CUSTOMIZATION.md     # Guia de customização
 ├── lib/                     # Motores (lib/engines/), rotas e utilitários do sistema
 ├── locales/                 # Traduções usadas pelo CLI
 ├── skills/                  # Habilidades do Assistant
