@@ -55,7 +55,7 @@ Para que `assistant-cli` reconozca y gestione tu motor, tu archivo `.sh` debe im
 | :--- | :--- | :---: |
 | `_engine_<nombre>_binary()` | Devuelve el nombre del ejecutable de la CLI en el sistema. | **Sí** |
 | `_engine_<nombre>_is_installed()` | Devuelve el código de estado `0` (éxito) si la herramienta está instalada. | **Sí** |
-| `_engine_<nombre>_list_models()` | Imprime la lista de modelos soportados (uno por línea). | **Sí** |
+| `_engine_<nombre>_list_models()` | Imprime la lista de modelos soportados (uno por línea). | *No* |
 | `_engine_<nombre>_run_prompt()` | Ejecuta un prompt en lote (una sola respuesta). | **Sí** |
 | `_engine_<nombre>_run_interactive()` | Inicia una sesión de chat interactiva con el modelo. | **Sí** |
 | `_engine_<nombre>_default_model()` | Devuelve el modelo por defecto del motor (opcional). | *No* |

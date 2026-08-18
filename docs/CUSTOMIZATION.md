@@ -55,7 +55,7 @@ For `assistant-cli` to recognize and manage your engine, your `.sh` file must im
 | :--- | :--- | :---: |
 | `_engine_<name>_binary()` | Returns the CLI executable name in the system. | **Yes** |
 | `_engine_<name>_is_installed()` | Returns status code `0` (success) if the tool is installed. | **Yes** |
-| `_engine_<name>_list_models()` | Prints the list of supported models (one per line). | **Yes** |
+| `_engine_<name>_list_models()` | Prints the list of supported models (one per line). | *No* |
 | `_engine_<name>_run_prompt()` | Executes a batch prompt (single response). | **Yes** |
 | `_engine_<name>_run_interactive()` | Starts an interactive chat session with the model. | **Yes** |
 | `_engine_<name>_default_model()` | Returns the default model for the engine (optional). | *No* |

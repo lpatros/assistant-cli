@@ -29,15 +29,15 @@ _engine_ollama_run_prompt() {
   fi
 
   if [[ -n "$output_file" ]]; then
-    local err_file status
+    local err_file exit_code
     err_file=$(mktemp 2>/dev/null || echo "/tmp/assistant_ollama_err_$$")
     echo "$prompt" | ollama run "$model" "${think_args[@]}" --nowordwrap > "$output_file" 2>"$err_file"
-    status=$?
-    if [[ $status -ne 0 && -f "$err_file" ]]; then
+    exit_code=$?
+    if [[ $exit_code -ne 0 && -f "$err_file" ]]; then
       cat "$err_file" >&2
     fi
     rm -f "$err_file" 2>/dev/null
-    return $status
+    return $exit_code
   else
     echo "$prompt" | ollama run "$model" "${think_args[@]}" --nowordwrap
   fi

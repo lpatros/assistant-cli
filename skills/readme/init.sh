@@ -69,7 +69,7 @@ _cmd_readme() {
   current_engine=$(_get_engine)
   current_model_display=$(_model_display "$(_get_model)")
 
-  t_readme_analyzing "$current_model_display" "$current_engine"
+  t_readme_analyzing "$current_engine" "$current_model_display"
 
   local md_file md_content
   md_file=$(_get_skill_md_path "readme")
@@ -81,6 +81,7 @@ _cmd_readme() {
   local prompt_instructions
   prompt_instructions=$(t_readme_prompt_instructions "$lang")
 
+  _parse_args_for_llm "${llm_args[@]}"
   local prompt
   prompt="$(
     [[ -n "$md_content" ]] && echo "=== Guidelines ===
@@ -91,11 +92,14 @@ $md_content
 $project_context
 
 $prompt_instructions"
+    if [[ ${#LLM_CLEAN_ARGS[@]} -gt 0 ]]; then
+      echo "
+=== Additional context from user ===
+${LLM_CLEAN_ARGS[*]}"
+    fi
   )"
 
   local output_file="${name}.md"
-
-  _parse_args_for_llm "${llm_args[@]}"
   _llm_run_prompt "$prompt" "$output_file" "${LLM_THINK_FLAGS[@]}"
   
   local run_status=$?

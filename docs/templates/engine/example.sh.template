@@ -9,7 +9,7 @@ _engine_kimi_is_installed() {
 }
 
 _engine_kimi_list_models() {
-  echo "k3"
+  kimi models 2>/dev/null | grep -v '^$' | grep '/'
 }
 
 _engine_kimi_run_prompt() {

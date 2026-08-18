@@ -52,16 +52,6 @@ _load_config() {
   if [[ -f "$ASSISTANT_CONFIG_FILE" ]]; then
     source "$ASSISTANT_CONFIG_FILE"
   fi
-
-  # Legacy fallback for old config format using ASSISTANT_MODEL
-  if [[ -n "${ASSISTANT_MODEL:-}" ]]; then
-    local legacy_var legacy_val=""
-    legacy_var=$(_get_model_var_name "$ASSISTANT_ENGINE")
-    _get_indirect_var "$legacy_var" legacy_val
-    if [[ -z "$legacy_val" ]]; then
-      printf -v "$legacy_var" "%s" "$ASSISTANT_MODEL"
-    fi
-  fi
 }
 
 _write_config() {
@@ -106,7 +96,7 @@ _set_model() {
   local engine="${2:-$ASSISTANT_ENGINE}"
   local var_name
   var_name=$(_get_model_var_name "$engine")
-  printf -v "$var_name" "%s" "$new_model"
+  eval "${var_name}=\"\${new_model}\""
   _write_config
 }
 

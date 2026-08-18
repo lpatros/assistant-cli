@@ -38,6 +38,11 @@ t_no_models_found() {
   _error "Nenhum modelo encontrado para a engine '$1'. O CLI está instalado e configurado?"
 }
 
+t_engine_no_model_listing() {
+  _info "A engine '$1' não suporta listagem de modelos."
+  echo -e "  Use ${BOLD}assistant model set <modelo>${RESET} para definir o modelo manualmente."
+}
+
 t_menu_switch_engine() {
   echo "[ Trocar engine ]"
 }
@@ -91,7 +96,7 @@ t_no_engines_uninstalled() {
 }
 
 t_use_model_list_to_choose() {
-  _info "Use ${CYAN}assistant model --list${RESET} para escolher um modelo dessa engine."
+  _info "Use ${CYAN}assistant model --list${RESET} ou ${CYAN}assistant model set <modelo>${RESET} para escolher um modelo."
 }
 
 t_current_engine_label() {
@@ -99,7 +104,11 @@ t_current_engine_label() {
 }
 
 t_model_usage() {
-  _error "Uso: assistant model --list|status"
+  _error "Uso: assistant model --list|set <modelo>|status"
+}
+
+t_model_set_usage() {
+  _error "Uso: assistant model set <modelo>"
 }
 
 # Think commands
@@ -473,7 +482,7 @@ t_channel_usage() {
 
 t_help_output() {
   echo -e "
-${BOLD}${BLUE}assistant${RESET} — CLI wrapper para LLMs e engines modulares (Ollama, OpenCode, Antigravity (AGY) e custom)
+${BOLD}${BLUE}assistant${RESET} — CLI wrapper para LLMs e engines modulares
 
 ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interativo com o modelo atual
@@ -489,15 +498,13 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant readme${RESET} --lang <code> --name <nome>  Gera o README do projeto
   ${GREEN}assistant create skill${RESET} <nome> <caminho.md>    Cria uma nova skill customizada
   ${GREEN}assistant <skill-customizada>${RESET} [argumentos]    Executa uma skill customizada
-  ${GREEN}assistant model --list${RESET}                        Lista modelos e permite trocar
-  ${GREEN}assistant model status${RESET}                        Mostra modelo da engine atual e modelos salvos
+  ${GREEN}assistant model${RESET} [--list|set <modelo>|status]  Gerencia os modelos da engine ativa
   ${GREEN}assistant engine${RESET} [<engine>|--list|status]     Troca a engine ativa
   ${GREEN}assistant engine status${RESET}                       Mostra engine atual e modelo ativo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Gerencia o think mode (ollama)
   ${GREEN}assistant lang${RESET} [<idioma>|--list|status]       Gerencia o idioma do assistente
 
 ${BOLD}Notas:${RESET}
-  - Engines nativas: ollama, opencode, agy.
   - Crie engines customizadas em custom/engines/<nome>.sh.
   - Modelos são salvos por engine; trocar a engine não perde os modelos anteriores.
 

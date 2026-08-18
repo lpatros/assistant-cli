@@ -4,7 +4,7 @@
 
 **English** | [Português](README-PTBR.md) | [Español](README-ES.md)
 
-  <p>A lightweight, modular, and localized shell wrapper for Ollama, OpenCode, Antigravity (agy), and Custom Engines, supporting interactive chat, repository analysis, README generation, project summaries, and more.</p>
+  <p>A lightweight, modular, and localized shell wrapper for Antigravity (agy), Codex, Copilot, Ollama, OpenCode, and Custom Engines, supporting interactive chat, repository analysis, README generation, project summaries, and more.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
@@ -23,7 +23,7 @@
 
 ## Description
 
-The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Bash. It allows users to interact with local or cloud Large Language Models (LLMs) orchestrated via **Ollama**, **OpenCode**, **Antigravity**, or **Custom Engines** (`custom/engines/`) directly from the terminal.
+The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Bash. It allows users to interact with local or cloud Large Language Models (LLMs) orchestrated via **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode**, or **Custom Engines** (`custom/engines/`) directly from the terminal.
 
 All configuration choices (such as active engine, saved models per engine, language, and think mode) are saved locally and persist across terminal sessions.
 
@@ -147,7 +147,7 @@ assistant channel stable  # Switch to stable channel (main branch) and update
 - Run `assistant "your prompt here"` to quickly send a single query to the model and receive the output.
 
 ### Modular & Custom Engine Support
-- Built-in support for **Ollama**, **OpenCode**, and **Antigravity**.
+- Built-in support for **Antigravity**, **Codex**, **Copilot**, **Ollama**, and **OpenCode**.
 - Create your own **Custom Engines** by saving `.sh` scripts in `custom/engines/` (e.g., `custom/engines/my_engine.sh`).
 - The assistant stores preferred models per engine, meaning you won't lose your selected model configurations when switching between engines.
 - Switch between engines interactively with `assistant engine --list` or directly using `assistant engine <name>`.
@@ -251,8 +251,10 @@ assistant "How do I implement a debouncer in vanilla JS?"
 # Generate git commits from staged changes
 assistant commit
 
-# Switch active engine to Antigravity (agy), Ollama, or OpenCode
+# Switch active engine to Antigravity (agy), Codex, Copilot, Ollama, or OpenCode
 assistant engine agy
+assistant engine codex
+assistant engine copilot
 assistant engine ollama
 assistant engine opencode
 

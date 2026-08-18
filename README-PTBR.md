@@ -4,7 +4,7 @@
 
 [English](README.md) | **Português** | [Español](README-ES.md)
 
-  <p>Um wrapper de terminal leve, modular e localizado para Ollama, OpenCode, Antigravity (agy) e Custom Engines, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
+  <p>Um wrapper de terminal leve, modular e localizado para Antigravity (agy), Codex, Copilot, Ollama, OpenCode e Custom Engines, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
@@ -23,7 +23,7 @@
 
 ## Descrição
 
-O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais ou em nuvem orquestrados via **Ollama**, **OpenCode**, **Antigravity** ou **Engines Customizadas** (`custom/engines/`) diretamente a partir do terminal.
+O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais ou em nuvem orquestrados via **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode** ou **Engines Customizadas** (`custom/engines/`) diretamente a partir do terminal.
 
 Todas as escolhas de configuração (como engine ativa, modelos salvos por engine, idioma e modo de pensamento) são salvas localmente e persistem entre as sessões do terminal.
 
@@ -146,7 +146,7 @@ assistant channel stable  # Alterna para o canal estável (branch main) e atuali
 - Execute `assistant "sua pergunta aqui"` para enviar uma pergunta rápida e obter a resposta diretamente no terminal.
 
 ### Suporte a Engines Modulares e Customizadas
-- Suporte nativo para **Ollama**, **OpenCode** e **Antigravity**.
+- Suporte nativo para **Antigravity**, **Codex**, **Copilot**, **Ollama** e **OpenCode**.
 - Crie suas próprias **Custom Engines** salvando scripts `.sh` em `custom/engines/` (ex: `custom/engines/minha_engine.sh`).
 - O assistente salva os modelos de preferência por engine. Desta forma, você não perde as configurações de modelo ao alternar de engine.
 - Alterne entre as engines de forma interativa com `assistant engine --list` ou diretamente com `assistant engine <nome>`.
@@ -253,8 +253,10 @@ assistant "Como eu implemento um debouncer em JS puro?"
 # Gerar mensagens de commit a partir das alterações no git staging
 assistant commit
 
-# Trocar a engine ativa para Antigravity (agy), Ollama ou Opencode
+# Trocar a engine ativa para Antigravity (agy), Codex, Copilot, Ollama ou OpenCode
 assistant engine agy
+assistant engine codex
+assistant engine copilot
 assistant engine ollama
 assistant engine opencode
 
