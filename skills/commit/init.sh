@@ -29,6 +29,8 @@ _cmd_commit() {
   prompt_staged_label=$(t_commit_no_staged_files)
   prompt_unstaged_label=$(t_commit_no_unstaged_files)
 
+  _parse_args_for_llm "$@"
+
   local prompt
   prompt="$(
     [[ -n "$md_content" ]] && echo "=== Commit Guidelines ===
@@ -45,8 +47,12 @@ ${git_diff_staged:-"$prompt_staged_label"}
 ${git_diff_unstaged:-"$prompt_unstaged_label"}
 
 $prompt_instructions"
+    if [[ ${#LLM_CLEAN_ARGS[@]} -gt 0 ]]; then
+      echo "
+=== Additional context from user ===
+${LLM_CLEAN_ARGS[*]}"
+    fi
   )"
 
-  _parse_args_for_llm "$@"
   _llm_run_prompt "$prompt" "" "${LLM_THINK_FLAGS[@]}"
 }
