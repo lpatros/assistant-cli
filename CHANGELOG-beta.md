@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0-beta.1](https://github.com/lpatros/assistant-cli/compare/v1.4.0-beta...v1.4.0-beta.1) (2026-08-18)
+
+
+### Bug Fixes
+
+* pass user args to LLM before prompt construction ([5fed45d](https://github.com/lpatros/assistant-cli/commit/5fed45d52b51a139eb41ebf2e5602bfecc0d9a72))
+* rename reserved 'status' variable to 'exit_code' ([7564585](https://github.com/lpatros/assistant-cli/commit/756458544f7b195b30881ce114c2c4484c6101ef))
+
 ## [1.4.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.3.0...v1.4.0-beta) (2026-08-08)
 
 
