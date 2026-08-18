@@ -96,7 +96,7 @@ _set_model() {
   local engine="${2:-$ASSISTANT_ENGINE}"
   local var_name
   var_name=$(_get_model_var_name "$engine")
-  printf -v "$var_name" "%s" "$new_model"
+  eval "${var_name}=\"\${new_model}\""
   _write_config
 }
 

@@ -7,7 +7,7 @@ _engine_agy_is_installed() {
 }
 
 _engine_agy_list_models() {
-  agy models 2>/dev/null | grep -v '^$' || grep '/'
+  agy models 2>/dev/null | grep -v '^$' | awk '{print $1}'
 }
 
 _engine_agy_run_prompt() {
