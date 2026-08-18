@@ -23,15 +23,15 @@ _engine_agy_run_prompt() {
   [[ -n "$model" ]] && args+=("--model" "$model")
 
   if [[ -n "$output_file" ]]; then
-    local err_file status
+    local err_file exit_code
     err_file=$(mktemp 2>/dev/null || echo "/tmp/assistant_agy_err_$$")
     echo "$prompt" | "$bin" "${args[@]}" > "$output_file" 2>"$err_file"
-    status=$?
-    if [[ $status -ne 0 && -f "$err_file" ]]; then
+    exit_code=$?
+    if [[ $exit_code -ne 0 && -f "$err_file" ]]; then
       cat "$err_file" >&2
     fi
     rm -f "$err_file" 2>/dev/null
-    return $status
+    return $exit_code
   else
     echo "$prompt" | "$bin" "${args[@]}"
   fi

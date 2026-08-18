@@ -75,9 +75,9 @@ $prompt_instructions"
   local output_file="$output_dir/$project_name.md"
 
   _llm_run_prompt "$prompt" "$output_file" "${think_flags[@]}"
-  local status=$?
+  local exit_code=$?
 
-  if [[ $status -ne 0 ]]; then
+  if [[ $exit_code -ne 0 ]]; then
     t_resume_failed "$project_name"
     return 1
   fi
