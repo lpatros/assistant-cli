@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.4.0](https://github.com/lpatros/assistant-cli/compare/v1.3.0...v1.4.0) (2026-08-18)
+
+
+### Features
+
+* **engine:** add codex and copilot engines ([05db4f8](https://github.com/lpatros/assistant-cli/commit/05db4f82db8d65651b98f5fba17bb3fe46b547d3))
+* **model:** add model set subcommand ([dbff66f](https://github.com/lpatros/assistant-cli/commit/dbff66f004ba007b4191629609412435d2ac85fd))
+
+
+### Bug Fixes
+
+* correct argument order in skill init functions ([36992ab](https://github.com/lpatros/assistant-cli/commit/36992abcc802d0f9e41c24532d9f7a3641c6e046))
+* correct model listing and variable assignment ([25619cb](https://github.com/lpatros/assistant-cli/commit/25619cbf5038c305293f1d32b1d65c002a36c45d))
+* pass user args to LLM before prompt construction ([5fed45d](https://github.com/lpatros/assistant-cli/commit/5fed45d52b51a139eb41ebf2e5602bfecc0d9a72))
+* rename reserved 'status' variable to 'exit_code' ([7564585](https://github.com/lpatros/assistant-cli/commit/756458544f7b195b30881ce114c2c4484c6101ef))
+
 ## [1.3.0](https://github.com/lpatros/assistant-cli/compare/v1.2.0...v1.3.0) (2026-08-08)
 
 
