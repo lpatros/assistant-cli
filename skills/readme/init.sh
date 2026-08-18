@@ -69,7 +69,7 @@ _cmd_readme() {
   current_engine=$(_get_engine)
   current_model_display=$(_model_display "$(_get_model)")
 
-  t_readme_analyzing "$current_model_display" "$current_engine"
+  t_readme_analyzing "$current_engine" "$current_model_display"
 
   local md_file md_content
   md_file=$(_get_skill_md_path "readme")

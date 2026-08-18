@@ -105,7 +105,7 @@ _cmd_resume() {
   local output_dir="./projects-resumes"
   mkdir -p "$output_dir"
 
-  t_resume_starting "$current_model_display" "$current_engine"
+  t_resume_starting "$current_engine" "$current_model_display"
 
   if [[ ${#projects[@]} -gt 1 ]]; then
     t_resume_parallel_info "${#projects[@]}"

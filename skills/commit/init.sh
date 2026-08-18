@@ -22,7 +22,7 @@ _cmd_commit() {
   git_diff_staged=$(git diff --cached 2>&1)
   git_diff_unstaged=$(git diff --stat 2>&1)
 
-  t_commit_analyzing "$current_model_display" "$current_engine"
+  t_commit_analyzing "$current_engine" "$current_model_display"
 
   local prompt_instructions prompt_staged_label prompt_unstaged_label
   prompt_instructions=$(t_commit_prompt_instructions)
