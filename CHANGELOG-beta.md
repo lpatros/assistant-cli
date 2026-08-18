@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0-beta.2](https://github.com/lpatros/assistant-cli/compare/v1.4.0-beta.1...v1.4.0-beta.2) (2026-08-18)
+
+
+### Bug Fixes
+
+* correct argument order in skill init functions ([36992ab](https://github.com/lpatros/assistant-cli/commit/36992abcc802d0f9e41c24532d9f7a3641c6e046))
+* correct model listing and variable assignment ([25619cb](https://github.com/lpatros/assistant-cli/commit/25619cbf5038c305293f1d32b1d65c002a36c45d))
+
 ## [1.4.0-beta.1](https://github.com/lpatros/assistant-cli/compare/v1.4.0-beta...v1.4.0-beta.1) (2026-08-18)
 
 
