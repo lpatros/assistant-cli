@@ -283,6 +283,12 @@ t_version_unknown() {
   echo "desconhecida"
 }
 
+# Update check (automatic)
+t_update_available() {
+  _info "Nova versão disponível: v$1 (atual: v$2)."
+  _info "Execute ${CYAN}assistant update${RESET} para atualizar."
+}
+
 # Update command
 t_update_starting() {
   _header "Atualizando o assistente..."

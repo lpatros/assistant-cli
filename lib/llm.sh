@@ -10,10 +10,13 @@ _llm_run_prompt() {
   func_name="_engine_${clean_eng}_run_prompt"
 
   _ensure_engine_installed "$current_engine" || return 1
+  _update_check_start
 
   if command -v "$func_name" &>/dev/null; then
     "$func_name" "$prompt" "$output_file" "$@"
-    return $?
+    local rc=$?
+    _update_check_notify
+    return $rc
   fi
 
   # Generic fallback execution if engine module function doesn't exist
@@ -31,6 +34,9 @@ _llm_run_prompt() {
   else
     "$binary" "${args[@]}"
   fi
+  local prompt_rc=$?
+  _update_check_notify
+  return $prompt_rc
 }
 
 _llm_run_interactive() {
@@ -42,6 +48,7 @@ _llm_run_interactive() {
   func_name="_engine_${clean_eng}_run_interactive"
 
   _ensure_engine_installed "$current_engine" || return 1
+  _update_check_start
 
   t_engine_display "$current_engine"
   t_model_display "$current_model_display"
@@ -50,7 +57,9 @@ _llm_run_interactive() {
 
   if command -v "$func_name" &>/dev/null; then
     "$func_name" "$current_model"
-    return $?
+    local rc=$?
+    _update_check_notify
+    return $rc
   fi
 
   # Generic fallback execution if engine module function doesn't exist
@@ -70,4 +79,7 @@ _llm_run_interactive() {
   else
     "$binary"
   fi
+  local interactive_rc=$?
+  _update_check_notify
+  return $interactive_rc
 }
