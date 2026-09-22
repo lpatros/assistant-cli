@@ -66,7 +66,9 @@ Generate a complete README in the language specified by `--lang`, following the 
 
 ```
 <div align="center">
-  <h1>Project Name</h1>
+
+# Project Name
+
   <p>Short, clear one-liner description.</p>
   <div>
     {badges}              ← shields.io badges for language, framework, license, etc.
