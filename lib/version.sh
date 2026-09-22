@@ -20,6 +20,7 @@ _get_assistant_version() {
 }
 
 _cmd_version() {
+  _print_banner
   local version
   version="$(_get_assistant_version)"
   t_version "$version"
