@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.4.0...v1.5.0-beta) (2026-09-22)
+
+
+### Features
+
+* **banner:** add ascii banner to cli and installers ([bb4da04](https://github.com/lpatros/assistant-cli/commit/bb4da048df6118b32b0cabcfdebd1b1d0e4c79d2))
+* **update:** notify users of new versions automatically ([8e4502a](https://github.com/lpatros/assistant-cli/commit/8e4502a810249bfbb3c9c381316cc0fb4bd8eff2))
+
 ## [1.4.0-beta.2](https://github.com/lpatros/assistant-cli/compare/v1.4.0-beta.1...v1.4.0-beta.2) (2026-08-18)
 
 

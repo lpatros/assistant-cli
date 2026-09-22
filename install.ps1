@@ -22,10 +22,24 @@ function _is_installed {
     return [bool](Get-Command $cmd -ErrorAction SilentlyContinue)
 }
 
+function Write-Banner {
+    param(
+        [ConsoleColor]$Color = "Cyan"
+    )
+    $Banner = @(
+        '    ___              _      __              __     ________    ____',
+        '   /   |  __________(_)____/ /_____ _____  / /_   / ____/ /   /  _/',
+        '  / /| | / ___/ ___/ / ___/ __/ __ `/ __ \/ __/  / /   / /    / /',
+        ' / ___ |(__  |__  ) (__  ) /_/ /_/ / / / / /_   / /___/ /____/ /',
+        '/_/  |_/____/____/_/____/\__/\__,_/_/ /_/\__/   \____/_____/___/'
+    )
+    foreach ($line in $Banner) {
+        Write-Color $line -Color $Color
+    }
+}
+
 Write-Host ""
-Write-Color "  ┌──────────────────────────────────────┐" -Color Cyan
-Write-Color "  │       @ Assistant CLI Installer      │" -Color Cyan
-Write-Color "  └──────────────────────────────────────┘" -Color Cyan
+Write-Banner -Color Cyan
 Write-Host ""
 
 Write-Color "  Use default installation path (" -NoNewline
@@ -151,9 +165,8 @@ function assistant {
 }
 
 Write-Host ""
-Write-Color "  ┌──────────────────────────────────────┐" -Color Green
-Write-Color "  │    @ Installation complete!          │" -Color Green
-Write-Color "  └──────────────────────────────────────┘" -Color Green
+Write-Banner -Color Green
+Write-Color "  Installation complete!" -Color Green
 Write-Host ""
 
 if ([string]::IsNullOrWhiteSpace($ProfileChoice) -or $ProfileChoice -eq "1") {

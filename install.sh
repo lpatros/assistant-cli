@@ -33,6 +33,19 @@ success() { printf "${GREEN} %s${RESET}\n" "$1"; }
 warn()    { printf "${YELLOW}  %s${RESET}\n" "$1"; }
 error()   { printf "${RED} %s${RESET}\n" "$1"; }
 
+print_banner() {
+  local color="${1:-$CYAN}"
+  printf "${BOLD}${color}"
+  cat <<'ASSISTANT_BANNER'
+    ___              _      __              __     ________    ____
+   /   |  __________(_)____/ /_____ _____  / /_   / ____/ /   /  _/
+  / /| | / ___/ ___/ / ___/ __/ __ `/ __ \/ __/  / /   / /    / /
+ / ___ |(__  |__  ) (__  ) /_/ /_/ / / / / /_   / /___/ /____/ /
+/_/  |_/____/____/_/____/\__/\__,_/_/ /_/\__/   \____/_____/___/
+ASSISTANT_BANNER
+  printf "${RESET}\n"
+}
+
 prompt_read() {
   local var_name="$1"
   if [ -c /dev/tty ]; then
@@ -68,11 +81,8 @@ shell_label() {
 }
 
 echo ""
-printf "${BOLD}${CYAN}"
-echo "  ┌──────────────────────────────────────┐"
-echo "  │       @ Assistant CLI Installer      │"
-echo "  └──────────────────────────────────────┘"
-printf "${RESET}\n"
+print_banner "$CYAN"
+echo ""
 
 echo ""
 printf "  Use default installation path (${BOLD}%s${RESET})? [Y/n]: " "$INSTALL_DIR"
@@ -231,11 +241,8 @@ else
 fi
 
 echo ""
-printf "${BOLD}${GREEN}"
-echo "  ┌──────────────────────────────────────┐"
-echo "  │    @ Installation complete!          │"
-echo "  └──────────────────────────────────────┘"
-printf "${RESET}\n"
+print_banner "$GREEN"
+success "Installation complete!"
 
 if [ "$SHELL_NAME" != "none" ]; then
   RC_FILE=$(get_rc_file "$SHELL_NAME")
