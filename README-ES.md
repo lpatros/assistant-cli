@@ -154,6 +154,7 @@ assistant channel stable  # Cambia al canal estable (rama main) y actualiza
 ### Habilidades Integradas (Habilidades Predeterminadas)
 El asistente viene con varias habilidades integradas para potenciar tu flujo de trabajo:
 - **Asistente de Commits (`assistant commit`)**: Analiza el estado de tu repositorio Git, los diffs en el área de preparación (staged) y las estadísticas de cambios no preparados, y los ejecuta bajo pautas estándar para generar sugerencias de mensajes de commit limpios y legibles.
+- **Asistente de Separación de Ramas (`assistant branch`)**: Analiza el estado, los diffs y el historial de tu repositorio Git para dividir trabajo mezclado en ramas separadas y con un propósito propio (p. ej. `fix/...`, `test/...`, `feature/...`), cada una con commits atómicos, mensajes Conventional Commits y comandos Git seguros para ejecutar manualmente.
 - **Generador de Resúmenes de Proyecto (`assistant resume [rutas...]`)**: Reúne automáticamente el contexto del directorio de tu proyecto (árbol estructural y archivos de manifiesto como `package.json`, `pom.xml`, `Cargo.toml`, etc.) y genera un resumen completo en formato markdown que describe la arquitectura y las dependencias del proyecto.
 - **Generador de README (`assistant readme --lang [idioma] --name [nombre_archivo]`)**: Analiza automáticamente la estructura del proyecto y los archivos de configuración para generar un archivo README profesional y contextualizado.
 
@@ -237,6 +238,7 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant "<mensaje>"` | Envía un mensaje directo al modelo actual |
 | `assistant status` | Muestra el motor activo, los modelos activos, el modo pensamiento y el idioma |
 | `assistant commit` | Analiza el área de preparación de git (staging) y sugiere commits estructurados |
+| `assistant branch` | Analiza los cambios de git y sugiere ramas separadas por propósito |
 | `assistant resume [rutas...]` | Escanea directorios y genera archivos markdown de resumen del proyecto |
 | `assistant readme --lang <idioma> --name <nombre>` | Escanea la estructura del proyecto y genera un archivo README |
 | `assistant create skill <nombre> <ruta.md>` | Crea una nueva habilidad personalizada a partir de una plantilla Markdown |
@@ -255,6 +257,9 @@ assistant "¿Cómo implemento un debouncer en JS vainilla?"
 
 # Generar commits de git a partir de los cambios preparados
 assistant commit
+
+# Separar cambios mezclados en ramas dedicadas por propósito
+assistant branch
 
 # Cambiar el motor activo a Antigravity (agy), Codex, Copilot, Ollama u OpenCode
 assistant engine agy

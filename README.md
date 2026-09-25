@@ -155,6 +155,7 @@ assistant channel stable  # Switch to stable channel (main branch) and update
 ### Built-in Skills (Default Skills)
 The assistant comes with several built-in skills to boost your workflow:
 - **Commit Assistant (`assistant commit`)**: Analyzes your Git repository's status, staged diffs, and unstaged change statistics, and runs them against standard guidelines to generate clean, readable commit message suggestions.
+- **Branch Separation Assistant (`assistant branch`)**: Analyzes your Git repository's status, diffs, and history to split mixed work into separate, purpose-focused branches (e.g. `fix/...`, `test/...`, `feature/...`), each with atomic commits, Conventional Commit messages, and safe Git commands to run manually.
 - **Project Resume Generator (`assistant resume [paths...]`)**: Automatically gathers context from your project directory (structural tree and manifest files like `package.json`, `pom.xml`, `Cargo.toml`, etc.) and formats a comprehensive markdown resume outlining project architecture and dependencies.
 - **README Generator (`assistant readme --lang [lang] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
 
@@ -232,6 +233,7 @@ When running `assistant`, you have access to the following commands:
 | `assistant "<message>"` | Sends a direct message to the current model |
 | `assistant status` | Shows active engine, active models, think mode, and language |
 | `assistant commit` | Analyzes git staging and suggests structured commits |
+| `assistant branch` | Analyzes git changes and suggests separate, purpose-focused branches |
 | `assistant resume [paths...]` | Scans directories and generates project resume markdown files |
 | `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
 | `assistant create skill <name> <path.md>` | Creates a new custom skill from a Markdown template |
@@ -250,6 +252,9 @@ assistant "How do I implement a debouncer in vanilla JS?"
 
 # Generate git commits from staged changes
 assistant commit
+
+# Split mixed changes into separate, purpose-focused branches
+assistant branch
 
 # Switch active engine to Antigravity (agy), Codex, Copilot, Ollama, or OpenCode
 assistant engine agy

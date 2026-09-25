@@ -154,6 +154,7 @@ assistant channel stable  # Alterna para o canal estável (branch main) e atuali
 ### Habilidades Padrão (Built-in Skills)
 O assistente vem com várias habilidades prontas para acelerar o seu fluxo de trabalho:
 - **Assistente de Commit (`assistant commit`)**: Analisa o status do seu repositório Git, diffs da staging e estatísticas de alterações para gerar sugestões de mensagens de commit claras e estruturadas, seguindo as diretrizes recomendadas.
+- **Assistente de Separação de Branches (`assistant branch`)**: Analisa o status, diffs e histórico do seu repositório Git para dividir trabalho misturado em branches separadas e com propósito próprio (ex.: `fix/...`, `test/...`, `feature/...`), cada uma com commits atômicos, mensagens Conventional Commits e comandos Git seguros para executar manualmente.
 - **Gerador de Resumos de Projeto (`assistant resume [caminhos...]`)**: Coleta informações estruturais do diretório (árvore estrutural e arquivos de manifesto como `package.json`, `pom.xml`, `Cargo.toml`, etc.) e formata um resumo completo em markdown descrevendo a arquitetura e dependências do projeto.
 - **Gerador de README (`assistant readme --lang [idioma] --name [nome_do_arquivo]`)**: Analisa automaticamente a estrutura do seu projeto e arquivos de configuração para gerar um README profissional e contextualizado.
 
@@ -234,6 +235,7 @@ Você também pode utilizar os modelos de referência disponíveis em [`docs/tem
 | `assistant "<mensagem>"` | Envia uma mensagem direta para o modelo atual |
 | `assistant status` | Mostra engine ativa, modelos ativos, modo think e idioma |
 | `assistant commit` | Analisa a staging do git e sugere commits estruturados |
+| `assistant branch` | Analisa as mudanças do git e sugere branches separadas por propósito |
 | `assistant resume [caminhos...]` | Escaneia diretórios e gera arquivos markdown de resumo de projeto |
 | `assistant readme --lang <idioma> --name <nome>` | Escaneia a estrutura do projeto e gera um arquivo README |
 | `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um modelo Markdown |
@@ -252,6 +254,9 @@ assistant "Como eu implemento um debouncer em JS puro?"
 
 # Gerar mensagens de commit a partir das alterações no git staging
 assistant commit
+
+# Separar alterações misturadas em branches dedicadas por propósito
+assistant branch
 
 # Trocar a engine ativa para Antigravity (agy), Codex, Copilot, Ollama ou OpenCode
 assistant engine agy
