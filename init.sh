@@ -37,6 +37,7 @@ _load_locale
 source "$ASSISTANT_ROOT_DIR/skills/commit/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
+source "$ASSISTANT_ROOT_DIR/skills/branch/init.sh"
 
 if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
   for _engine_file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
@@ -72,6 +73,10 @@ function assistant() {
     "commit")
       shift
       _cmd_commit "$@"
+      ;;
+    "branch")
+      shift
+      _cmd_branch "$@"
       ;;
     "create")
       shift
