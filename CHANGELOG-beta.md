@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.5.0...v1.6.0-beta) (2026-09-25)
+
+
+### Features
+
+* **branch:** add branch separation skill ([f17153e](https://github.com/lpatros/assistant-cli/commit/f17153e10531e5db7599d3ce68867c58aaf6cbe0))
+* **i18n:** add branch skill translations ([0bb9be0](https://github.com/lpatros/assistant-cli/commit/0bb9be0c43e10c689caa523efd229a3f1fc28aa3))
+
 ## [1.5.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.4.0...v1.5.0-beta) (2026-09-22)
 
 
