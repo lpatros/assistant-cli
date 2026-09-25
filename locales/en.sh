@@ -215,6 +215,19 @@ t_commit_prompt_instructions() {
   echo "Analyze the changes above and suggest commits following the provided guidelines."
 }
 
+# Branch skill
+t_branch_analyzing() {
+  _header "Analyzing branch separation with $1 ($2)..."
+}
+
+t_branch_no_branches() {
+  echo "(no local branches)"
+}
+
+t_branch_prompt_instructions() {
+  echo "Analyze the changes above and propose a multi-branch separation plan strictly following the provided guidelines: identify every distinct scope, suggest one dedicated branch per scope with its atomic commits, Conventional Commit messages, and the exact safe Git commands. Display the commands only for the user to review and run manually; never execute any Git command."
+}
+
 # Resume skill
 t_resume_analyzing() {
   _info "Analyzing project ${BOLD}$1${RESET}..."
@@ -500,6 +513,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Update assistant to latest or specific version
   ${GREEN}assistant --version${RESET}                           Show current assistant version
   ${GREEN}assistant commit${RESET}                              Analyze git repo and suggest commits
+  ${GREEN}assistant branch${RESET}                              Analyze git changes and suggest separate branches
   ${GREEN}assistant resume${RESET} [paths...]                   Generate project resumes in markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <name>  Generate project README file
   ${GREEN}assistant create skill${RESET} <name> <path.md>       Create a new custom skill
@@ -522,6 +536,7 @@ ${BOLD}Thinking flags — Ollama only (per session or persistent):${RESET}
 ${BOLD}Examples:${RESET}
   assistant \"Explain what a closure is in JS\"
   assistant commit
+  assistant branch
   assistant custom status
   assistant custom engines status
   assistant channel beta

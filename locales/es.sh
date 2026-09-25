@@ -215,6 +215,19 @@ t_commit_prompt_instructions() {
   echo "Analiza los cambios anteriores y sugiere commits siguiendo las pautas proporcionadas."
 }
 
+# Branch skill
+t_branch_analyzing() {
+  _header "Analizando separación de ramas con $1 ($2)..."
+}
+
+t_branch_no_branches() {
+  echo "(sin ramas locales)"
+}
+
+t_branch_prompt_instructions() {
+  echo "Analiza los cambios anteriores y propón un plan de separación en múltiples ramas siguiendo estrictamente las pautas proporcionadas: identifica cada alcance distinto, sugiere una rama dedicada por alcance con sus commits atómicos, mensajes Conventional Commits y los comandos Git exactos y seguros. Muestra los comandos solo para que el usuario los revise y ejecute manualmente; nunca ejecutes ningún comando Git."
+}
+
 # Resume skill
 t_resume_analyzing() {
   _info "Analizando proyecto ${BOLD}$1${RESET}..."
@@ -500,6 +513,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Actualizar el asistente a la última versión o a una específica
   ${GREEN}assistant --version${RESET}                           Mostrar la versión actual del asistente
   ${GREEN}assistant commit${RESET}                              Analizar repositorio git y sugerir commits
+  ${GREEN}assistant branch${RESET}                              Analizar cambios git y sugerir ramas separadas
   ${GREEN}assistant resume${RESET} [rutas...]                   Generar resúmenes de proyectos en markdown
   ${GREEN}assistant readme${RESET} --lang <código> --name <nom> Generar archivo README del proyecto
   ${GREEN}assistant create skill${RESET} <nom> <ruta.md>        Crear una nueva habilidad personalizada
@@ -522,6 +536,7 @@ ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
 ${BOLD}Ejemplos:${RESET}
   assistant \"Explica qué es un closure in JS\"
   assistant commit
+  assistant branch
   assistant custom status
   assistant custom engines status
   assistant channel beta

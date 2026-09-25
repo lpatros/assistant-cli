@@ -215,6 +215,19 @@ t_commit_prompt_instructions() {
   echo "Analise as mudanças acima e sugira commits seguindo as guidelines fornecidas."
 }
 
+# Branch skill
+t_branch_analyzing() {
+  _header "Analisando separação de branches com $1 ($2)..."
+}
+
+t_branch_no_branches() {
+  echo "(nenhuma branch local)"
+}
+
+t_branch_prompt_instructions() {
+  echo "Analise as mudanças acima e proponha um plano de separação em múltiplas branches seguindo estritamente as guidelines fornecidas: identifique cada escopo distinto, sugira uma branch dedicada por escopo com seus commits atômicos, mensagens Conventional Commits e os comandos Git exatos e seguros. Exiba os comandos apenas para o usuário revisar e executar manualmente; nunca execute nenhum comando Git."
+}
+
 # Resume skill
 t_resume_analyzing() {
   _info "Analisando projeto ${BOLD}$1${RESET}..."
@@ -500,6 +513,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Atualiza o assistente para a versão mais recente ou específica
   ${GREEN}assistant --version${RESET}                           Mostra a versão atual do assistente
   ${GREEN}assistant commit${RESET}                              Analisa o repo git e sugere commits
+  ${GREEN}assistant branch${RESET}                              Analisa mudanças git e sugere branches separadas
   ${GREEN}assistant resume${RESET} [caminhos...]                Gera resumos de projetos em markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <nome>  Gera o README do projeto
   ${GREEN}assistant create skill${RESET} <nome> <caminho.md>    Cria uma nova skill customizada
@@ -522,6 +536,7 @@ ${BOLD}Flags de thinking — apenas Ollama (por sessão ou persistente):${RESET}
 ${BOLD}Exemplos:${RESET}
   assistant \"Explica o que é um closure em JS\"
   assistant commit
+  assistant branch
   assistant custom status
   assistant custom engines status
   assistant channel beta
