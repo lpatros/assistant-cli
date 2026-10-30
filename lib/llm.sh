@@ -30,7 +30,16 @@ _llm_run_prompt() {
   args+=("--" "$prompt")
 
   if [[ -n "$output_file" ]]; then
-    "$binary" "${args[@]}" > "$output_file" 2>/dev/null
+    local err_file exit_code
+    err_file=$(mktemp) || return 1
+    "$binary" "${args[@]}" > "$output_file" 2>"$err_file"
+    exit_code=$?
+    if [[ $exit_code -ne 0 ]]; then
+      cat "$err_file" >&2
+    fi
+    rm -f "$err_file"
+    _update_check_notify
+    return "$exit_code"
   else
     "$binary" "${args[@]}"
   fi
