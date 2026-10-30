@@ -91,7 +91,7 @@ _cmd_resume() {
   current_model_display=$(_model_display "$(_get_model)")
 
   local md_file md_content
-  md_file=$(_get_skill_md_path "resume")
+  md_file=$(_get_skill_md_path "resume") || return 1
   md_content=$(_read_guidelines "$md_file")
 
   _parse_args_for_llm "$@"
@@ -109,12 +109,17 @@ _cmd_resume() {
 
   if [[ ${#projects[@]} -gt 1 ]]; then
     t_resume_parallel_info "${#projects[@]}"
+    local proj pid result=0
+    local pids=()
     for proj in "${projects[@]}"; do
       _analyze_single_project "$proj" "$output_dir" "$md_content" "${think_flags[@]}" &
+      pids+=("$!")
     done
-    wait
-    t_resume_parallel_done
-    return 0
+    for pid in "${pids[@]}"; do
+      wait "$pid" || result=1
+    done
+    [[ $result -eq 0 ]] && t_resume_parallel_done
+    return "$result"
   fi
 
   local first_project

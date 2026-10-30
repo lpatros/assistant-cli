@@ -46,10 +46,18 @@ _cmd_readme() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --lang)
+        if [[ $# -lt 2 || -z "$2" || "$2" == --* ]]; then
+          t_readme_missing_args
+          return 1
+        fi
         lang="$2"
         shift 2
         ;;
       --name)
+        if [[ $# -lt 2 || -z "$2" || "$2" == --* ]]; then
+          t_readme_missing_args
+          return 1
+        fi
         name="$2"
         shift 2
         ;;
@@ -72,7 +80,7 @@ _cmd_readme() {
   t_readme_analyzing "$current_engine" "$current_model_display"
 
   local md_file md_content
-  md_file=$(_get_skill_md_path "readme")
+  md_file=$(_get_skill_md_path "readme") || return 1
   md_content=$(_read_guidelines "$md_file")
 
   local project_context
