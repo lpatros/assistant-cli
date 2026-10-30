@@ -159,27 +159,34 @@ El asistente viene con varias habilidades integradas para potenciar tu flujo de 
 - **Generador de README (`assistant readme --lang [idioma] --name [nombre_archivo]`)**: Analiza automáticamente la estructura del proyecto y los archivos de configuración para generar un archivo README profesional y contextualizado.
 
 ### Habilidades Personalizadas
-Puedes crear tus propias habilidades personalizadas utilizando archivos Markdown que definan pautas para el LLM.
 
-#### Creación de una Habilidad Personalizada
+Las skills usan `skills/<nombre>/SKILL.md` (nativas) o `custom/skills/<nombre>/SKILL.md` (personalizadas). Solo se descubre este formato; los archivos antiguos `*-assistant.md` no se admiten.
+
+```markdown
+---
+name: traductor
+description: Traduce textos conservando el contexto técnico.
+---
+Translate the user input into the requested language.
+```
+
+`name` y `description` son obligatorios. El nombre debe coincidir con la carpeta y usar minúsculas, números, guiones bajos o guiones, comenzando con letra o número. El frontmatter admite solo estos dos campos escalares de una línea, opcionalmente entre comillas coincidentes. No se admiten escapes, valores multilínea, comentarios al final de línea ni otras construcciones YAML. Usa comillas si la descripción contiene dos puntos seguidos de espacio. Los metadatos se leen como datos y se excluyen del prompt.
+
 ```bash
-assistant create skill <nombre> <ruta-al-archivo-markdown>
+assistant skills list
+assistant create skill traductor /ruta/a/SKILL.md
+assistant traductor "Traduce este texto al español"
 ```
-Esto guardará las reglas de tu habilidad personalizada en `custom/skills/<nombre>-assistant.md`.
 
-#### Sobrescribir Habilidades Predeterminadas
-Si intentas crear una habilidad personalizada con el mismo nombre que una habilidad integrada/predeterminada (por ejemplo, `commit`), la CLI te pedirá confirmación:
-```
-⚠ La habilidad 'commit' es una habilidad predeterminada del asistente.
-¿Realmente deseas sobrescribirla? [y/N]:
-```
-Si eliges sobrescribir (`y`/`yes`), tu habilidad personalizada tendrá prioridad sobre la habilidad integrada al ejecutar `assistant commit`.
+La importación valida los metadatos y copia el archivo a `custom/skills/traductor/SKILL.md`. Se rechazan destinos existentes e identidades duplicadas. Importar instrucciones para una skill nativa pide confirmación. Las instrucciones personalizadas tienen prioridad y conservan el handler nativo, la recopilación de contexto, los argumentos y el tratamiento de salida.
 
-#### Ejecutar Habilidades Personalizadas
-Ejecuta tu habilidad personalizada directamente como un comando:
-```bash
-assistant <nombre> "tu consulta o tarea"
-```
+El descubrimiento lee solo archivos inmediatos `<nombre>/SKILL.md` y nunca ejecuta scripts de paquetes. Las nuevas skills compuestas solo por Markdown no requieren cambios en `init.sh`. Los handlers nativos existentes siguen siendo código confiable de inicialización; no se ejecutan `init.sh` ni `scripts/` de paquetes personalizados. Los comandos dinámicos en `custom/init.sh` siguen siendo un mecanismo separado de extensión confiable.
+
+`assistant skills list` muestra nombre, origen, formato, estado, ruta y descripción, incluidas definiciones sustituidas y entradas inválidas. Los metadatos inválidos, nombres distintos de la carpeta y nombres duplicados dentro de un origen bloquean la skill afectada y hacen que el listado devuelva error. Una sustitución personalizada inválida nunca recurre silenciosamente a la definición nativa. Los nombres declarados duplicados se detectan incluso en carpetas distintas. Otras skills válidas siguen disponibles.
+
+Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
+
+Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](docs/templates/skills/SKILL.md.template) como referencia.
 
 #### Comandos Dinámicos Personalizados (Shell)
 También puedes definir funciones Shell personalizadas para ejecutar lógica dinámica.
@@ -241,6 +248,7 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant branch` | Analiza los cambios de git y sugiere ramas separadas por propósito |
 | `assistant resume [rutas...]` | Escanea directorios y genera archivos markdown de resumen del proyecto |
 | `assistant readme --lang <idioma> --name <nombre>` | Escanea la estructura del proyecto y genera un archivo README |
+| `assistant skills list` | Lista skills, orígenes y conflictos |
 | `assistant create skill <nombre> <ruta.md>` | Crea una nueva habilidad personalizada a partir de una plantilla Markdown |
 | `assistant <habilidad-personalizada> [args]` | Ejecuta una habilidad personalizada |
 | `assistant lang [<idioma>\|--list\|status]` | Cambia el idioma activo, lista idiomas disponibles o muestra el idioma actual |
@@ -282,7 +290,7 @@ assistant/
 ├── custom/                  # Motores, habilidades e idiomas personalizados del usuario
 │   ├── engines/             # Motores personalizados (scripts .sh)
 │   ├── locales/             # Idiomas personalizados (.sh)
-│   └── skills/              # Habilidades personalizadas (.md)
+│   └── skills/              # Habilidades personalizadas (<nombre>/SKILL.md)
 ├── data/                    # Almacenamiento persistente de la configuración (motor, modelo, idioma)
 ├── docs/                    # Guía de personalización y plantillas de extensión
 │   ├── templates/           # Plantillas de referencia (engine, locales, skills)

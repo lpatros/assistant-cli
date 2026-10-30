@@ -14,7 +14,7 @@ _cmd_commit() {
   fi
 
   local md_file md_content
-  md_file=$(_get_skill_md_path "commit")
+  md_file=$(_get_skill_md_path "commit") || return 1
   md_content=$(_read_guidelines "$md_file")
 
   local git_status git_diff_staged git_diff_unstaged

@@ -160,20 +160,34 @@ The assistant comes with several built-in skills to boost your workflow:
 - **README Generator (`assistant readme --lang [lang] --name [filename]`)**: Automatically analyzes your project structure and configuration files to generate a professional, contextualized README file.
 
 ### Custom Skills
-You can create your own custom skills using Markdown files that define guidelines for the LLM.
 
-If you try to create a custom skill with the same name as a default/built-in skill (e.g., `commit`), the CLI will ask for confirmation:
-```
-⚠ The skill 'commit' is a default assistant skill.
-Do you really want to overwrite it? [y/N]:
-```
-If you choose to overwrite (`y`/`yes`), your custom skill will take precedence over the built-in skill when executing `assistant commit`.
+Skills use `skills/<name>/SKILL.md` (built-in) or `custom/skills/<name>/SKILL.md` (custom). Only this format is discovered; legacy `*-assistant.md` files are unsupported.
 
-#### Running Custom Skills
-Run your custom skill directly as a command:
+```markdown
+---
+name: translator
+description: Translate text while preserving technical context.
+---
+Translate the user input into the requested language.
+```
+
+`name` and `description` are required. The name must match the folder and use lowercase letters, digits, underscores or hyphens, beginning with a letter or digit. Frontmatter supports only these two single-line scalar fields, optionally enclosed in matching quotes. Escapes, multiline values, inline comments and other YAML constructs are unsupported. Quote descriptions containing a colon followed by a space. Metadata is read as data and excluded from the model prompt.
+
 ```bash
-assistant <name> "your prompt or task"
+assistant skills list
+assistant create skill translator /path/to/SKILL.md
+assistant translator "Translate this text into Spanish"
 ```
+
+The import validates metadata and copies the file to `custom/skills/translator/SKILL.md`. An existing destination or duplicate identity is rejected. Importing instructions for a built-in skill asks for confirmation. Custom instructions take precedence while preserving the built-in handler, context collection, arguments and output behavior.
+
+Discovery reads only immediate `<name>/SKILL.md` files and never executes package scripts. New Markdown-only skills require no changes to `init.sh`. The existing built-in context handlers remain trusted bootstrap code; custom package `init.sh` and `scripts/` are not executed. Custom dynamic commands in `custom/init.sh` remain a separate, trusted extension mechanism.
+
+`assistant skills list` shows name, origin, format, state, path and description, including overridden definitions and invalid entries. Invalid metadata, mismatched folder names and duplicate names within an origin block the affected skill and cause listing to return nonzero. An invalid custom override never silently falls back to the built-in definition. Duplicate declared names are reported even when placed in different folders. Unrelated valid skills remain usable.
+
+Administrative commands and aliases are reserved: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
+
+To migrate an old custom skill, move its instructions to `custom/skills/<name>/SKILL.md` and add the required frontmatter. The old filename is ignored. Start from [SKILL.md.template](docs/templates/skills/SKILL.md.template).
 
 #### Custom Dynamic Shell Commands
 You can also define custom Shell functions that execute dynamic logic.
@@ -236,6 +250,7 @@ When running `assistant`, you have access to the following commands:
 | `assistant branch` | Analyzes git changes and suggests separate, purpose-focused branches |
 | `assistant resume [paths...]` | Scans directories and generates project resume markdown files |
 | `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
+| `assistant skills list` | List skills, origins and conflicts |
 | `assistant create skill <name> <path.md>` | Creates a new custom skill from a Markdown template |
 | `assistant <custom-skill> [args]` | Executes a custom skill |
 | `assistant lang [<lang>\|--list\|status]` | Changes active language, lists available languages, or shows current language |
@@ -277,7 +292,7 @@ assistant/
 ├── custom/                  # User custom engines, skills, and locales
 │   ├── engines/             # Custom engine scripts (.sh)
 │   ├── locales/             # Custom locale translations (.sh)
-│   └── skills/              # Custom markdown skills (.md)
+│   └── skills/              # Custom skills (<name>/SKILL.md)
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── docs/                    # Customization guides and extension templates
 │   ├── templates/           # Starter templates (engine, locales, skills)

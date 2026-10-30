@@ -30,7 +30,7 @@ _cmd_branch() {
   fi
 
   local md_file md_content
-  md_file=$(_get_skill_md_path "branch")
+  md_file=$(_get_skill_md_path "branch") || return 1
   md_content=$(_read_guidelines "$md_file")
 
   local current_branch base_branch

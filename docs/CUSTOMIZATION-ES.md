@@ -20,10 +20,6 @@
   - [Paso a Paso de Creación](#paso-a-paso-de-creación-1)
   - [Cómo Activar y Probar](#cómo-activar-y-probar-1)
 - [Skills Personalizadas](#skills-personalizadas-customskills)
-  - [Convención de Nombres](#convención-de-nombres)
-  - [Método 1: Creación Manual](#método-1-creación-manual)
-  - [Método 2: Creación mediante CLI](#método-2-creación-mediante-cli)
-  - [Cómo Usar una Skill](#cómo-usar-una-skill)
 - [Comandos Personalizados Dinámicos](#comandos-personalizados-dinámicos-custominitsh)
   - [Cómo Funciona](#cómo-funciona)
   - [Ejemplo Práctico](#ejemplo-práctico)
@@ -39,7 +35,7 @@ La estructura de carpetas para extensiones es la siguiente:
 custom/
 ├── engines/     # Scripts de shell con controladores para nuevos ejecutables/servicios de LLM
 ├── locales/     # Scripts de shell que sobrescriben o agregan traducciones de interfaz
-├── skills/      # Archivos Markdown (*-assistant.md) que definen personas y prompts del sistema
+├── skills/      # Paquetes Markdown (<nombre>/SKILL.md) que definen personas y prompts del sistema
 └── init.sh      # Script de shell para comandos personalizados dinámicos (_cmd_<nombre>)
 ```
 
@@ -122,50 +118,34 @@ Los archivos de idioma sobrescriben las funciones de traducción con el prefijo 
 
 ## Skills Personalizadas (`custom/skills/`)
 
-Las skills son directivas en Markdown que definen comportamientos específicos, personas o instrucciones preformateadas para que el asistente ejecute tareas automatizadas.
+Las skills usan `skills/<nombre>/SKILL.md` (nativas) o `custom/skills/<nombre>/SKILL.md` (personalizadas). Solo se descubre este formato; los archivos antiguos `*-assistant.md` no se admiten.
 
-### Convención de Nombres
-
-Los archivos de skill en el directorio `custom/skills/` deben seguir estrictamente la convención de nombres:
-```text
-<nombre_de_la_skill>-assistant.md
+```markdown
+---
+name: traductor
+description: Traduce textos conservando el contexto técnico.
+---
+Translate the user input into the requested language.
 ```
 
-Por ejemplo: `traductor-assistant.md`, `revisor-assistant.md` o `test-assistant.md`.
-
----
-
-### Método 1: Creación Manual
-
-1. Crea un archivo `.md` en `custom/skills/` siguiendo la convención de nombres:
-   ```bash
-   touch custom/skills/mi_traductor-assistant.md
-   ```
-2. Escribe las instrucciones y el prompt del sistema. Puedes usar como base la plantilla en [`docs/templates/skills/example-assistant.md.template`](templates/skills/example-assistant.md.template).
-
----
-
-### Método 2: Creación mediante CLI
-
-Puedes importar un archivo Markdown desde cualquier directorio de tu sistema usando `assistant create skill`:
+`name` y `description` son obligatorios. El nombre debe coincidir con la carpeta y usar minúsculas, números, guiones bajos o guiones, comenzando con letra o número. El frontmatter admite solo estos dos campos escalares de una línea, opcionalmente entre comillas coincidentes. No se admiten escapes, valores multilínea, comentarios al final de línea ni otras construcciones YAML. Usa comillas si la descripción contiene dos puntos seguidos de espacio. Los metadatos se leen como datos y se excluyen del prompt.
 
 ```bash
-assistant create skill traductor /ruta/a/mi_archivo.md
+assistant skills list
+assistant create skill traductor /ruta/a/SKILL.md
+assistant traductor "Traduce este texto al español"
 ```
 
-El asistente copiará automáticamente el archivo a `custom/skills/traductor-assistant.md`.
+La importación valida los metadatos y copia el archivo a `custom/skills/traductor/SKILL.md`. Se rechazan destinos existentes e identidades duplicadas. Importar instrucciones para una skill nativa pide confirmación. Las instrucciones personalizadas tienen prioridad y conservan el handler nativo, la recopilación de contexto, los argumentos y el tratamiento de salida.
 
----
+El descubrimiento lee solo archivos inmediatos `<nombre>/SKILL.md` y nunca ejecuta scripts de paquetes. Las nuevas skills compuestas solo por Markdown no requieren cambios en `init.sh`. Los handlers nativos existentes siguen siendo código confiable de inicialización; no se ejecutan `init.sh` ni `scripts/` de paquetes personalizados. Los comandos dinámicos en `custom/init.sh` siguen siendo un mecanismo separado de extensión confiable.
 
-### Cómo Usar una Skill
+`assistant skills list` muestra nombre, origen, formato, estado, ruta y descripción, incluidas definiciones sustituidas y entradas inválidas. Los metadatos inválidos, nombres distintos de la carpeta y nombres duplicados dentro de un origen bloquean la skill afectada y hacen que el listado devuelva error. Una sustitución personalizada inválida nunca recurre silenciosamente a la definición nativa. Los nombres declarados duplicados se detectan incluso en carpetas distintas. Otras skills válidas siguen disponibles.
 
-Una vez guardada en `custom/skills/`, puedes invocar la skill directamente pasando su nombre como subcomando:
+Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
 
-```bash
-assistant traductor "Translate this sentence into Spanish and preserve technical context"
-```
+Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](templates/skills/SKILL.md.template) como referencia.
 
----
 
 ## Comandos Personalizados Dinámicos (`custom/init.sh`)
 
@@ -206,4 +186,4 @@ El repositorio incluye plantillas para facilitar la creación de extensiones en 
 | :--- | :--- | :--- |
 | **Motor** | [`docs/templates/engine/example.sh.template`](templates/engine/example.sh.template) | Plantilla base para controladores de motores personalizados |
 | **Idioma** | [`docs/templates/locales/example.sh.template`](templates/locales/example.sh.template) | Plantilla base para archivos de idioma personalizados |
-| **Skill** | [`docs/templates/skills/example-assistant.md.template`](templates/skills/example-assistant.md.template) | Plantilla base para archivos Markdown de skills |
+| **Skill** | [`docs/templates/skills/SKILL.md.template`](templates/skills/SKILL.md.template) | Plantilla base para archivos Markdown de skills |

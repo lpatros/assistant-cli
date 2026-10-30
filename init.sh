@@ -2,6 +2,8 @@ if [ -z "${ASSISTANT_ROOT_DIR:-}" ]; then
   if [ -n "${BASH_SOURCE[0]:-}" ]; then
     _assistant_dir="$(dirname -- "${BASH_SOURCE[0]}")"
   elif [ -n "${ZSH_VERSION:-}" ]; then
+    # Zsh-only expansion; this branch is not evaluated by Bash.
+    # shellcheck disable=SC2296
     _assistant_dir="$(dirname -- "${(%):-%x}")"
   else
     _assistant_dir="$(dirname -- "$0")"
@@ -30,6 +32,7 @@ source "$ASSISTANT_LIB_DIR/update-check.sh"
 source "$ASSISTANT_LIB_DIR/version.sh"
 source "$ASSISTANT_LIB_DIR/channel.sh"
 source "$ASSISTANT_LIB_DIR/changelog.sh"
+source "$ASSISTANT_LIB_DIR/skills.sh"
 source "$ASSISTANT_LIB_DIR/custom.sh"
 
 _load_locale
@@ -39,19 +42,7 @@ source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/branch/init.sh"
 
-if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
-  for _engine_file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
-    [[ -f "$_engine_file" ]] && source "$_engine_file"
-  done
-  unset _engine_file
-fi
-
-if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
-  for _custom_engine_file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
-    [[ -f "$_custom_engine_file" ]] && source "$_custom_engine_file"
-  done
-  unset _custom_engine_file
-fi
+_load_engine_modules
 
 if [[ -f "$ASSISTANT_ROOT_DIR/custom/init.sh" ]]; then
   source "$ASSISTANT_ROOT_DIR/custom/init.sh"
@@ -60,23 +51,9 @@ fi
 function assistant() {
   local subcmd="${1:-}"
 
-  if [[ -n "$subcmd" && -f "$ASSISTANT_ROOT_DIR/custom/skills/${subcmd}-assistant.md" ]]; then
-    shift
-    _run_generic_skill "$subcmd" "$@"
-    return $?
-  fi
-
   case "$subcmd" in
     "")
       _llm_run_interactive
-      ;;
-    "commit")
-      shift
-      _cmd_commit "$@"
-      ;;
-    "branch")
-      shift
-      _cmd_branch "$@"
       ;;
     "create")
       shift
@@ -90,14 +67,6 @@ function assistant() {
           return 1
           ;;
       esac
-      ;;
-    "resume")
-      shift
-      _cmd_resume "$@"
-      ;;
-    "readme")
-      shift
-      _cmd_readme "$@"
       ;;
     "model")
       shift
@@ -130,6 +99,10 @@ function assistant() {
       shift
       _cmd_lang "$@"
       ;;
+    "skills")
+      shift
+      _cmd_skills "$@"
+      ;;
     "custom")
       shift
       _cmd_custom "$@"
@@ -159,6 +132,17 @@ function assistant() {
       _llm_run_interactive "$@"
       ;;
     *)
+      local skill_file skill_rc
+      skill_file=$(_resolve_skill "$subcmd")
+      skill_rc=$?
+      if [[ $skill_rc -eq 0 ]]; then
+        shift
+        _run_skill "$subcmd" "$skill_file" "$@"
+        return $?
+      elif [[ $skill_rc -ne 2 ]]; then
+        return "$skill_rc"
+      fi
+
       if command -v "_cmd_${subcmd}" &>/dev/null; then
         shift
         "_cmd_${subcmd}" "$@"

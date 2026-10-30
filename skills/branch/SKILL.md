@@ -1,3 +1,8 @@
+---
+name: branch
+description: Propose safe branches and atomic commits from Git changes.
+---
+
 # Git Branch Separation Assistant – Guidelines
 
 ## Purpose

@@ -1,3 +1,8 @@
+---
+name: resume
+description: Generate project summaries from local project context.
+---
+
 # Project Resume Assistant – Guidelines
 
 ## Purpose

@@ -45,11 +45,14 @@ _read_guidelines() {
     echo ""
     return 0
   fi
-  cat "$filepath"
+  awk '{ sub(/\r$/, "") }
+    NR == 1 && $0 == "---" { header = 1; next }
+    header && $0 == "---" { header = 0; next }
+    !header { print }' "$filepath"
 }
 
 _get_skill_md_path() {
-  echo "$ASSISTANT_ROOT_DIR/skills/$1/$1-assistant.md"
+  _resolve_skill "$1"
 }
 
 _get_changelog_file() {

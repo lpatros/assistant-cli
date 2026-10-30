@@ -1,3 +1,8 @@
+---
+name: commit
+description: Analyze Git changes and suggest Conventional Commits.
+---
+
 # Git Commit Assistant – Guidelines
 
 ## Purpose

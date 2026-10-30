@@ -1,53 +1,36 @@
-_run_generic_skill() {
-  local skill_name="$1"
-  shift
-
-  local md_file="$ASSISTANT_ROOT_DIR/custom/skills/${skill_name}-assistant.md"
-  if [[ ! -f "$md_file" ]]; then
-    t_custom_skill_not_found "$md_file"
-    return 1
-  fi
-
-  local md_content
-  md_content=$(cat "$md_file")
-
-  _parse_args_for_llm "$@"
-  local clean_args=("${LLM_CLEAN_ARGS[@]}")
-  local think_flags=("${LLM_THINK_FLAGS[@]}")
-
-  local prompt=""
-  if [[ -n "$md_content" ]]; then
-    prompt="=== Guidelines ===
-$md_content
-"
-  fi
-
-  if [[ ${#clean_args[@]} -gt 0 ]]; then
-    prompt="$prompt
-
-=== User Query ===
-${clean_args[*]}"
-  fi
-
-  _llm_run_prompt "$prompt" "" "${think_flags[@]}"
-}
-
 _cmd_create_skill() {
   local skill_name="${1:-}"
   local skill_md_path="${2:-}"
 
-  if [[ -z "$skill_name" || -z "$skill_md_path" ]]; then
+  if [[ $# -ne 2 || -z "$skill_name" || -z "$skill_md_path" ]]; then
     t_create_skill_usage
     return 1
   fi
 
-  if [[ ! "$skill_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  if [[ ! "$skill_name" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
     t_create_skill_invalid_name
     return 1
   fi
 
   if [[ ! -f "$skill_md_path" ]]; then
     t_create_skill_md_not_found "$skill_md_path"
+    return 1
+  fi
+
+  if _skill_is_reserved "$skill_name"; then
+    t_skill_error "$skill_name" "$(t_skill_state reserved)" >&2
+    return 1
+  fi
+  local metadata
+  metadata=$(_skill_metadata "$skill_md_path")
+  if [[ $? -ne 0 || "${metadata%%$'\t'*}" != "$skill_name" ]]; then
+    t_skill_error "$skill_md_path" "$(t_skill_state invalid)" >&2
+    return 1
+  fi
+  local existing
+  existing=$(_skill_registry | awk -F '\t' -v name="$skill_name" '$2 == "custom" && ($1 == name || $6 == name) { print $3 }')
+  if [[ -e "$ASSISTANT_ROOT_DIR/custom/skills/$skill_name" || -n "$existing" ]]; then
+    t_skill_error "$skill_name" "$(t_skill_state conflict)" >&2
     return 1
   fi
 
@@ -62,16 +45,19 @@ _cmd_create_skill() {
     fi
   fi
 
-  local custom_dir="$ASSISTANT_ROOT_DIR/custom/skills"
-  mkdir -p "$custom_dir"
+  local custom_dir="$ASSISTANT_ROOT_DIR/custom/skills/$skill_name"
+  mkdir -p "$custom_dir" || return 1
 
-  local dest_md="$custom_dir/${skill_name}-assistant.md"
-  cp "$skill_md_path" "$dest_md"
+  local dest_md="$custom_dir/SKILL.md"
+  cp "$skill_md_path" "$dest_md" || return 1
 
   t_create_skill_success "$skill_name" "$dest_md"
 }
 
 _get_custom_engines() {
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    setopt localoptions nonomatch
+  fi
   local engines=()
   local file name
 
@@ -96,25 +82,13 @@ _get_custom_engines() {
 }
 
 _get_custom_skills() {
-  local skills=()
-  local file name
-
-  if [[ -d "$ASSISTANT_ROOT_DIR/custom/skills" ]]; then
-    for file in "$ASSISTANT_ROOT_DIR/custom/skills"/*-assistant.md; do
-      if [[ -f "$file" ]]; then
-        name=$(basename "$file")
-        name="${name%-assistant.md}"
-        skills+=("$name")
-      fi
-    done
-  fi
-
-  if [[ ${#skills[@]} -gt 0 ]]; then
-    printf "%s\n" "${skills[@]}" | sort -u
-  fi
+  _skill_registry | awk -F '\t' '$2 == "custom" { print $1 }' | sort -u
 }
 
 _get_custom_locales() {
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    setopt localoptions nonomatch
+  fi
   local locales=()
   local file name
 

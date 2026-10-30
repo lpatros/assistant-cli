@@ -410,7 +410,7 @@ t_custom_skill_not_found() {
 }
 
 t_create_skill_invalid_name() {
-  _error "Invalid skill name. Use only alphanumeric characters, underscores, or hyphens."
+  _error "Invalid skill name. Use lowercase letters, digits, underscores or hyphens, starting with a letter or digit."
 }
 
 t_create_skill_md_not_found() {
@@ -516,6 +516,7 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant branch${RESET}                              Analyze git changes and suggest separate branches
   ${GREEN}assistant resume${RESET} [paths...]                   Generate project resumes in markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <name>  Generate project README file
+  ${GREEN}assistant skills list${RESET}                          List skills, origins, and conflicts
   ${GREEN}assistant create skill${RESET} <name> <path.md>       Create a new custom skill
   ${GREEN}assistant <custom-skill>${RESET} [arguments]          Execute a custom skill
   ${GREEN}assistant model${RESET} [--list|set <model>|status]   Manage models for the active engine
@@ -547,4 +548,24 @@ ${BOLD}Examples:${RESET}
   assistant engine status
   assistant status
 "
+}
+
+# Skill discovery
+t_skills_usage() { _error "Usage: assistant skills [list]"; }
+t_skills_header() { printf 'Name\tOrigin\tFormat\tState\tPath\tDescription\n'; }
+t_skill_error() { _error "Invalid skill: $1 ($2)."; }
+t_skill_origin() {
+  case "$1" in
+    builtin) printf '%s' 'built-in' ;;
+    custom) printf '%s' 'custom' ;;
+  esac
+}
+t_skill_state() {
+  case "$1" in
+    ready) printf '%s' 'ready' ;;
+    overridden) printf '%s' 'overridden' ;;
+    invalid) printf '%s' 'invalid metadata or folder name' ;;
+    reserved) printf '%s' 'reserved command name' ;;
+    conflict) printf '%s' 'duplicate name' ;;
+  esac
 }

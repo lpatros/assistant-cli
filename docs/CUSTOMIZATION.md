@@ -20,10 +20,6 @@
   - [Step-by-Step Guide](#step-by-step-guide-1)
   - [Activation and Testing](#activation-and-testing-1)
 - [Custom Skills](#custom-skills-customskills)
-  - [Naming Convention](#naming-convention)
-  - [Method 1: Manual Creation](#method-1-manual-creation)
-  - [Method 2: CLI Creation](#method-2-cli-creation)
-  - [Using a Skill](#using-a-skill)
 - [Dynamic Custom Commands](#dynamic-custom-commands-custominitsh)
   - [How It Works](#how-it-works)
   - [Practical Example](#practical-example)
@@ -39,7 +35,7 @@ The directory structure for extensions is as follows:
 custom/
 ├── engines/     # Shell scripts providing drivers for new LLM CLIs/services
 ├── locales/     # Shell scripts overriding or adding interface translations
-├── skills/      # Markdown files (*-assistant.md) defining system personas and prompts
+├── skills/      # Markdown packages (<name>/SKILL.md) defining system personas and prompts
 └── init.sh      # Shell script for dynamic custom commands (_cmd_<name>)
 ```
 
@@ -122,50 +118,34 @@ Locale files override translation functions prefixed with `t_` used by the assis
 
 ## Custom Skills (`custom/skills/`)
 
-Skills are Markdown guidelines defining specific behaviors, personas, or pre-formatted instructions for the assistant to execute automated tasks.
+Skills use `skills/<name>/SKILL.md` (built-in) or `custom/skills/<name>/SKILL.md` (custom). Only this format is discovered; legacy `*-assistant.md` files are unsupported.
 
-### Naming Convention
-
-Skill files in the `custom/skills/` directory must strictly follow the naming pattern:
-```text
-<skill_name>-assistant.md
+```markdown
+---
+name: translator
+description: Translate text while preserving technical context.
+---
+Translate the user input into the requested language.
 ```
 
-For example: `translator-assistant.md`, `reviewer-assistant.md`, or `test-assistant.md`.
-
----
-
-### Method 1: Manual Creation
-
-1. Create a `.md` file in `custom/skills/` following the naming convention:
-   ```bash
-   touch custom/skills/my_translator-assistant.md
-   ```
-2. Write system instructions inside the file. You can start from the template at [`docs/templates/skills/example-assistant.md.template`](templates/skills/example-assistant.md.template).
-
----
-
-### Method 2: CLI Creation
-
-You can import a Markdown file from any directory in your system using `assistant create skill`:
+`name` and `description` are required. The name must match the folder and use lowercase letters, digits, underscores or hyphens, beginning with a letter or digit. Frontmatter supports only these two single-line scalar fields, optionally enclosed in matching quotes. Escapes, multiline values, inline comments and other YAML constructs are unsupported. Quote descriptions containing a colon followed by a space. Metadata is read as data and excluded from the model prompt.
 
 ```bash
-assistant create skill translator /path/to/my_file.md
+assistant skills list
+assistant create skill translator /path/to/SKILL.md
+assistant translator "Translate this text into Spanish"
 ```
 
-The assistant will automatically copy the file to `custom/skills/translator-assistant.md`.
+The import validates metadata and copies the file to `custom/skills/translator/SKILL.md`. An existing destination or duplicate identity is rejected. Importing instructions for a built-in skill asks for confirmation. Custom instructions take precedence while preserving the built-in handler, context collection, arguments and output behavior.
 
----
+Discovery reads only immediate `<name>/SKILL.md` files and never executes package scripts. New Markdown-only skills require no changes to `init.sh`. The existing built-in context handlers remain trusted bootstrap code; custom package `init.sh` and `scripts/` are not executed. Custom dynamic commands in `custom/init.sh` remain a separate, trusted extension mechanism.
 
-### Using a Skill
+`assistant skills list` shows name, origin, format, state, path and description, including overridden definitions and invalid entries. Invalid metadata, mismatched folder names and duplicate names within an origin block the affected skill and cause listing to return nonzero. An invalid custom override never silently falls back to the built-in definition. Duplicate declared names are reported even when placed in different folders. Unrelated valid skills remain usable.
 
-Once saved in `custom/skills/`, you can invoke the skill directly by passing its name as a subcommand:
+Administrative commands and aliases are reserved: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
 
-```bash
-assistant translator "Translate this sentence into Spanish and preserve technical context"
-```
+To migrate an old custom skill, move its instructions to `custom/skills/<name>/SKILL.md` and add the required frontmatter. The old filename is ignored. Start from [SKILL.md.template](templates/skills/SKILL.md.template).
 
----
 
 ## Dynamic Custom Commands (`custom/init.sh`)
 
@@ -206,4 +186,4 @@ The repository includes templates to jumpstart extension development in `docs/te
 | :--- | :--- | :--- |
 | **Engine** | [`docs/templates/engine/example.sh.template`](templates/engine/example.sh.template) | Starter template for custom engine drivers |
 | **Locale** | [`docs/templates/locales/example.sh.template`](templates/locales/example.sh.template) | Starter template for custom locale files |
-| **Skill** | [`docs/templates/skills/example-assistant.md.template`](templates/skills/example-assistant.md.template) | Starter template for custom skill markdown files |
+| **Skill** | [`docs/templates/skills/SKILL.md.template`](templates/skills/SKILL.md.template) | Starter template for custom skill markdown files |

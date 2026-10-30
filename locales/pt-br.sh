@@ -410,7 +410,7 @@ t_custom_skill_not_found() {
 }
 
 t_create_skill_invalid_name() {
-  _error "Nome de skill inválido. Use apenas caracteres alfanuméricos, sublinhados (_) ou hífens (-)."
+  _error "Nome de skill inválido. Use letras minúsculas, números, sublinhados ou hífens, começando com letra ou número."
 }
 
 t_create_skill_md_not_found() {
@@ -516,6 +516,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant branch${RESET}                              Analisa mudanças git e sugere branches separadas
   ${GREEN}assistant resume${RESET} [caminhos...]                Gera resumos de projetos em markdown
   ${GREEN}assistant readme${RESET} --lang <code> --name <nome>  Gera o README do projeto
+  ${GREEN}assistant skills list${RESET}                          Listar skills, origens e conflitos
   ${GREEN}assistant create skill${RESET} <nome> <caminho.md>    Cria uma nova skill customizada
   ${GREEN}assistant <skill-customizada>${RESET} [argumentos]    Executa uma skill customizada
   ${GREEN}assistant model${RESET} [--list|set <modelo>|status]  Gerencia os modelos da engine ativa
@@ -547,4 +548,24 @@ ${BOLD}Exemplos:${RESET}
   assistant engine status
   assistant status
 "
+}
+
+# Skill discovery
+t_skills_usage() { _error "Uso: assistant skills [list]"; }
+t_skills_header() { printf 'Nome\tOrigem\tFormato\tEstado\tCaminho\tDescrição\n'; }
+t_skill_error() { _error "Skill inválida: $1 ($2)."; }
+t_skill_origin() {
+  case "$1" in
+    builtin) printf '%s' 'nativa' ;;
+    custom) printf '%s' 'customizada' ;;
+  esac
+}
+t_skill_state() {
+  case "$1" in
+    ready) printf '%s' 'disponível' ;;
+    overridden) printf '%s' 'substituída' ;;
+    invalid) printf '%s' 'metadados ou nome da pasta inválidos' ;;
+    reserved) printf '%s' 'nome de comando reservado' ;;
+    conflict) printf '%s' 'nome duplicado' ;;
+  esac
 }

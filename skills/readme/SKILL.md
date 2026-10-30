@@ -1,3 +1,8 @@
+---
+name: readme
+description: Generate a README using project context.
+---
+
 # README Generator Assistant – Guidelines
 
 

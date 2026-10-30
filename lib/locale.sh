@@ -38,6 +38,9 @@ _load_locale() {
 }
 
 _cmd_lang_list() {
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    setopt localoptions nonomatch
+  fi
   if command -v t_lang_list_header &>/dev/null; then
     t_lang_list_header
   else

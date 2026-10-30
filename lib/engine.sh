@@ -1,4 +1,26 @@
+_load_engine_modules() {
+  local engine_file custom_engine_file
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    setopt localoptions nonomatch
+  fi
+  if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
+    for engine_file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
+      [[ -f "$engine_file" ]] && source "$engine_file"
+    done
+  fi
+
+  if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
+    for custom_engine_file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
+      [[ -f "$custom_engine_file" ]] && source "$custom_engine_file"
+    done
+  fi
+  return 0
+}
+
 _get_available_engines() {
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    setopt localoptions nonomatch
+  fi
   local engines=()
   local file name
 
