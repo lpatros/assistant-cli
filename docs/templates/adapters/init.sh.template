@@ -1,4 +1,4 @@
-# custom/engines/kimi.sh
+# custom/adapters/kimi/init.sh
 
 _engine_kimi_binary() {
   echo "kimi"
@@ -20,11 +20,11 @@ _engine_kimi_run_prompt() {
   local model
   model=$(_get_model_for_engine "kimi")
 
-  if [[ -n "$output_file" ]]; then
-    kimi --model "$model" --prompt "$prompt" > "$output_file" 2>/dev/null
-  else
-    kimi --model "$model" --prompt "$prompt"
-  fi
+  local args=()
+  [[ -z "$model" ]] || args+=(--model "$model")
+  args+=(--prompt "$prompt")
+  # Choose the CLI mode that emits only its final response.
+  _harness_capture_text kimi "$output_file" kimi "${args[@]}"
 }
 
 _engine_kimi_run_interactive() {
@@ -39,4 +39,9 @@ _engine_kimi_run_interactive() {
 
 _engine_kimi_default_model() {
   echo ""
+}
+
+# Optional complete declaration. Omitted capabilities mean unsupported.
+_engine_kimi_capabilities() {
+  printf '%s\n' prompt interactive model_list final_output
 }

@@ -4,7 +4,7 @@
 
 **English** | [Português](README-PTBR.md) | [Español](README-ES.md)
 
-  <p>A lightweight, modular, and localized shell wrapper for Antigravity (agy), Codex, Copilot, Ollama, OpenCode, and Custom Engines, supporting interactive chat, repository analysis, README generation, project summaries, and more.</p>
+  <p>A lightweight, modular, and localized shell wrapper for Antigravity (agy), Codex, Copilot, Ollama, OpenCode, and Custom Adapters, supporting interactive chat, repository analysis, README generation, project summaries, and more.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
@@ -23,7 +23,7 @@
 
 ## Description
 
-The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Bash. It allows users to interact with local or cloud Large Language Models (LLMs) orchestrated via **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode**, or **Custom Engines** (`custom/engines/`) directly from the terminal.
+The **Assistant CLI** (`assistant`) is a powerful, lightweight command-line interface (CLI) wrapper written in Bash. It allows users to interact with local or cloud Large Language Models (LLMs) orchestrated via **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode**, or **Custom Adapters** (`custom/adapters/`) directly from the terminal.
 
 All configuration choices (such as active engine, saved models per engine, language, and think mode) are saved locally and persist across terminal sessions.
 
@@ -146,9 +146,13 @@ assistant channel stable  # Switch to stable channel (main branch) and update
 - Run `assistant` to start an interactive chat session with your currently selected model.
 - Run `assistant "your prompt here"` to quickly send a single query to the model and receive the output.
 
+### Harnesses and native Codex skills
+
+Inspect capabilities with `assistant harness capabilities`. `engine` remains compatible. Native skill installation in Codex supports explicit project/user scopes, previews, verification and removal that preserves local edits. See the [harness and installation guide](docs/harnesses/README.md).
+
 ### Modular & Custom Engine Support
 - Built-in support for **Antigravity**, **Codex**, **Copilot**, **Ollama**, and **OpenCode**.
-- Create your own **Custom Engines** by saving `.sh` scripts in `custom/engines/` (e.g., `custom/engines/my_engine.sh`).
+- Create your own **Custom Adapters** with an entry point at `custom/adapters/<name>/init.sh`. The directory name identifies the adapter; auxiliary files stay beside its entry point.
 - The assistant stores preferred models per engine, meaning you won't lose your selected model configurations when switching between engines.
 - Switch between engines interactively with `assistant engine --list` or directly using `assistant engine <name>`.
 
@@ -185,7 +189,7 @@ Discovery reads only immediate `<name>/SKILL.md` files and never executes packag
 
 `assistant skills list` shows name, origin, format, state, path and description, including overridden definitions and invalid entries. Invalid metadata, mismatched folder names and duplicate names within an origin block the affected skill and cause listing to return nonzero. An invalid custom override never silently falls back to the built-in definition. Duplicate declared names are reported even when placed in different folders. Unrelated valid skills remain usable.
 
-Administrative commands and aliases are reserved: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
+Administrative commands and aliases are reserved: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
 
 To migrate an old custom skill, move its instructions to `custom/skills/<name>/SKILL.md` and add the required frontmatter. The old filename is ignored. Start from [SKILL.md.template](docs/templates/skills/SKILL.md.template).
 
@@ -233,9 +237,9 @@ assistant lang --list
 
 #### Complete Customization Guide & Templates
 
-For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/CUSTOMIZATION.md)](docs/CUSTOMIZATION.md)**.
+For detailed documentation, function API contracts, and advanced step-by-step examples on creating custom AI engines, locales, skills, and dynamic shell commands, refer to the **[Customization and Extensions Guide (docs/customization/README.md)](docs/customization/README.md)**.
 
-Starter templates are also available inside the [`docs/templates/`](docs/templates/)
+Starter templates are also available inside the [`docs/templates/`](docs/templates)
 
 ## Usage
 
@@ -250,6 +254,11 @@ When running `assistant`, you have access to the following commands:
 | `assistant branch` | Analyzes git changes and suggests separate, purpose-focused branches |
 | `assistant resume [paths...]` | Scans directories and generates project resume markdown files |
 | `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
+| `assistant harness [<name>\|--list\|status]` | Manage harnesses; engine remains an alias |
+| `assistant harness capabilities [name]` | Show adapter capabilities |
+| `assistant skills install <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Preview or install a native Codex skill |
+| `assistant skills verify <name> --harness codex --scope <project\|user> [--project <dir>]` | Validate the managed installation |
+| `assistant skills remove <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Remove an unedited managed installation |
 | `assistant skills list` | List skills, origins and conflicts |
 | `assistant create skill <name> <path.md>` | Creates a new custom skill from a Markdown template |
 | `assistant <custom-skill> [args]` | Executes a custom skill |
@@ -290,14 +299,15 @@ assistant model --list
 ```
 assistant/
 ├── custom/                  # User custom engines, skills, and locales
-│   ├── engines/             # Custom engine scripts (.sh)
+│   ├── adapters/            # Custom adapter scripts (.sh)
 │   ├── locales/             # Custom locale translations (.sh)
 │   └── skills/              # Custom skills (<name>/SKILL.md)
 ├── data/                    # Persistent configuration store (engine, model, lang)
 ├── docs/                    # Customization guides and extension templates
-│   ├── templates/           # Starter templates (engine, locales, skills)
-│   └── CUSTOMIZATION.md     # Customization guide
-├── lib/                     # Modular engines (lib/engines/), core routes, utilities
+│   ├── customization/       # Customization guides (README*.md)
+│   ├── harnesses/           # Harness and native skill guides (README*.md)
+│   └── templates/           # Starter templates (adapters, locales, skills)
+├── lib/                     # Modular engines (lib/adapters/), core routes, utilities
 ├── locales/                 # Text translations
 ├── skills/                  # Built-in skills
 ├── utils/                   # Utility scripts and helpers

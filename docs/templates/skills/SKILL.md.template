@@ -5,3 +5,6 @@ description: Describe when this skill should be used.
 
 Follow these instructions when performing the user task.
 Replace this body with imperative behavior rules in English.
+
+Reuse context supplied by the caller. Collect missing evidence with available tools; when tools or evidence are unavailable, ask for the missing information instead of guessing.
+If the caller captures your response as an artifact, return only the requested artifact content. Otherwise follow the user request for direct output or file creation.

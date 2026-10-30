@@ -4,7 +4,7 @@
 
 [English](README.md) | **Português** | [Español](README-ES.md)
 
-  <p>Um wrapper de terminal leve, modular e localizado para Antigravity (agy), Codex, Copilot, Ollama, OpenCode e Custom Engines, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
+  <p>Um wrapper de terminal leve, modular e localizado para Antigravity (agy), Codex, Copilot, Ollama, OpenCode e Custom Adapters, com suporte a chat interativo, análise de repositórios, geração de README, resumos de projetos e muito mais.</p>
     <div style="margin-bottom: 10px">
     <img src="https://img.shields.io/badge/Language-Shell-orange.svg"/>
     </div>
@@ -23,7 +23,7 @@
 
 ## Descrição
 
-O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais ou em nuvem orquestrados via **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode** ou **Engines Customizadas** (`custom/engines/`) diretamente a partir do terminal.
+O **Assistant CLI** (`assistant`) é uma interface de linha de comando (CLI) poderosa e leve escrita em Bash. Ela permite que os usuários interajam com Modelos de Linguagem de Grande Porte (LLMs) locais ou em nuvem orquestrados via **Antigravity**, **Codex**, **Copilot**, **Ollama**, **OpenCode** ou **Adaptadores Customizados** (`custom/adapters/`) diretamente a partir do terminal.
 
 Todas as escolhas de configuração (como engine ativa, modelos salvos por engine, idioma e modo de pensamento) são salvas localmente e persistem entre as sessões do terminal.
 
@@ -145,9 +145,13 @@ assistant channel stable  # Alterna para o canal estável (branch main) e atuali
 - Execute `assistant` para iniciar uma sessão de chat interativo com o seu modelo selecionado.
 - Execute `assistant "sua pergunta aqui"` para enviar uma pergunta rápida e obter a resposta diretamente no terminal.
 
+### Harnesses e skills nativas no Codex
+
+Consulte os recursos com `assistant harness capabilities`. `engine` permanece compatível. A instalação nativa no Codex oferece escopos explícitos de projeto/usuário, prévia, verificação e remoção que preserva edições locais. Consulte o [guia de harnesses e instalação](docs/harnesses/README-PTBR.md).
+
 ### Suporte a Engines Modulares e Customizadas
 - Suporte nativo para **Antigravity**, **Codex**, **Copilot**, **Ollama** e **OpenCode**.
-- Crie suas próprias **Custom Engines** salvando scripts `.sh` em `custom/engines/` (ex: `custom/engines/minha_engine.sh`).
+- Crie seus **Adaptadores Customizados** com ponto de entrada em `custom/adapters/<nome>/init.sh`. O nome da pasta identifica o adaptador; arquivos auxiliares ficam junto ao ponto de entrada.
 - O assistente salva os modelos de preferência por engine. Desta forma, você não perde as configurações de modelo ao alternar de engine.
 - Alterne entre as engines de forma interativa com `assistant engine --list` ou diretamente com `assistant engine <nome>`.
 
@@ -184,7 +188,7 @@ A descoberta lê apenas arquivos imediatos `<nome>/SKILL.md` e nunca executa scr
 
 `assistant skills list` mostra nome, origem, formato, estado, caminho e descrição, incluindo definições substituídas e entradas inválidas. Metadados inválidos, nomes divergentes da pasta e nomes duplicados na mesma origem bloqueiam a skill afetada e fazem a listagem retornar erro. Uma substituição customizada inválida nunca recorre silenciosamente à definição nativa. Nomes declarados duplicados são identificados mesmo em pastas diferentes. Outras skills válidas continuam utilizáveis.
 
-Comandos administrativos e aliases são reservados: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills não podem interceptá-los. A resolução segue: comandos administrativos, skills validadas (instruções customizadas antes das nativas), comandos dinâmicos customizados e prompts diretos.
+Comandos administrativos e aliases são reservados: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills não podem interceptá-los. A resolução segue: comandos administrativos, skills validadas (instruções customizadas antes das nativas), comandos dinâmicos customizados e prompts diretos.
 
 Para migrar uma skill antiga, mova suas instruções para `custom/skills/<nome>/SKILL.md` e acrescente o frontmatter obrigatório. O nome antigo é ignorado. Use o [SKILL.md.template](docs/templates/skills/SKILL.md.template) como referência.
 
@@ -231,9 +235,9 @@ assistant lang --list
 ```
 
 #### Guia Completo de Customização e Templates
-Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/CUSTOMIZATION-PTBR.md)](docs/CUSTOMIZATION-PTBR.md)**.
+Para documentação detalhada, especificações de contrato de funções e exemplos avançados sobre como criar motores de IA, idiomas, habilidades (skills) e comandos dinâmicos, consulte o **[Guia de Customização e Extensões (docs/customization/README-PTBR.md)](docs/customization/README-PTBR.md)**.
 
-Você também pode utilizar os modelos de referência disponíveis em [`docs/templates/`](docs/templates/)
+Você também pode utilizar os modelos de referência disponíveis em [`docs/templates/`](docs/templates)
 ## Uso
 
 | Comando | Descrição |
@@ -245,6 +249,11 @@ Você também pode utilizar os modelos de referência disponíveis em [`docs/tem
 | `assistant branch` | Analisa as mudanças do git e sugere branches separadas por propósito |
 | `assistant resume [caminhos...]` | Escaneia diretórios e gera arquivos markdown de resumo de projeto |
 | `assistant readme --lang <idioma> --name <nome>` | Escaneia a estrutura do projeto e gera um arquivo README |
+| `assistant harness [<name>\|--list\|status]` | Gerencia harnesses; engine continua como alias |
+| `assistant harness capabilities [name]` | Mostra capacidades dos adaptadores |
+| `assistant skills install <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Mostra prévia ou instala skill nativa no Codex |
+| `assistant skills verify <name> --harness codex --scope <project\|user> [--project <dir>]` | Valida a instalação gerenciada |
+| `assistant skills remove <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Remove instalação gerenciada sem edições locais |
 | `assistant skills list` | Lista skills, origens e conflitos |
 | `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um modelo Markdown |
 | `assistant <skill-customizada> [args]` | Executa uma skill personalizada |
@@ -285,14 +294,15 @@ assistant model --list
 ```
 assistant/
 ├── custom/                  # Engines, habilidades e idiomas personalizados do usuário
-│   ├── engines/             # Engines customizadas (scripts .sh)
+│   ├── adapters/            # Adaptadores customizados (scripts .sh)
 │   ├── locales/             # Idiomas customizados (.sh)
 │   └── skills/              # Habilidades customizadas (<nome>/SKILL.md)
 ├── data/                    # Armazena configurações e metadados do sistema
 ├── docs/                    # Guias de customização e templates de extensão
-│   ├── templates/           # Modelos de referência (engine, locales, skills)
-│   └── CUSTOMIZATION.md     # Guia de customização
-├── lib/                     # Motores (lib/engines/), rotas e utilitários do sistema
+│   ├── customization/       # Guias de customização (README*.md)
+│   ├── harnesses/           # Guias de harnesses e skills nativas (README*.md)
+│   └── templates/           # Modelos de referência (adapters, locales, skills)
+├── lib/                     # Motores (lib/adapters/), rotas e utilitários do sistema
 ├── locales/                 # Traduções usadas pelo CLI
 ├── skills/                  # Habilidades do Assistant
 ├── utils/                   # Funções utilitárias auxiliares

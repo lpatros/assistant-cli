@@ -2,7 +2,7 @@
 
 # Guía de Personalización y Extensiones
 
-[English](CUSTOMIZATION.md) | [Português](CUSTOMIZATION-PTBR.md) | **Español**
+[English](README.md) | [Português](README-PTBR.md) | **Español**
 
 <p>Aprende a extender el <b>Assistant CLI</b> configurando los motores de IA que utilizas, idiomas personalizados, habilidades (skills) y comandos dinámicos.</p>
 
@@ -11,8 +11,8 @@
 ## Índice
 
 - [Visión General](#visión-general)
-- [Motores Personalizados](#motores-personalizados-customengines)
-  - [Contrato de Funciones del Motor](#contrato-de-funciones-del-motor)
+- [Adaptadores Personalizados](#adaptadores-personalizados-customadapters)
+  - [Contrato de Funciones del Adaptador](#contrato-de-funciones-del-adaptador)
   - [Paso a Paso de Creación](#paso-a-paso-de-creación)
   - [Cómo Activar y Probar](#cómo-activar-y-probar)
 - [Idiomas Personalizados](#idiomas-personalizados-customlocales)
@@ -33,17 +33,21 @@ La estructura de carpetas para extensiones es la siguiente:
 
 ```text
 custom/
-├── engines/     # Scripts de shell con controladores para nuevos ejecutables/servicios de LLM
-├── locales/     # Scripts de shell que sobrescriben o agregan traducciones de interfaz
-├── skills/      # Paquetes Markdown (<nombre>/SKILL.md) que definen personas y prompts del sistema
-└── init.sh      # Script de shell para comandos personalizados dinámicos (_cmd_<nombre>)
+├── adapters/   # Scripts de shell con controladores para nuevos ejecutables/servicios de LLM
+├── locales/    # Scripts de shell que sobrescriben o agregan traducciones de interfaz
+├── skills/     # Paquetes Markdown (<nombre>/SKILL.md) que definen personas y prompts del sistema
+└── init.sh     # Script de shell para comandos personalizados dinámicos (_cmd_<nombre>)
 ```
 
-## Motores Personalizados (`custom/engines/`)
+## Adaptadores Personalizados (`custom/adapters/`)
 
-Puedes integrar cualquier nuevo modelo, CLI o API (ej: Kimi, APIs personalizadas) creando un controlador en script de shell en el directorio `custom/engines/`.
+Puedes integrar cualquier nuevo modelo, CLI o API (ej: Kimi, APIs personalizadas) creando un controlador en script de shell en el directorio `custom/adapters/`.
 
-### Contrato de Funciones del Motor
+Los adaptadores personalizados se cargan solo desde `custom/adapters/*/init.sh`; mueve las extensiones existentes a ese directorio. La ubicación antigua `custom/engines/` ya no se consulta. `assistant custom adapters` lista las extensiones; `assistant custom engines` sigue siendo un alias de comando. Las funciones `_engine_*` y las configuraciones `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` permanecen iguales.
+
+Solo se descubre y carga `<nombre>/init.sh`. Guarda helpers, filtros y assets en la misma carpeta y cárgalos explícitamente desde el adaptador cuando sea necesario. Los archivos `.sh` directamente en `lib/adapters/` o `custom/adapters/` se ignoran.
+
+### Contrato de Funciones del Adaptador
 
 Para que `assistant-cli` reconozca y gestione tu motor, tu archivo `.sh` debe implementar el prefijo `_engine_<nombre_del_motor>_` en las siguientes funciones:
 
@@ -56,16 +60,23 @@ Para que `assistant-cli` reconozca y gestione tu motor, tu archivo `.sh` debe im
 | `_engine_<nombre>_run_interactive()` | Inicia una sesión de chat interactiva con el modelo. | **Sí** |
 | `_engine_<nombre>_default_model()` | Devuelve el modelo por defecto del motor (opcional). | *No* |
 
+### Capacidades opcionales del adaptador
+
+El hook `_engine_<nombre>_capabilities()` imprime un token de soporte por línea: `prompt`, `interactive`, `workspace_tools`, `model_list`, `final_output`, `native_skills`. La declaración es completa: los tokens omitidos significan ausencia de soporte. Sin el hook, se conserva la ejecución de prompts e interacción, se deshabilita la instalación nativa y las demás capacidades quedan desconocidas.
+
+Los hooks de prompt deben emitir solo texto final, mantener los diagnósticos en stderr y devolver el código del ejecutor. `_harness_capture_text <nombre> <archivo_salida> <comando> [args...]` almacena temporalmente la salida de un modo de la CLI que ya emite solo la respuesta final; no elimina logs de un flujo arbitrario. Rechaza respuestas vacías y publica solo tras el éxito. Los adaptadores de instalación nativa implementan también `_engine_<nombre>_skill_root <alcance> <proyecto>` (ruta absoluta de descubrimiento) y `_engine_<nombre>_render_skill <nombre> <archivo_origen>` (SKILL.md adaptado válido en stdout). Solo el adaptador Codex ofrece instalación nativa en esta versión.
+
+
 ### Paso a Paso de Creación
 
-1. Crea un archivo `.sh` en `custom/engines/`.
-2. Utiliza como base la plantilla oficial disponible en [`docs/templates/engine/example.sh.template`](templates/engine/example.sh.template).
+1. Crea `custom/adapters/<nombre>/init.sh`; el nombre de la carpeta es el identificador del adaptador.
+2. Utiliza como base la plantilla oficial disponible en [`docs/templates/adapters/init.sh.template`](../templates/adapters/init.sh.template).
 3. Reemplaza `<nombre>` por el identificador de tu motor (usa solo letras minúsculas, números y guiones bajos).
 4. Implementa cada una de las funciones según la sintaxis de la CLI deseada.
 
 ### Cómo Activar y Probar
 
-Después de guardar el archivo en `custom/engines/mi_motor.sh`:
+Después de guardar el archivo en `custom/adapters/mi_motor/init.sh`:
 
 1. Comprueba si el motor aparece en la lista de disponibles:
    ```bash
@@ -102,7 +113,7 @@ Los archivos de idioma sobrescriben las funciones de traducción con el prefijo 
 ### Paso a Paso de Creación
 
 1. Crea un archivo `.sh` en `custom/locales/`.
-2. Como referencia, consulta la plantilla oficial en [`docs/templates/locales/example.sh.template`](templates/locales/example.sh.template).
+2. Como referencia, consulta la plantilla oficial en [`docs/templates/locales/example.sh.template`](../templates/locales/example.sh.template).
 3. Define únicamente las funciones `t_*` que desees traducir o personalizar.
 
 ### Cómo Activar y Probar
@@ -142,9 +153,9 @@ El descubrimiento lee solo archivos inmediatos `<nombre>/SKILL.md` y nunca ejecu
 
 `assistant skills list` muestra nombre, origen, formato, estado, ruta y descripción, incluidas definiciones sustituidas y entradas inválidas. Los metadatos inválidos, nombres distintos de la carpeta y nombres duplicados dentro de un origen bloquean la skill afectada y hacen que el listado devuelva error. Una sustitución personalizada inválida nunca recurre silenciosamente a la definición nativa. Los nombres declarados duplicados se detectan incluso en carpetas distintas. Otras skills válidas siguen disponibles.
 
-Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `engine`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
+Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
 
-Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](templates/skills/SKILL.md.template) como referencia.
+Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](../templates/skills/SKILL.md.template) como referencia.
 
 
 ## Comandos Personalizados Dinámicos (`custom/init.sh`)
@@ -184,6 +195,10 @@ El repositorio incluye plantillas para facilitar la creación de extensiones en 
 
 | Categoría | Ruta de la Plantilla | Descripción |
 | :--- | :--- | :--- |
-| **Motor** | [`docs/templates/engine/example.sh.template`](templates/engine/example.sh.template) | Plantilla base para controladores de motores personalizados |
-| **Idioma** | [`docs/templates/locales/example.sh.template`](templates/locales/example.sh.template) | Plantilla base para archivos de idioma personalizados |
-| **Skill** | [`docs/templates/skills/SKILL.md.template`](templates/skills/SKILL.md.template) | Plantilla base para archivos Markdown de skills |
+| **Motor** | [`docs/templates/adapters/init.sh.template`](../templates/adapters/init.sh.template) | Plantilla base para controladores de motores personalizados |
+| **Idioma** | [`docs/templates/locales/example.sh.template`](../templates/locales/example.sh.template) | Plantilla base para archivos de idioma personalizados |
+| **Skill** | [`docs/templates/skills/SKILL.md.template`](../templates/skills/SKILL.md.template) | Plantilla base para archivos Markdown de skills |
+
+## Harnesses y skills nativas en Codex
+
+[Harnesses y skills nativas en Codex](../harnesses/README-ES.md).
