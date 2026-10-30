@@ -61,14 +61,8 @@ _get_custom_engines() {
   local engines=()
   local file name
 
-  if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
-    for file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh; do
-      if [[ -f "$file" ]]; then
-        name=$(basename "$file" .sh)
-        engines+=("$name")
-      fi
-    done
-    for file in "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
+  if [[ -d "$ASSISTANT_ROOT_DIR/custom/adapters" ]]; then
+    for file in "$ASSISTANT_ROOT_DIR/custom/adapters"/*/init.sh; do
       if [[ -f "$file" ]]; then
         name=$(basename "$(dirname "$file")")
         engines+=("$name")
@@ -160,7 +154,7 @@ _cmd_custom() {
     status|"")
       _cmd_custom_status
       ;;
-    engines)
+    adapters|engines)
       local subaction="${1:-status}"
       case "$subaction" in
         status|"")

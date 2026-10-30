@@ -25,8 +25,8 @@ section() { printf "\n${BOLD}== %s ==${RESET}\n" "$1"; }
 
 cd -- "$ROOT_DIR"
 
-PROJECT_FILES="init.sh lib/*.sh lib/engines/*.sh utils/*.sh skills/*/init.sh locales/*.sh"
-CALLER_FILES="init.sh lib/*.sh lib/engines/*.sh utils/*.sh skills/*/init.sh"
+PROJECT_FILES="init.sh lib/*.sh lib/adapters/*/init.sh utils/*.sh skills/*/init.sh locales/*.sh"
+CALLER_FILES="init.sh lib/*.sh lib/adapters/*/init.sh utils/*.sh skills/*/init.sh"
 
 section "Syntax checks"
 
@@ -107,7 +107,11 @@ runtime "assistant status" status
 runtime "assistant model status" model status
 runtime "assistant lang --list" lang --list
 runtime "assistant custom status" custom status
+runtime "assistant custom adapters status" custom adapters status
 runtime "assistant skills list" skills list
+runtime "assistant harness status" harness status
+runtime "assistant harness capabilities" harness capabilities
+runtime "assistant engine capabilities codex" engine capabilities codex
 
 section "Runtime (usage error path)"
 
@@ -132,6 +136,23 @@ if command -v zsh >/dev/null 2>&1; then
   fi
 else
   skip "behavioral checks in zsh: interpreter not installed"
+fi
+
+section "Harnesses and native installation (simulated executors)"
+
+if bash tests/harness.sh >"$ERR_FILE" 2>&1; then
+  pass "harness and installation checks in bash"
+else
+  fail "harness and installation checks in bash"
+fi
+if command -v zsh >/dev/null 2>&1; then
+  if zsh tests/harness.sh >"$ERR_FILE" 2>&1; then
+    pass "harness and installation checks in zsh"
+  else
+    fail "harness and installation checks in zsh"
+  fi
+else
+  skip "harness checks in zsh: interpreter not installed"
 fi
 
 section "Summary"

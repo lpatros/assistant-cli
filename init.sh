@@ -25,6 +25,7 @@ source "$ASSISTANT_LIB_DIR/persistence.sh"
 source "$ASSISTANT_LIB_DIR/locale.sh"
 source "$ASSISTANT_LIB_DIR/think.sh"
 source "$ASSISTANT_LIB_DIR/engine.sh"
+source "$ASSISTANT_LIB_DIR/harness.sh"
 source "$ASSISTANT_LIB_DIR/llm.sh"
 source "$ASSISTANT_LIB_DIR/help.sh"
 source "$ASSISTANT_LIB_DIR/update.sh"
@@ -33,6 +34,7 @@ source "$ASSISTANT_LIB_DIR/version.sh"
 source "$ASSISTANT_LIB_DIR/channel.sh"
 source "$ASSISTANT_LIB_DIR/changelog.sh"
 source "$ASSISTANT_LIB_DIR/skills.sh"
+source "$ASSISTANT_LIB_DIR/skill-install.sh"
 source "$ASSISTANT_LIB_DIR/custom.sh"
 
 _load_locale
@@ -42,7 +44,7 @@ source "$ASSISTANT_ROOT_DIR/skills/resume/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/readme/init.sh"
 source "$ASSISTANT_ROOT_DIR/skills/branch/init.sh"
 
-_load_engine_modules
+_load_adapter_modules
 
 if [[ -f "$ASSISTANT_ROOT_DIR/custom/init.sh" ]]; then
   source "$ASSISTANT_ROOT_DIR/custom/init.sh"
@@ -87,9 +89,9 @@ function assistant() {
           ;;
       esac
       ;;
-    "engine")
+    "harness"|"engine")
       shift
-      _cmd_engine "$@"
+      _cmd_harness "$@"
       ;;
     "think")
       shift

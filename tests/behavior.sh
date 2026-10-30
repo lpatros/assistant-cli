@@ -5,7 +5,11 @@ trap 'rm -rf "$TEST_ROOT"' EXIT
 cp -R "$PROJECT_ROOT/lib" "$PROJECT_ROOT/utils" "$PROJECT_ROOT/locales" "$PROJECT_ROOT/skills" "$PROJECT_ROOT/init.sh" "$TEST_ROOT/" || exit 1
 export ASSISTANT_ROOT_DIR="$TEST_ROOT" ASSISTANT_NO_UPDATE_CHECK=1
 unset ASSISTANT_LIB_DIR ASSISTANT_UTILS_DIR
-mkdir -p "$TEST_ROOT/custom/engines" "$TEST_ROOT/custom/locales" || exit 1
+mkdir -p "$TEST_ROOT/custom/adapters" "$TEST_ROOT/custom/locales" || exit 1
+# Old extension locations must not be read, even when their scripts exist.
+mkdir -p "$TEST_ROOT/custom/engines/legacy-folder" || exit 1
+printf 'touch "%s/legacy-loaded"\n' "$TEST_ROOT" > "$TEST_ROOT/custom/engines/legacy-flat.sh"
+printf 'touch "%s/legacy-loaded"\n' "$TEST_ROOT" > "$TEST_ROOT/custom/engines/legacy-folder/init.sh"
 source "$TEST_ROOT/init.sh" || exit 1
 cd "$TEST_ROOT" || exit 1
 git init -q work || exit 1
@@ -47,6 +51,28 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
   zsh_nomatch_enabled() { [[ -o nomatch ]]; }
   check 'zsh nomatch option preserved' zsh_nomatch_enabled
 fi
+
+check 'legacy adapter scripts never sourced at bootstrap' test ! -e "$TEST_ROOT/legacy-loaded"
+check 'legacy flat adapter not discovered' fails has "$(_get_available_engines)" legacy-flat
+check 'legacy folder adapter not discovered' fails has "$(_get_available_engines)" legacy-folder
+mkdir -p "$TEST_ROOT/custom/adapters/folder_probe"
+printf '%s\n' '_engine_flat_probe_binary() { printf probe; }' > "$TEST_ROOT/custom/adapters/flat_probe.sh"
+printf '%s\n' '_engine_folder_probe_binary() { printf probe; }' > "$TEST_ROOT/custom/adapters/folder_probe/init.sh"
+printf 'touch "%s/auxiliary-loaded"\n' "$TEST_ROOT" > "$TEST_ROOT/custom/adapters/folder_probe/helper.sh"
+printf 'touch "%s/auxiliary-loaded"\n' "$TEST_ROOT" > "$TEST_ROOT/lib/adapters/stray.sh"
+printf 'touch "%s/auxiliary-loaded"\n' "$TEST_ROOT" > "$TEST_ROOT/lib/adapters/opencode/helper.sh"
+check 'load adapters from the new location' _load_adapter_modules
+check 'flat adapter is not loaded' fails command -v _engine_flat_probe_binary
+check 'folder adapter is loaded' test "$(_engine_folder_probe_binary)" = probe
+check 'flat adapter is not discovered' fails has "$(_get_custom_engines)" flat_probe
+check 'new folder adapter is discovered' has "$(_get_custom_engines)" folder_probe
+check 'custom adapters status command' assistant custom adapters status >/dev/null
+check 'custom engines command remains an alias' assistant custom engines status >/dev/null
+check 'legacy adapter scripts never sourced on reload' test ! -e "$TEST_ROOT/legacy-loaded"
+check 'auxiliary adapter scripts never auto-sourced' test ! -e "$TEST_ROOT/auxiliary-loaded"
+check 'top-level built-in script is not an adapter' fails has "$(_get_available_engines)" stray
+check 'flat custom script excluded from available adapters' fails has "$(_get_available_engines)" flat_probe
+
 
 check 'initial registry' _cmd_skills list >/dev/null
 skill skills plain

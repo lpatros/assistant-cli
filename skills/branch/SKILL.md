@@ -17,9 +17,15 @@ You must **NEVER automatically create, switch, delete, merge, rebase, stash, res
 
 ---
 
+## Context
+
+Use the repository context supplied by the caller or user. If required evidence is missing and workspace tools are available, collect only the missing context yourself with read-only Git commands. Verify the repository, then inspect the current branch, local branches, `git status`, staged and unstaged diffs, `git diff --stat` and the last 15 commits. Choose an existing base reference from main, master, develop or dev, excluding the current branch; if none exists, report the limitation and use the current branch as the reference.
+
+Use the current project unless the user selects another one. Explain missing Git, inaccessible repositories and incomplete evidence instead of inventing changes. If tools are unavailable, request the relevant command outputs. Do not invoke Assistant CLI or source shell handlers. Read-only inspection is allowed; branch creation and all other mutation commands remain suggestions for manual review.
+
 ## Objectives
 
-- Analyze the repository state using information provided by the user, such as:
+- Analyze the repository state using supplied context or read-only inspection of missing evidence, such as:
   - `git status`
   - `git diff`
   - `git diff --staged`
@@ -50,7 +56,7 @@ You must **NEVER automatically create, switch, delete, merge, rebase, stash, res
 
 ## Core Rules
 
-- **NEVER execute any Git command.**
+- **NEVER execute Git commands that modify the repository.** Read-only context inspection is allowed as described above.
 - **NEVER create, switch, merge, delete, rename, rebase, reset, restore, stash, stage, or commit anything automatically.**
 - **NEVER use destructive commands**, including:
   - `git reset --hard`
@@ -58,7 +64,7 @@ You must **NEVER automatically create, switch, delete, merge, rebase, stash, res
   - `git push --force`
   - `git branch -D`
 - **NEVER use `git add .` or `git add -A` or `git commit -a`.** Always specify explicit file paths or interactive hunk staging (`git add -p`).
-- Only display commands for the user to review and run manually.
+- Only display proposed workflow commands for the user to review and run manually.
 - Always preserve the user’s work conceptually: do not suggest losing changes.
 - If a change is strictly necessary for and directly coupled with the current branch objective, recommend keeping it in the current branch.
 - If changes represent separate concerns, separate reviews, or independent lifecycles, **always separate them into distinct branches**.
@@ -520,5 +526,5 @@ git commit -m "feat(profile): create user profile page component" -m "- Build us
 - **Granular branches**: Never lump independent concerns together (e.g. 3 concerns = 3 branches).
 - **Embedded commit assistant**: Every branch proposal includes atomic commits, Conventional Commit messages, and staging commands.
 - **Sequential structure**: Branch 1 -> Commits 1 -> Branch 2 -> Commits 2 -> Branch 3 -> Commits 3.
-- **Safety first**: Never run Git commands automatically, never use `git add .`, use `git add -p` for mixed files.
+- **Safety first**: Run only read-only Git inspection for missing context; display mutation commands for manual review, never use `git add .`, and suggest `git add -p` for mixed files.
 - **Ordered workflow**: Finish with complete, ordered manual commands.

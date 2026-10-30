@@ -1,6 +1,6 @@
 _skill_is_reserved() {
   case "$1" in
-    create|skills|model|engine|think|lang|custom|status|update|channel|changelog|version|--version|-v|help|--help|-h|--think|--no-think|--hide-think) return 0 ;;
+    create|skills|model|engine|harness|think|lang|custom|status|update|channel|changelog|version|--version|-v|help|--help|-h|--think|--no-think|--hide-think) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -118,6 +118,12 @@ ${LLM_CLEAN_ARGS[*]}"
 }
 
 _cmd_skills() {
+  case "${1:-list}" in
+    install|remove|verify)
+      _cmd_skill_install "$@"
+      return $?
+      ;;
+  esac
   if [[ "${1:-list}" != list || $# -gt 1 ]]; then
     t_skills_usage
     return 1

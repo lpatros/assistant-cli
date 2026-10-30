@@ -45,7 +45,7 @@ _cmd_branch() {
   git_diff_unstaged=$(git diff 2>&1)
   git_diff_stat=$(git diff --stat 2>&1)
 
-  t_branch_analyzing "$current_engine" "$current_model_display"
+  t_branch_analyzing "$current_engine" "$current_model_display" >&2
 
   local prompt_instructions prompt_staged_label prompt_unstaged_label prompt_no_branches
   prompt_instructions=$(t_branch_prompt_instructions)

@@ -77,7 +77,7 @@ _cmd_readme() {
   current_engine=$(_get_engine)
   current_model_display=$(_model_display "$(_get_model)")
 
-  t_readme_analyzing "$current_engine" "$current_model_display"
+  t_readme_analyzing "$current_engine" "$current_model_display" >&2
 
   local md_file md_content
   md_file=$(_get_skill_md_path "readme") || return 1
@@ -112,9 +112,9 @@ ${LLM_CLEAN_ARGS[*]}"
   
   local run_status=$?
   if [[ $run_status -ne 0 ]]; then
-    t_readme_failed
+    t_readme_failed >&2
     return 1
   fi
 
-  t_readme_success "$output_file" "$lang"
+  t_readme_success "$output_file" "$lang" >&2
 }

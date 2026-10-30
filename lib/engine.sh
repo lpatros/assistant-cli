@@ -1,19 +1,11 @@
-_load_engine_modules() {
-  local engine_file custom_engine_file
+_load_adapter_modules() {
+  local adapter_file
   if [[ -n "${ZSH_VERSION:-}" ]]; then
     setopt localoptions nonomatch
   fi
-  if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
-    for engine_file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
-      [[ -f "$engine_file" ]] && source "$engine_file"
-    done
-  fi
-
-  if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
-    for custom_engine_file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
-      [[ -f "$custom_engine_file" ]] && source "$custom_engine_file"
-    done
-  fi
+  for adapter_file in "$ASSISTANT_LIB_DIR/adapters"/*/init.sh "$ASSISTANT_ROOT_DIR/custom/adapters"/*/init.sh; do
+    [[ -f "$adapter_file" ]] && source "$adapter_file"
+  done
   return 0
 }
 
@@ -23,32 +15,15 @@ _get_available_engines() {
   fi
   local engines=()
   local file name
-
-  if [[ -d "$ASSISTANT_LIB_DIR/engines" ]]; then
-    for file in "$ASSISTANT_LIB_DIR/engines"/*.sh; do
-      if [[ -f "$file" ]]; then
-        name=$(basename "$file" .sh)
-        engines+=("$name")
-      fi
-    done
+  for file in "$ASSISTANT_LIB_DIR/adapters"/*/init.sh "$ASSISTANT_ROOT_DIR/custom/adapters"/*/init.sh; do
+    if [[ -f "$file" ]]; then
+      name=$(basename "$(dirname "$file")")
+      engines+=("$name")
+    fi
+  done
+  if [[ ${#engines[@]} -gt 0 ]]; then
+    printf '%s\n' "${engines[@]}" | sort -u
   fi
-
-  if [[ -d "$ASSISTANT_ROOT_DIR/custom/engines" ]]; then
-    for file in "$ASSISTANT_ROOT_DIR/custom/engines"/*.sh; do
-      if [[ -f "$file" ]]; then
-        name=$(basename "$file" .sh)
-        engines+=("$name")
-      fi
-    done
-    for file in "$ASSISTANT_ROOT_DIR/custom/engines"/*/init.sh; do
-      if [[ -f "$file" ]]; then
-        name=$(basename "$(dirname "$file")")
-        engines+=("$name")
-      fi
-    done
-  fi
-
-  printf "%s\n" "${engines[@]}" | sort -u | grep -Ev '^\*$'
 }
 
 _is_engine_installed() {

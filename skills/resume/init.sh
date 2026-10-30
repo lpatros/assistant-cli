@@ -52,7 +52,7 @@ _analyze_single_project() {
   local project_name
   project_name=$(basename "$(cd "$proj" && pwd)")
 
-  t_resume_analyzing "$project_name"
+  t_resume_analyzing "$project_name" >&2
 
   local project_context
   project_context=$(_gather_project_context "$proj" "$project_name")
@@ -78,11 +78,11 @@ $prompt_instructions"
   local exit_code=$?
 
   if [[ $exit_code -ne 0 ]]; then
-    t_resume_failed "$project_name"
+    t_resume_failed "$project_name" >&2
     return 1
   fi
 
-  t_resume_success "$project_name" "$output_file"
+  t_resume_success "$project_name" "$output_file" >&2
 }
 
 _cmd_resume() {
@@ -105,10 +105,10 @@ _cmd_resume() {
   local output_dir="./projects-resumes"
   mkdir -p "$output_dir"
 
-  t_resume_starting "$current_engine" "$current_model_display"
+  t_resume_starting "$current_engine" "$current_model_display" >&2
 
   if [[ ${#projects[@]} -gt 1 ]]; then
-    t_resume_parallel_info "${#projects[@]}"
+    t_resume_parallel_info "${#projects[@]}" >&2
     local proj pid result=0
     local pids=()
     for proj in "${projects[@]}"; do

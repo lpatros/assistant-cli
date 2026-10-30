@@ -234,7 +234,7 @@ t_resume_analyzing() {
 }
 
 t_resume_prompt_instructions() {
-  echo "Analiza el proyecto anterior y genera el archivo de resumen siguiendo estrictamente las pautas proporcionadas."
+  echo "Analiza el proyecto anterior y genera el archivo de resumen siguiendo estrictamente las pautas proporcionadas. Devuelve SOLO el Markdown puro de este proyecto. El programa que te invoca guarda la respuesta en el archivo de salida; no crees archivos ni incluyas confirmaciones o bloques de código externos."
 }
 
 t_resume_failed() {
@@ -431,11 +431,11 @@ t_create_skill_aborted() {
 
 # Custom commands
 t_custom_engines_status_header() {
-  _header "Motores Personalizados:"
+  _header "Adaptadores Personalizados:"
 }
 
 t_no_custom_engines_found() {
-  echo -e "  ${DIM}(ningún motor personalizado encontrado)${RESET}"
+  echo -e "  ${DIM}(ningún adaptador personalizado encontrado)${RESET}"
 }
 
 t_custom_skills_status_header() {
@@ -459,11 +459,11 @@ t_custom_status_header() {
 }
 
 t_custom_usage() {
-  _error "Uso: assistant custom [engines|skills|locales|status] [status]"
+  _error "Uso: assistant custom [adapters|skills|locales|status] [status]"
 }
 
 t_custom_engines_usage() {
-  _error "Uso: assistant custom engines [status]"
+  _error "Uso: assistant custom adapters [status]"
 }
 
 t_custom_skills_usage() {
@@ -507,7 +507,7 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant${RESET}                                     Chat interactivo con el modelo actual
   ${GREEN}assistant${RESET} \"<mensaje>\"                         Enviar un mensaje directo
   ${GREEN}assistant status${RESET}                              Mostrar motor, modelos, modo pensamiento e idioma
-  ${GREEN}assistant custom${RESET} [engines|skills|locales|status] Mostrar componentes personalizados identificados
+  ${GREEN}assistant custom${RESET} [adapters|skills|locales|status] Mostrar componentes personalizados identificados
   ${GREEN}assistant channel${RESET} [<stable|beta|status>]      Gestionar el canal de lanzamiento (estable/beta)
   ${GREEN}assistant changelog${RESET} [--terminal|-t]           Muestra el registro de cambios en el navegador (o terminal con -t)
   ${GREEN}assistant update${RESET} [@<ver>|--version <ver>|--list] Actualizar el asistente a la última versión o a una específica
@@ -520,13 +520,16 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant create skill${RESET} <nom> <ruta.md>        Crear una nueva habilidad personalizada
   ${GREEN}assistant <habilidad-personalizada>${RESET} [args]    Ejecutar una habilidad personalizada
   ${GREEN}assistant model${RESET} [--list|set <modelo>|status]  Gestionar los modelos del motor activo
+  ${GREEN}assistant harness${RESET} [<name>|--list|status]   Gestionar harnesses (engine es un alias compatible)
+  ${GREEN}assistant harness capabilities${RESET} [name]       Mostrar operaciones disponibles
+  ${GREEN}assistant skills install|verify|remove${RESET} <name>  Instalar, verificar o eliminar una skill en Codex; requiere --scope
   ${GREEN}assistant engine${RESET} [<motor>|--list|status]      Cambiar el motor activo
   ${GREEN}assistant engine status${RESET}                       Mostrar motor actual y modelo activo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Gestionar modo pensamiento (ollama)
   ${GREEN}assistant lang${RESET} [<idioma>|--list|status]       Gestionar el idioma del asistente
 
 ${BOLD}Notas:${RESET}
-  - Crea motores personalizados en custom/engines/<nombre>.sh.
+  - Crea adaptadores personalizados en custom/adapters/<nombre>/init.sh.
   - Los modelos se guardan por motor; cambiar el motor no hace perder los modelos anteriores.
 
 ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
@@ -539,7 +542,7 @@ ${BOLD}Ejemplos:${RESET}
   assistant commit
   assistant branch
   assistant custom status
-  assistant custom engines status
+  assistant custom adapters status
   assistant channel beta
   assistant engine agy
   assistant engine opencode
@@ -551,7 +554,7 @@ ${BOLD}Ejemplos:${RESET}
 }
 
 # Skill discovery
-t_skills_usage() { _error "Uso: assistant skills [list]"; }
+t_skills_usage() { _error "Uso: assistant skills [list|install|verify|remove]"; }
 t_skills_header() { printf 'Nombre\tOrigen\tFormato\tEstado\tRuta\tDescripción\n'; }
 t_skill_error() { _error "Skill inválida: $1 ($2)."; }
 t_skill_origin() {
@@ -569,3 +572,47 @@ t_skill_state() {
     conflict) printf '%s' 'nombre duplicado' ;;
   esac
 }
+
+# Harness capabilities and native skills
+t_harness_usage() { _error "Uso: assistant harness [<nombre>|--list|status|capabilities [nombre]]"; }
+t_harness_unknown() { _error "Harness desconocido: $1."; }
+t_harness_unsupported() { _error "El harness $1 no admite $2."; }
+t_harness_status() { _info "Harness: $1 | Modelo: $2"; }
+t_harness_failed() { _error "El harness $1 falló (código $2)."; }
+t_harness_empty() { _error "El harness $1 no devolvió una respuesta final."; }
+t_harness_dependency() { _error "El harness $1 requiere $2 para esta operación."; }
+t_native_usage() { _error "Uso: assistant skills <install|verify|remove> <nombre> --harness codex --scope <project|user> [--project <directorio>] [--dry-run]"; }
+t_native_error() { _error "Error en la operación de la skill: $1 ($2)."; }
+t_harness_capabilities_header() { printf 'Harness\tPrompt\tInteractivo\tHerramientas de proyecto\tLista de modelos\tRespuesta final\tInstalación nativa\n'; }
+t_harness_capability_value() {
+  case "$1" in
+    yes) printf '%s' 'sí' ;;
+    no) printf '%s' 'no' ;;
+    unknown) printf '%s' 'desconocido' ;;
+  esac
+}
+t_native_reason() {
+  case "$1" in
+    checksum) printf '%s' 'SHA-256 requiere sha256sum o shasum' ;;
+    symlink) printf '%s' 'no se permiten enlaces simbólicos en el destino administrado' ;;
+    unmanaged) printf '%s' 'registro de instalación ausente o inválido' ;;
+    edited) printf '%s' 'el contenido instalado o su registro de origen fue editado' ;;
+    invalid) printf '%s' 'skill o ruta inválida' ;;
+    extra) printf '%s' 'el destino contiene archivos adicionales' ;;
+    conflict) printf '%s' 'el destino o nombre de la skill ya existe' ;;
+    failed) printf '%s' 'falló la operación de archivo; revisa el destino' ;;
+    unsupported) printf '%s' 'instalación nativa no disponible para este harness' ;;
+    reserved) printf '%s' 'nombre reservado para un comando administrativo' ;;
+  esac
+}
+t_native_action() {
+  case "$1" in
+    install) printf '%s' 'instalar' ;;
+    verify) printf '%s' 'verificar' ;;
+    remove) printf '%s' 'eliminar' ;;
+  esac
+}
+t_native_plan() {
+  printf 'Vista previa: %s\nDestino: %s\nOrigen: %s\nVersión: %s\nSHA-256: %s\nArchivos: SKILL.md, .assistant-install.tsv, .assistant-install.sha256\n' "$(t_native_action "$1")" "$2" "$3" "$4" "$5"
+}
+t_native_done() { _success "$(t_native_action "$1"): $2"; }

@@ -9,13 +9,17 @@ _llm_run_prompt() {
   clean_eng=$(_sanitize_engine_name "$current_engine")
   func_name="_engine_${clean_eng}_run_prompt"
 
-  _ensure_engine_installed "$current_engine" || return 1
+  _harness_require "$current_engine" prompt || return 1
+  if ! _is_engine_installed "$current_engine"; then
+    t_engine_not_installed_warning "$current_engine" >&2
+    return 127
+  fi
   _update_check_start
 
   if command -v "$func_name" &>/dev/null; then
     "$func_name" "$prompt" "$output_file" "$@"
     local rc=$?
-    _update_check_notify
+    _update_check_notify >&2
     return $rc
   fi
 
@@ -29,23 +33,10 @@ _llm_run_prompt() {
   [[ -n "$current_model" ]] && args+=("--model" "$current_model")
   args+=("--" "$prompt")
 
-  if [[ -n "$output_file" ]]; then
-    local err_file exit_code
-    err_file=$(mktemp) || return 1
-    "$binary" "${args[@]}" > "$output_file" 2>"$err_file"
-    exit_code=$?
-    if [[ $exit_code -ne 0 ]]; then
-      cat "$err_file" >&2
-    fi
-    rm -f "$err_file"
-    _update_check_notify
-    return "$exit_code"
-  else
-    "$binary" "${args[@]}"
-  fi
+  _harness_capture_text "$current_engine" "$output_file" "$binary" "${args[@]}"
   local prompt_rc=$?
-  _update_check_notify
-  return $prompt_rc
+  _update_check_notify >&2
+  return "$prompt_rc"
 }
 
 _llm_run_interactive() {
@@ -56,18 +47,22 @@ _llm_run_interactive() {
   clean_eng=$(_sanitize_engine_name "$current_engine")
   func_name="_engine_${clean_eng}_run_interactive"
 
-  _ensure_engine_installed "$current_engine" || return 1
+  _parse_args_for_llm "$@"
+  if [[ ${#LLM_CLEAN_ARGS[@]} -gt 0 ]]; then
+    _llm_run_prompt "${LLM_CLEAN_ARGS[*]}" "" "${LLM_THINK_FLAGS[@]}"
+    return $?
+  fi
+  _harness_require "$current_engine" interactive || return 1
+  _ensure_engine_installed "$current_engine" >&2 || return 1
   _update_check_start
 
-  t_engine_display "$current_engine"
-  t_model_display "$current_model_display"
-
-  _parse_args_for_llm "$@"
+  t_engine_display "$current_engine" >&2
+  t_model_display "$current_model_display" >&2
 
   if command -v "$func_name" &>/dev/null; then
     "$func_name" "$current_model"
     local rc=$?
-    _update_check_notify
+    _update_check_notify >&2
     return $rc
   fi
 
@@ -89,6 +84,6 @@ _llm_run_interactive() {
     "$binary"
   fi
   local interactive_rc=$?
-  _update_check_notify
+  _update_check_notify >&2
   return $interactive_rc
 }

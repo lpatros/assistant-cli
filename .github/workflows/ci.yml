@@ -31,4 +31,4 @@ jobs:
         run: command -v shellcheck >/dev/null 2>&1 || sudo apt-get install -y shellcheck
 
       - name: Run shellcheck (errors only)
-        run: shellcheck -S error init.sh lib/*.sh lib/engines/*.sh utils/*.sh skills/*/init.sh locales/*.sh install.sh tests/*.sh
+        run: shellcheck -S error init.sh lib/*.sh lib/adapters/*/init.sh utils/*.sh skills/*/init.sh locales/*.sh install.sh tests/*.sh

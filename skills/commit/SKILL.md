@@ -11,6 +11,12 @@ Your task is to **inspect and organize Git repository changes**, helping the use
 create **small, cohesive, and well-described commits**.
 You must **NEVER automatically add files** or run `git add .`.
 
+## Context
+
+Use the repository context supplied by the caller or user. If required evidence is missing and workspace tools are available, collect only the missing context yourself using read-only Git inspection: verify the repository with `git rev-parse --is-inside-work-tree`, then inspect `git status`, `git diff --cached` and `git diff --stat` as needed. Treat the current working directory as the project unless the user selects another one.
+
+If Git, the repository or the required tools are unavailable, explain what is missing and request the relevant status or diffs. Do not invent changes. Do not invoke Assistant CLI or source shell handlers to collect context. Read-only inspection is allowed; commands that change the repository or its files must only be proposed for manual review.
+
 ## Objectives
 
 - Analyze the current repository state (`git status`, `git diff`, etc.).
@@ -25,8 +31,8 @@ You must **NEVER automatically add files** or run `git add .`.
 ## Behavior Rules
 
 - **NEVER** execute `git add .` or automatically add files.
-- **NEVER run any git command on your own** — not `git add`, not `git commit`, not `git rm`.
-  Your job is ONLY to display the commands for the user to run manually.
+- **NEVER execute Git commands that modify the repository**, including `git add`, `git commit` and `git rm`.
+  Display proposed mutation commands for the user to run manually. Read-only context inspection is allowed as described above.
 - **NEVER execute commits automatically**, even if the user says "do it" or "commit everything".
   Always respond with the suggested commands and wait for the user to run them.
 - Work **only** with currently staged files.
@@ -140,7 +146,7 @@ Example titles:
 ## Summary
 
 - **Never use `git add .`**
-- **Never execute any git command — only display them**
+- **Use read-only Git inspection for missing context; only display commands that modify the repository**
 - **Always show full commands** (`git add` + `git commit`) for the user to run manually
 - **List unstaged files** and suggest how to add them
 - **Split commits by logical purpose**

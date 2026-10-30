@@ -22,12 +22,18 @@ Examples:
 /resume proj1 proj2 proj3        # analyzes multiple projects
 ```
 
+## Context
+
+Use the project evidence supplied by the caller or user. If required evidence is missing and workspace tools are available, verify each project directory and inspect its structure, README, manifests, configuration and relevant source files yourself. Collect only missing context. Explain inaccessible projects or unavailable tools and request missing evidence instead of inventing details. Do not invoke Assistant CLI or source shell handlers.
+
 ## Output
 
-- Create a **`projects-resumes/`** folder inside the **current working directory**
-- Write **one `.md` file per project** inside `projects-resumes/`
-- Name each file after the project folder name (e.g., `project-name.md`)
-- If the folder already has files from a previous run, **overwrite** them
+- If the caller explicitly captures the response for one project, return only that project's raw Markdown. The caller owns the output path; do not create another file or include conversational text, confirmations or outer code fences.
+- Otherwise, when file tools are available, create **`projects-resumes/`** inside the current working directory and write one `.md` file per project, named after the project folder.
+- Detect identical project folder names before writing; ask for distinct output names so one result cannot silently replace another.
+- Existing summaries for the same selected project may be regenerated as requested; preserve unrelated files.
+- Without file tools, return clearly separated Markdown documents that the user can save.
+- Report project failures, incomplete evidence and files actually produced. In captured-response mode, use the caller's error mechanism or request missing evidence before producing a document; do not present an error message as a successful summary.
 
 ## Objectives
 
@@ -44,7 +50,7 @@ Examples:
 
 ## Behavior Rules
 
-- **ALWAYS** read the project files first — package.json, README, main entry points, config files
+- **ALWAYS** ground the analysis in supplied project evidence or read missing files first — package.json, README, main entry points and config files
 - **NEVER** guess the tech stack — verify by reading actual config/code files
 - **ALWAYS** identify the real problem the project solves, not just what it does
 - **NEVER** use generic descriptions — be specific about features, architecture patterns, and technologies
@@ -53,7 +59,7 @@ Examples:
 - Highlight real-world impact when applicable
 - Mention architecture, design patterns, and best practices when applicable
 - Note the project type: Scientific Initiation, Mentored Project, Study Project, Technical Assessment, Creative Project
-- When analyzing **multiple projects**, analyze them **in parallel** (launch sub-agents) for performance
+- When analyzing multiple projects, use parallel analysis only when the environment supports it and it is permitted; otherwise process projects sequentially. A caller may already schedule projects independently.
 
 ---
 
@@ -99,11 +105,11 @@ Developed, Implemented, Built, Modeled, Structured, Created, Designed, Led, Opti
 
 ## Summary
 
-- **Always read the source code first** — never guess
+- **Use supplied project evidence or inspect missing source files** — never guess
 - **Identify the real problem**, not just features
 - **Use strong action verbs**
 - **Be specific** about architecture, patterns, and technologies
-- **Output**: one `.md` file per project inside **`projects-resumes/`** in the CWD
+- **Output**: raw Markdown when the caller captures it; otherwise one `.md` file per project inside **`projects-resumes/`** in the CWD when file tools are available
 - **Multiple projects**: pass multiple paths — one per project
 - **Format sections**: Role → Problem → Technologies → Achievements → Skills
 - **Classify the project type** (Scientific Initiation, Study, etc.)
