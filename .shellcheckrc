@@ -1,0 +1,2 @@
+# Scripts are sourced without shebangs. Zsh compatibility is checked separately.
+shell=bash

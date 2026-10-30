@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  smoke:
+    name: Smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shells (zsh, fish)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends zsh fish
+
+      - name: Run tests/smoke.sh
+        run: bash tests/smoke.sh
+
+  shellcheck:
+    name: Shellcheck (advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck if missing
+        run: command -v shellcheck >/dev/null 2>&1 || sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck (errors only)
+        run: shellcheck -S error init.sh lib/*.sh lib/engines/*.sh utils/*.sh skills/*/init.sh locales/*.sh install.sh tests/*.sh
