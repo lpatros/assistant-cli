@@ -2,18 +2,25 @@
 
 **English** | [Português](README-PTBR.md) | [Español](README-ES.md)
 
-Assistant CLI coordinates skills and context. An adapter translates its calls into a tool's CLI; an agent harness uses project tools and a model/provider to perform tasks. The Ollama adapter runs text prompts without enabling its experimental tool loop. `assistant harness` is the public command; `assistant engine` remains a compatible alias. Existing `ASSISTANT_ENGINE`, `ASSISTANT_MODEL_*` settings, `custom/adapters/` and `_engine_*` functions remain supported.
+Assistant CLI coordinates skills and context. An adapter translates its calls into a tool's CLI; an agent harness uses project tools and a model/provider to perform tasks. The Ollama adapter runs text prompts without enabling its experimental tool loop. `assistant adapters` is the main command; `assistant engine` and `assistant harness` are compatible aliases. Existing `ASSISTANT_ENGINE`, `ASSISTANT_MODEL_*` settings, `custom/adapters/` and `_engine_*` functions remain supported.
 
-Custom adapters are loaded only from `custom/adapters/*/init.sh`; move existing extensions to that directory. The former `custom/engines/` location is no longer scanned. `assistant custom adapters` lists the discovered extensions; `assistant custom engines` remains a command alias. Existing `_engine_*` functions and `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` settings remain unchanged.
+Custom adapters are loaded only from `custom/adapters/*/init.sh`. `assistant custom adapters --list` lists custom extensions only; `assistant custom engine`, `assistant custom harness` and `assistant custom engines` are aliases. Existing `_engine_*` functions and `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` settings remain unchanged.
 
 ```bash
-assistant harness status
-assistant harness capabilities
-assistant harness capabilities codex
-assistant harness codex
+assistant adapters --list
+assistant adapters select
+assistant adapters status
+assistant adapters capabilities
+assistant adapters capabilities codex
+assistant adapters codex
+assistant custom adapters --list
 ```
 
-Capabilities describe what the Assistant adapter supports, not every feature in the external tool or whether its binary is installed. `unknown` means an older custom adapter has not declared that capability.
+`--list` (and `list`) prints a noninteractive table, including through the `engine` and `harness` aliases. Use `select` for the interactive menu. The table shows each adapter's origin, executable availability and active state. Selection rejects names that are not discovered. When a custom adapter has the same name as a built-in adapter, the custom adapter takes precedence and appears once.
+
+The same operations are available under `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` and `<name>`. Lists, capabilities and selection are restricted to custom adapters. `status` reports whether the active adapter is custom; selecting here still changes the single global active adapter.
+
+Capabilities describe what the Assistant adapter supports, not every feature in the external tool or whether its binary is installed. `unknown` means a custom adapter does not declare that capability.
 
 | Adapter | Prompt | Interactive | Project tools | Model list | Final response | Native install |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -25,7 +32,7 @@ Capabilities describe what the Assistant adapter supports, not every feature in 
 
 Prompt execution returns only final response text on stdout or in the requested file. Diagnostics and progress use stderr. Nonzero executor exit codes are preserved; empty or malformed final results fail. The destination is not truncated when the executor fails. Publication itself is not an atomic filesystem transaction. Custom adapters remain responsible for separating their own logs from response text.
 
-Codex uses `exec --output-last-message`; Copilot uses `-p --silent`; AGY uses print/text mode; Ollama hides reasoning for document generation. OpenCode uses raw JSON events internally and requires `jq` to extract the final assistant step. Missing `jq` fails before inference; no public JSON response mode was added. Existing custom adapters keep their prompt and interactive fallback. Explicit messages use prompt mode, while `assistant` with no message opens the interactive CLI.
+Codex uses `exec --output-last-message`; Copilot uses `-p --silent`; AGY uses print/text mode; Ollama hides reasoning for document generation. OpenCode uses raw JSON events internally and requires `jq` to extract the final assistant step. Missing `jq` fails before inference; the public response is text. Existing custom adapters keep their prompt and interactive fallback. Explicit messages use prompt mode, while `assistant` with no message opens the interactive CLI.
 
 The OpenCode response filter lives next to its adapter at `lib/adapters/opencode/result.jq`.
 

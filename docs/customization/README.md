@@ -43,9 +43,13 @@ custom/
 
 You can integrate any new model, CLI, or API (e.g., Kimi, custom APIs) by creating a driver shell script in the `custom/adapters/` directory.
 
-Custom adapters are loaded only from `custom/adapters/*/init.sh`; move existing extensions to that directory. The former `custom/engines/` location is no longer scanned. `assistant custom adapters` lists the discovered extensions; `assistant custom engines` remains a command alias. Existing `_engine_*` functions and `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` settings remain unchanged.
+Custom adapters are loaded only from `custom/adapters/*/init.sh`. `assistant custom adapters --list` lists custom extensions only; `assistant custom engine`, `assistant custom harness` and `assistant custom engines` are aliases. Existing `_engine_*` functions and `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` settings remain unchanged.
 
 Only `<name>/init.sh` is discovered and sourced. Keep helpers, filters and assets in the same directory and load them explicitly from the adapter when needed. Flat `.sh` files directly inside `lib/adapters/` or `custom/adapters/` are ignored.
+
+`--list` (and `list`) prints a noninteractive table, including through the `engine` and `harness` aliases. Use `select` for the interactive menu. The table shows each adapter's origin, executable availability and active state. Selection rejects names that are not discovered. When a custom adapter has the same name as a built-in adapter, the custom adapter takes precedence and appears once.
+
+The same operations are available under `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` and `<name>`. Lists, capabilities and selection are restricted to custom adapters. `status` reports whether the active adapter is custom; selecting here still changes the single global active adapter.
 
 ### Adapter Function Contract
 
@@ -80,11 +84,12 @@ After saving your file in `custom/adapters/my_engine/init.sh`:
 
 1. Check if the engine appears in the list of available engines:
    ```bash
-   assistant engine --list
+   assistant adapters --list
+   assistant custom adapters --list
    ```
 2. Switch to the new engine:
    ```bash
-   assistant engine my_engine
+   assistant adapters my_engine
    ```
 3. Set a model for the engine if needed:
    ```bash
@@ -153,7 +158,7 @@ Discovery reads only immediate `<name>/SKILL.md` files and never executes packag
 
 `assistant skills list` shows name, origin, format, state, path and description, including overridden definitions and invalid entries. Invalid metadata, mismatched folder names and duplicate names within an origin block the affected skill and cause listing to return nonzero. An invalid custom override never silently falls back to the built-in definition. Duplicate declared names are reported even when placed in different folders. Unrelated valid skills remain usable.
 
-Administrative commands and aliases are reserved: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
+Administrative commands and aliases are reserved: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
 
 To migrate an old custom skill, move its instructions to `custom/skills/<name>/SKILL.md` and add the required frontmatter. The old filename is ignored. Start from [SKILL.md.template](../templates/skills/SKILL.md.template).
 

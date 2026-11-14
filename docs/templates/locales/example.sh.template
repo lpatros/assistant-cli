@@ -20,17 +20,17 @@ t_lang_list_header() {
   _header "Langues disponibles:"
 }
 
-# Engine commands
-t_engine_changed() {
-  _success "Moteur changé pour: ${BOLD}$1${RESET}"
+# Adapter commands
+t_adapters_changed() {
+  _success "Adaptateur actif changé pour: ${BOLD}$1${RESET}"
 }
 
-t_engine_usage() {
-  _error "Utilisation: assistant engine [ollama|opencode|--list|status]"
+t_adapters_usage() {
+  _error "Utilisation: assistant [custom] adapters [<nom>|--list|select|status|capabilities [nom]]"
 }
 
-t_engine_status() {
-  _info "Moteur actuel: ${MAGENTA}${BOLD}$1${RESET}"
+t_adapters_status() {
+  _info "Adaptateur actif: ${MAGENTA}${BOLD}$1${RESET}"
   _info "Modèle actuel: ${GREEN}${BOLD}$2${RESET}"
 }
 

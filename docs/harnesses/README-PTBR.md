@@ -2,18 +2,25 @@
 
 [English](README.md) | **Português** | [Español](README-ES.md)
 
-O Assistant CLI coordena skills e contexto. Um adaptador traduz as chamadas para a CLI da ferramenta; um harness de agente usa ferramentas do projeto e um modelo/provedor para executar tarefas. O adaptador Ollama executa prompts de texto sem ativar seu loop experimental de ferramentas. `assistant harness` é o comando público; `assistant engine` continua como alias compatível. As configurações `ASSISTANT_ENGINE`, `ASSISTANT_MODEL_*`, a pasta `custom/adapters/` e as funções `_engine_*` são preservadas.
+O Assistant CLI coordena skills e contexto. Um adaptador traduz as chamadas para a CLI da ferramenta; um harness de agente usa ferramentas do projeto e um modelo/provedor para executar tarefas. O adaptador Ollama executa prompts de texto sem ativar seu loop experimental de ferramentas. `assistant adapters` é o comando principal; `assistant engine` e `assistant harness` são aliases compatíveis. As configurações `ASSISTANT_ENGINE`, `ASSISTANT_MODEL_*`, a pasta `custom/adapters/` e as funções `_engine_*` são preservadas.
 
-Adaptadores customizados são carregados apenas de `custom/adapters/*/init.sh`; mova as extensões existentes para esse diretório. O antigo `custom/engines/` não é mais consultado. `assistant custom adapters` lista as extensões descobertas; `assistant custom engines` permanece como alias de comando. As funções `_engine_*` e as configurações `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` continuam iguais.
+Adaptadores customizados são carregados apenas de `custom/adapters/*/init.sh`. `assistant custom adapters --list` lista apenas extensões customizadas; `assistant custom engine`, `assistant custom harness` e `assistant custom engines` são aliases. As funções `_engine_*` e as configurações `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` continuam iguais.
 
 ```bash
-assistant harness status
-assistant harness capabilities
-assistant harness capabilities codex
-assistant harness codex
+assistant adapters --list
+assistant adapters select
+assistant adapters status
+assistant adapters capabilities
+assistant adapters capabilities codex
+assistant adapters codex
+assistant custom adapters --list
 ```
 
-As capacidades descrevem o suporte do adaptador do Assistant, não todos os recursos da ferramenta externa nem a presença do executável. `desconhecido` significa que um adaptador customizado antigo não declarou aquela capacidade.
+`--list` (e `list`) imprime uma tabela sem interação, inclusive pelos aliases `engine` e `harness`. Use `select` para o menu interativo. A tabela mostra a origem, a disponibilidade do executável e o estado ativo de cada adaptador. A seleção rejeita nomes que não foram descobertos. Quando um adaptador customizado tem o mesmo nome de um nativo, o customizado prevalece e aparece uma única vez.
+
+As mesmas operações estão disponíveis em `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` e `<nome>`. Listas, capacidades e seleção ficam restritas aos adaptadores customizados. `status` informa se o adaptador ativo é customizado; a seleção nesse ramo também altera o único adaptador ativo global.
+
+As capacidades descrevem o suporte do adaptador do Assistant, não todos os recursos da ferramenta externa nem a presença do executável. `desconhecido` significa que um adaptador customizado não declara aquela capacidade.
 
 | Adaptador | Prompt | Interativo | Ferramentas de projeto | Lista de modelos | Resposta final | Instalação nativa |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -25,7 +32,7 @@ As capacidades descrevem o suporte do adaptador do Assistant, não todos os recu
 
 A execução de prompts entrega apenas a resposta final em stdout ou no arquivo solicitado. Diagnósticos e progresso usam stderr. Códigos de falha do executor são preservados; respostas finais vazias ou malformadas falham. O destino não é truncado quando o executor falha. A publicação em si não é uma transação atômica de sistema de arquivos. Adaptadores customizados continuam responsáveis por separar seus próprios logs da resposta.
 
-Codex usa `exec --output-last-message`; Copilot usa `-p --silent`; AGY usa modo print/text; Ollama oculta o raciocínio ao gerar documentos. OpenCode usa eventos JSON internamente e requer `jq` para extrair a última etapa de resposta. A ausência de `jq` causa erro antes da inferência; não foi criada uma saída JSON pública. Adaptadores customizados existentes preservam o fallback de prompt e interação. Mensagens explícitas usam modo prompt; `assistant` sem mensagem abre a CLI interativa.
+Codex usa `exec --output-last-message`; Copilot usa `-p --silent`; AGY usa modo print/text; Ollama oculta o raciocínio ao gerar documentos. OpenCode usa eventos JSON internamente e requer `jq` para extrair a última etapa de resposta. A ausência de `jq` causa erro antes da inferência; a saída pública é texto. Adaptadores customizados existentes preservam o fallback de prompt e interação. Mensagens explícitas usam modo prompt; `assistant` sem mensagem abre a CLI interativa.
 
 O filtro de resposta do OpenCode fica junto de seu adaptador em `lib/adapters/opencode/result.jq`.
 

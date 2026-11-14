@@ -147,13 +147,13 @@ assistant channel stable  # Cambia al canal estable (rama main) y actualiza
 
 ### Harnesses y skills nativas en Codex
 
-Consulta los recursos con `assistant harness capabilities`. `engine` sigue compatible. La instalación nativa en Codex ofrece alcances explícitos de proyecto/usuario, vista previa, verificación y eliminación que conserva ediciones locales. Consulta la [guía de harnesses e instalación](docs/harnesses/README-ES.md).
+Consulta los recursos con `assistant adapters capabilities`. `engine` y `harness` son alias de `adapters`. La instalación nativa en Codex ofrece alcances explícitos de proyecto/usuario, vista previa, verificación y eliminación que conserva ediciones locales. Consulta la [guía de harnesses e instalación](docs/harnesses/README-ES.md).
 
 ### Soporte Modular y Adaptadores Personalizados
 - Soporte nativo para **Antigravity**, **Codex**, **Copilot**, **Ollama** y **OpenCode**.
 - Crea tus **Adaptadores Personalizados** con un punto de entrada en `custom/adapters/<nombre>/init.sh`. El nombre de la carpeta identifica el adaptador; los archivos auxiliares quedan junto al punto de entrada.
 - El asistente almacena los modelos de preferencia por motor. De esta forma, no perderás las configuraciones del modelo seleccionado al cambiar de motor.
-- Cambia entre motores de forma interactiva con `assistant engine --list` o directamente con `assistant engine <nombre>`.
+- Cambia entre adaptadores de forma interactiva con `assistant adapters select` o directamente con `assistant adapters <nombre>`.
 
 ### Habilidades Integradas (Habilidades Predeterminadas)
 El asistente viene con varias habilidades integradas para potenciar tu flujo de trabajo:
@@ -188,7 +188,7 @@ El descubrimiento lee solo archivos inmediatos `<nombre>/SKILL.md` y nunca ejecu
 
 `assistant skills list` muestra nombre, origen, formato, estado, ruta y descripción, incluidas definiciones sustituidas y entradas inválidas. Los metadatos inválidos, nombres distintos de la carpeta y nombres duplicados dentro de un origen bloquean la skill afectada y hacen que el listado devuelva error. Una sustitución personalizada inválida nunca recurre silenciosamente a la definición nativa. Los nombres declarados duplicados se detectan incluso en carpetas distintas. Otras skills válidas siguen disponibles.
 
-Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
+Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
 
 Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](docs/templates/skills/SKILL.md.template) como referencia.
 
@@ -252,8 +252,12 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant branch` | Analiza los cambios de git y sugiere ramas separadas por propósito |
 | `assistant resume [rutas...]` | Escanea directorios y genera archivos markdown de resumen del proyecto |
 | `assistant readme --lang <idioma> --name <nombre>` | Escanea la estructura del proyecto y genera un archivo README |
-| `assistant harness [<name>\|--list\|status]` | Gestiona harnesses; engine sigue como alias |
-| `assistant harness capabilities [name]` | Muestra capacidades de los adaptadores |
+| `assistant adapters [<nombre>\|status]` | Selecciona un adaptador por nombre o muestra su estado |
+| `assistant adapters --list` | Lista adaptadores integrados y personalizados sin interacción |
+| `assistant adapters select` | Abre el menú interactivo de selección |
+| `assistant custom adapters --list` | Lista solo adaptadores personalizados |
+| `assistant engine …` / `assistant harness …` | Alias de `assistant adapters`, con comportamiento idéntico |
+| `assistant adapters capabilities [nombre]` | Muestra capacidades de los adaptadores |
 | `assistant skills install <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Muestra vista previa o instala una skill nativa en Codex |
 | `assistant skills verify <name> --harness codex --scope <project\|user> [--project <dir>]` | Valida la instalación administrada |
 | `assistant skills remove <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Elimina una instalación administrada sin ediciones locales |
@@ -263,8 +267,11 @@ Al ejecutar `assistant`, tienes acceso a los siguientes comandos:
 | `assistant lang [<idioma>\|--list\|status]` | Cambia el idioma activo, lista idiomas disponibles o muestra el idioma actual |
 | `assistant model --list` | Muestra de forma interactiva los modelos disponibles para el motor actual para cambiarlos |
 | `assistant model status` | Muestra los modelos configurados actualmente para todos los motores |
-| `assistant engine [<nombre>\|--list\|status]` | Cambia el motor activo |
 | `assistant think [on\|off\|hide\|clear]` | Alterna los modos de pensamiento/razonamiento en modelos de Ollama |
+
+`--list` (y `list`) imprime una tabla sin interacción, también mediante los alias `engine` y `harness`. Usa `select` para el menú interactivo. La tabla muestra el origen, la disponibilidad del ejecutable y el estado activo de cada adaptador. La selección rechaza nombres que no se han descubierto. Cuando un adaptador personalizado tiene el mismo nombre que uno integrado, el personalizado tiene prioridad y aparece una sola vez.
+
+Las mismas operaciones están disponibles en `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` y `<nombre>`. Las listas, capacidades y selección se limitan a los adaptadores personalizados. `status` indica si el adaptador activo es personalizado; seleccionar aquí también cambia el único adaptador activo global.
 
 ### Ejemplos
 
@@ -279,14 +286,17 @@ assistant commit
 assistant branch
 
 # Cambiar el motor activo a Antigravity (agy), Codex, Copilot, Ollama u OpenCode
-assistant engine agy
-assistant engine codex
-assistant engine copilot
-assistant engine ollama
-assistant engine opencode
+assistant adapters agy
+assistant adapters codex
+assistant adapters copilot
+assistant adapters ollama
+assistant adapters opencode
+
+# Listar adaptadores sin abrir un menú
+assistant adapters --list
 
 # Cambiar de motor de forma interactiva
-assistant engine --list
+assistant adapters select
 
 # Cambiar el modelo del motor actual de forma interactiva
 assistant model --list

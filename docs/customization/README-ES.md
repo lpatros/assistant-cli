@@ -43,9 +43,13 @@ custom/
 
 Puedes integrar cualquier nuevo modelo, CLI o API (ej: Kimi, APIs personalizadas) creando un controlador en script de shell en el directorio `custom/adapters/`.
 
-Los adaptadores personalizados se cargan solo desde `custom/adapters/*/init.sh`; mueve las extensiones existentes a ese directorio. La ubicación antigua `custom/engines/` ya no se consulta. `assistant custom adapters` lista las extensiones; `assistant custom engines` sigue siendo un alias de comando. Las funciones `_engine_*` y las configuraciones `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` permanecen iguales.
+Los adaptadores personalizados se cargan solo desde `custom/adapters/*/init.sh`. `assistant custom adapters --list` lista solo extensiones personalizadas; `assistant custom engine`, `assistant custom harness` y `assistant custom engines` son alias. Las funciones `_engine_*` y las configuraciones `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` permanecen iguales.
 
 Solo se descubre y carga `<nombre>/init.sh`. Guarda helpers, filtros y assets en la misma carpeta y cárgalos explícitamente desde el adaptador cuando sea necesario. Los archivos `.sh` directamente en `lib/adapters/` o `custom/adapters/` se ignoran.
+
+`--list` (y `list`) imprime una tabla sin interacción, también mediante los alias `engine` y `harness`. Usa `select` para el menú interactivo. La tabla muestra el origen, la disponibilidad del ejecutable y el estado activo de cada adaptador. La selección rechaza nombres que no se han descubierto. Cuando un adaptador personalizado tiene el mismo nombre que uno integrado, el personalizado tiene prioridad y aparece una sola vez.
+
+Las mismas operaciones están disponibles en `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` y `<nombre>`. Las listas, capacidades y selección se limitan a los adaptadores personalizados. `status` indica si el adaptador activo es personalizado; seleccionar aquí también cambia el único adaptador activo global.
 
 ### Contrato de Funciones del Adaptador
 
@@ -80,11 +84,12 @@ Después de guardar el archivo en `custom/adapters/mi_motor/init.sh`:
 
 1. Comprueba si el motor aparece en la lista de disponibles:
    ```bash
-   assistant engine --list
+   assistant adapters --list
+   assistant custom adapters --list
    ```
 2. Cambia al nuevo motor:
    ```bash
-   assistant engine mi_motor
+   assistant adapters mi_motor
    ```
 3. Configura un modelo para el motor si es necesario:
    ```bash
@@ -153,7 +158,7 @@ El descubrimiento lee solo archivos inmediatos `<nombre>/SKILL.md` y nunca ejecu
 
 `assistant skills list` muestra nombre, origen, formato, estado, ruta y descripción, incluidas definiciones sustituidas y entradas inválidas. Los metadatos inválidos, nombres distintos de la carpeta y nombres duplicados dentro de un origen bloquean la skill afectada y hacen que el listado devuelva error. Una sustitución personalizada inválida nunca recurre silenciosamente a la definición nativa. Los nombres declarados duplicados se detectan incluso en carpetas distintas. Otras skills válidas siguen disponibles.
 
-Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
+Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
 
 Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](../templates/skills/SKILL.md.template) como referencia.
 

@@ -43,9 +43,13 @@ custom/
 
 Você pode integrar qualquer novo modelo, CLI ou API (ex: Kimi, APIs customizadas) criando um driver em script shell no diretório `custom/adapters/`.
 
-Adaptadores customizados são carregados apenas de `custom/adapters/*/init.sh`; mova as extensões existentes para esse diretório. O antigo `custom/engines/` não é mais consultado. `assistant custom adapters` lista as extensões descobertas; `assistant custom engines` permanece como alias de comando. As funções `_engine_*` e as configurações `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` continuam iguais.
+Adaptadores customizados são carregados apenas de `custom/adapters/*/init.sh`. `assistant custom adapters --list` lista apenas extensões customizadas; `assistant custom engine`, `assistant custom harness` e `assistant custom engines` são aliases. As funções `_engine_*` e as configurações `ASSISTANT_ENGINE`/`ASSISTANT_MODEL_*` continuam iguais.
 
 Somente `<nome>/init.sh` é descoberto e carregado. Mantenha helpers, filtros e assets na mesma pasta e carregue-os explicitamente pelo adaptador quando necessário. Arquivos `.sh` diretamente em `lib/adapters/` ou `custom/adapters/` são ignorados.
+
+`--list` (e `list`) imprime uma tabela sem interação, inclusive pelos aliases `engine` e `harness`. Use `select` para o menu interativo. A tabela mostra a origem, a disponibilidade do executável e o estado ativo de cada adaptador. A seleção rejeita nomes que não foram descobertos. Quando um adaptador customizado tem o mesmo nome de um nativo, o customizado prevalece e aparece uma única vez.
+
+As mesmas operações estão disponíveis em `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` e `<nome>`. Listas, capacidades e seleção ficam restritas aos adaptadores customizados. `status` informa se o adaptador ativo é customizado; a seleção nesse ramo também altera o único adaptador ativo global.
 
 ### Contrato de Funções do Adaptador
 
@@ -80,11 +84,12 @@ Após salvar o arquivo em `custom/adapters/minha_engine/init.sh`:
 
 1. Verifique se a engine aparece na lista de disponíveis:
    ```bash
-   assistant engine --list
+   assistant adapters --list
+   assistant custom adapters --list
    ```
 2. Alterne para a nova engine:
    ```bash
-   assistant engine minha_engine
+   assistant adapters minha_engine
    ```
 3. Defina um modelo para a engine se necessário:
    ```bash
@@ -153,7 +158,7 @@ A descoberta lê apenas arquivos imediatos `<nome>/SKILL.md` e nunca executa scr
 
 `assistant skills list` mostra nome, origem, formato, estado, caminho e descrição, incluindo definições substituídas e entradas inválidas. Metadados inválidos, nomes divergentes da pasta e nomes duplicados na mesma origem bloqueiam a skill afetada e fazem a listagem retornar erro. Uma substituição customizada inválida nunca recorre silenciosamente à definição nativa. Nomes declarados duplicados são identificados mesmo em pastas diferentes. Outras skills válidas continuam utilizáveis.
 
-Comandos administrativos e aliases são reservados: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills não podem interceptá-los. A resolução segue: comandos administrativos, skills validadas (instruções customizadas antes das nativas), comandos dinâmicos customizados e prompts diretos.
+Comandos administrativos e aliases são reservados: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills não podem interceptá-los. A resolução segue: comandos administrativos, skills validadas (instruções customizadas antes das nativas), comandos dinâmicos customizados e prompts diretos.
 
 Para migrar uma skill antiga, mova suas instruções para `custom/skills/<nome>/SKILL.md` e acrescente o frontmatter obrigatório. O nome antigo é ignorado. Use o [SKILL.md.template](../templates/skills/SKILL.md.template) como referência.
 

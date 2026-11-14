@@ -148,13 +148,13 @@ assistant channel stable  # Switch to stable channel (main branch) and update
 
 ### Harnesses and native Codex skills
 
-Inspect capabilities with `assistant harness capabilities`. `engine` remains compatible. Native skill installation in Codex supports explicit project/user scopes, previews, verification and removal that preserves local edits. See the [harness and installation guide](docs/harnesses/README.md).
+Inspect capabilities with `assistant adapters capabilities`. `engine` and `harness` are aliases of `adapters`. Native skill installation in Codex supports explicit project/user scopes, previews, verification and removal that preserves local edits. See the [harness and installation guide](docs/harnesses/README.md).
 
 ### Modular & Custom Engine Support
 - Built-in support for **Antigravity**, **Codex**, **Copilot**, **Ollama**, and **OpenCode**.
 - Create your own **Custom Adapters** with an entry point at `custom/adapters/<name>/init.sh`. The directory name identifies the adapter; auxiliary files stay beside its entry point.
 - The assistant stores preferred models per engine, meaning you won't lose your selected model configurations when switching between engines.
-- Switch between engines interactively with `assistant engine --list` or directly using `assistant engine <name>`.
+- Switch between adapters interactively with `assistant adapters select` or directly using `assistant adapters <name>`.
 
 ### Built-in Skills (Default Skills)
 The assistant comes with several built-in skills to boost your workflow:
@@ -189,7 +189,7 @@ Discovery reads only immediate `<name>/SKILL.md` files and never executes packag
 
 `assistant skills list` shows name, origin, format, state, path and description, including overridden definitions and invalid entries. Invalid metadata, mismatched folder names and duplicate names within an origin block the affected skill and cause listing to return nonzero. An invalid custom override never silently falls back to the built-in definition. Duplicate declared names are reported even when placed in different folders. Unrelated valid skills remain usable.
 
-Administrative commands and aliases are reserved: `create`, `skills`, `model`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
+Administrative commands and aliases are reserved: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
 
 To migrate an old custom skill, move its instructions to `custom/skills/<name>/SKILL.md` and add the required frontmatter. The old filename is ignored. Start from [SKILL.md.template](docs/templates/skills/SKILL.md.template).
 
@@ -254,8 +254,12 @@ When running `assistant`, you have access to the following commands:
 | `assistant branch` | Analyzes git changes and suggests separate, purpose-focused branches |
 | `assistant resume [paths...]` | Scans directories and generates project resume markdown files |
 | `assistant readme --lang <lang> --name <name>` | Scans project structure and generates a README file |
-| `assistant harness [<name>\|--list\|status]` | Manage harnesses; engine remains an alias |
-| `assistant harness capabilities [name]` | Show adapter capabilities |
+| `assistant adapters [<name>\|status]` | Select an adapter by name or show its status |
+| `assistant adapters --list` | List built-in and custom adapters without prompting |
+| `assistant adapters select` | Open the interactive selection menu |
+| `assistant custom adapters --list` | List custom adapters only |
+| `assistant engine …` / `assistant harness …` | Aliases of `assistant adapters`, with identical behavior |
+| `assistant adapters capabilities [name]` | Show adapter capabilities |
 | `assistant skills install <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Preview or install a native Codex skill |
 | `assistant skills verify <name> --harness codex --scope <project\|user> [--project <dir>]` | Validate the managed installation |
 | `assistant skills remove <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Remove an unedited managed installation |
@@ -265,8 +269,11 @@ When running `assistant`, you have access to the following commands:
 | `assistant lang [<lang>\|--list\|status]` | Changes active language, lists available languages, or shows current language |
 | `assistant model --list` | Interactively lists available models for the current engine to switch them |
 | `assistant model status` | Shows currently configured models for all engines |
-| `assistant engine [<name>\|--list\|status]` | Changes active engine |
 | `assistant think [on\|off\|hide\|clear]` | Toggles thinking/reasoning modes on Ollama models |
+
+`--list` (and `list`) prints a noninteractive table, including through the `engine` and `harness` aliases. Use `select` for the interactive menu. The table shows each adapter's origin, executable availability and active state. Selection rejects names that are not discovered. When a custom adapter has the same name as a built-in adapter, the custom adapter takes precedence and appears once.
+
+The same operations are available under `assistant custom adapters`: `--list`, `select`, `status`, `capabilities [name]` and `<name>`. Lists, capabilities and selection are restricted to custom adapters. `status` reports whether the active adapter is custom; selecting here still changes the single global active adapter.
 
 ### Examples
 
@@ -281,14 +288,17 @@ assistant commit
 assistant branch
 
 # Switch active engine to Antigravity (agy), Codex, Copilot, Ollama, or OpenCode
-assistant engine agy
-assistant engine codex
-assistant engine copilot
-assistant engine ollama
-assistant engine opencode
+assistant adapters agy
+assistant adapters codex
+assistant adapters copilot
+assistant adapters ollama
+assistant adapters opencode
 
-# Interactively switch engines
-assistant engine --list
+# List adapters without opening a menu
+assistant adapters --list
+
+# Interactively switch adapters
+assistant adapters select
 
 # Interactively change model for the current engine
 assistant model --list
