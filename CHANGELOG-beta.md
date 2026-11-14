@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.0.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.6.0-beta...v2.0.0-beta) (2026-11-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* **adapters:** adapter --list and list commands, including engine and harness aliases, print a noninteractive table. Use select for the menu and custom adapters --list to list custom adapters. Selection requires a discovered adapter.
+* **harness:** Built-in adapters now use lib/adapters/<name>/init.sh. Custom adapters must use custom/adapters/<name>/init.sh; custom/engines and flat adapter scripts are no longer discovered.
+* **skills:** Skills must use <name>/SKILL.md with matching name and description metadata. Legacy *-assistant.md files are no longer discovered.
+
+### Features
+
+* **adapters:** unify adapter management ([d8ceda6](https://github.com/lpatros/assistant-cli/commit/d8ceda6edc8602b61940542c18dfff42dc57cf8e))
+* **harness:** add native skill management ([7005d64](https://github.com/lpatros/assistant-cli/commit/7005d6482fa3023b0ccff613a8d40aba26ad46bb))
+* **skills:** discover and resolve SKILL.md ([091a9d8](https://github.com/lpatros/assistant-cli/commit/091a9d8641ac5b6728b500cb472d4e9946ee5636))
+
+
+### Bug Fixes
+
+* **install:** use the fish entry point ([1de9211](https://github.com/lpatros/assistant-cli/commit/1de9211a51e5909a3d841454fc34b0d14de34905))
+* **llm:** preserve executor error diagnostics ([f5e6f33](https://github.com/lpatros/assistant-cli/commit/f5e6f338bce96030853708f0f9a7d58d4a91cb83))
+* **skills:** align skill listing columns ([a0d3afd](https://github.com/lpatros/assistant-cli/commit/a0d3afd7da750328f0855bf69523165fc99bee68))
+* **skills:** validate inputs and parallel failures ([6d28f55](https://github.com/lpatros/assistant-cli/commit/6d28f55ccd8f256a3a45cbe8f05ae4c3b1a2cf55))
+
 ## [1.6.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.5.0...v1.6.0-beta) (2026-09-25)
 
 
