@@ -25,6 +25,7 @@ source "$ASSISTANT_LIB_DIR/persistence.sh"
 source "$ASSISTANT_LIB_DIR/locale.sh"
 source "$ASSISTANT_LIB_DIR/think.sh"
 source "$ASSISTANT_LIB_DIR/engine.sh"
+source "$ASSISTANT_LIB_DIR/adapters.sh"
 source "$ASSISTANT_LIB_DIR/harness.sh"
 source "$ASSISTANT_LIB_DIR/llm.sh"
 source "$ASSISTANT_LIB_DIR/help.sh"
@@ -89,9 +90,9 @@ function assistant() {
           ;;
       esac
       ;;
-    "harness"|"engine")
+    "adapters"|"harness"|"engine")
       shift
-      _cmd_harness "$@"
+      _cmd_adapters "$@"
       ;;
     "think")
       shift

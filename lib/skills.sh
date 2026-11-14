@@ -1,6 +1,6 @@
 _skill_is_reserved() {
   case "$1" in
-    create|skills|model|engine|harness|think|lang|custom|status|update|channel|changelog|version|--version|-v|help|--help|-h|--think|--no-think|--hide-think) return 0 ;;
+    create|skills|model|adapters|engine|harness|think|lang|custom|status|update|channel|changelog|version|--version|-v|help|--help|-h|--think|--no-think|--hide-think) return 0 ;;
     *) return 1 ;;
   esac
 }

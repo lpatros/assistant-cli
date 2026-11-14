@@ -1,5 +1,5 @@
 # tests/smoke.sh — automated smoke checks for Assistant CLI.
-# Mirrors the Validation Checklist in AGENTS.md: syntax checks in bash/zsh
+# Checks syntax in bash/zsh
 # (plus `fish -n init.fish` when fish is installed), locale key parity,
 # missing-t_* scan, read-only commands, usage errors and behavioral checks.
 #
@@ -109,6 +109,12 @@ runtime "assistant lang --list" lang --list
 runtime "assistant custom status" custom status
 runtime "assistant custom adapters status" custom adapters status
 runtime "assistant skills list" skills list
+runtime "assistant adapters --list" adapters --list
+runtime "assistant adapters status" adapters status
+runtime "assistant adapters capabilities" adapters capabilities
+runtime "assistant custom adapters --list" custom adapters --list
+runtime "assistant custom harness --list" custom harness --list
+runtime "assistant engine --list" engine --list
 runtime "assistant harness status" harness status
 runtime "assistant harness capabilities" harness capabilities
 runtime "assistant engine capabilities codex" engine capabilities codex
@@ -139,6 +145,21 @@ else
 fi
 
 section "Harnesses and native installation (simulated executors)"
+
+if bash tests/adapters.sh >"$ERR_FILE" 2>&1; then
+  pass "adapter command checks in bash"
+else
+  fail "adapter command checks in bash"
+fi
+if command -v zsh >/dev/null 2>&1; then
+  if zsh tests/adapters.sh >"$ERR_FILE" 2>&1; then
+    pass "adapter command checks in zsh"
+  else
+    fail "adapter command checks in zsh"
+  fi
+else
+  skip "adapter checks in zsh: interpreter not installed"
+fi
 
 if bash tests/harness.sh >"$ERR_FILE" 2>&1; then
   pass "harness and installation checks in bash"

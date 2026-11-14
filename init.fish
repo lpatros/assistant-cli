@@ -14,12 +14,12 @@ function assistant --description 'Assistant CLI - LLM command-line wrapper'
 end
 
 complete -c assistant -f
-complete -c assistant -f -a 'harness skills commit branch create resume readme model engine think lang custom status update channel changelog version help --version --help --think --no-think --hide-think'
+complete -c assistant -f -a 'adapters harness skills commit branch create resume readme model engine think lang custom status update channel changelog version help --version --help --think --no-think --hide-think'
 
 complete -c assistant -n "__fish_seen_subcommand_from skills" -a 'list install verify remove'
-complete -c assistant -n "__fish_seen_subcommand_from harness engine" -a 'capabilities status list'
+complete -c assistant -n "__fish_seen_subcommand_from adapters harness engine" -a 'capabilities status list select --list'
 complete -c assistant -n "__fish_seen_subcommand_from install verify remove" -l harness -xa codex
 complete -c assistant -n "__fish_seen_subcommand_from install verify remove" -l scope -xa 'project user'
 complete -c assistant -n "__fish_seen_subcommand_from install verify remove" -l project -r
 complete -c assistant -n "__fish_seen_subcommand_from install remove" -l dry-run
-complete -c assistant -n "__fish_seen_subcommand_from custom" -a 'adapters skills locales status'
+complete -c assistant -n "__fish_seen_subcommand_from custom" -a 'adapters engine engines harness skills locales status'

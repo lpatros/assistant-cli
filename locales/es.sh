@@ -4,7 +4,7 @@ t_engine_changed() {
 }
 
 t_engine_usage() {
-  _error "Uso: assistant engine [<motor>|--list|status]"
+  t_adapters_usage
 }
 
 t_engine_status() {
@@ -44,7 +44,7 @@ t_engine_no_model_listing() {
 }
 
 t_menu_switch_engine() {
-  echo "[ Cambiar motor ]"
+  echo "[ Cambiar adaptador ]"
 }
 
 t_menu_cancel() {
@@ -80,19 +80,19 @@ t_invalid_option_simple() {
 }
 
 t_engines_configured_header() {
-  _info "${BOLD}Motores instalados:${RESET}"
+  _info "${BOLD}Adaptadores con ejecutable disponible:${RESET}"
 }
 
 t_engines_not_installed_header() {
-  _info "${BOLD}Motores no instalados:${RESET}"
+  _info "${BOLD}Adaptadores con ejecutable no disponible:${RESET}"
 }
 
 t_no_engines_configured() {
-  echo -e "  ${DIM}(ningún motor instalado)${RESET}"
+  echo -e "  ${DIM}(ninguno disponible)${RESET}"
 }
 
 t_no_engines_uninstalled() {
-  echo -e "  ${DIM}(ninguno)${RESET}"
+  echo -e "  ${DIM}(ninguno sin instalar)${RESET}"
 }
 
 t_use_model_list_to_choose() {
@@ -100,7 +100,7 @@ t_use_model_list_to_choose() {
 }
 
 t_current_engine_label() {
-  echo -e "  Motor actual: ${MAGENTA}${BOLD}$1${RESET}\n"
+  echo -e "  Adaptador activo: ${MAGENTA}${BOLD}$1${RESET}\n"
 }
 
 t_model_usage() {
@@ -459,11 +459,11 @@ t_custom_status_header() {
 }
 
 t_custom_usage() {
-  _error "Uso: assistant custom [adapters|skills|locales|status] [status]"
+  _error "Uso: assistant custom [adapters|skills|locales|status] [opciones]"
 }
 
 t_custom_engines_usage() {
-  _error "Uso: assistant custom adapters [status]"
+  t_adapters_usage
 }
 
 t_custom_skills_usage() {
@@ -520,16 +520,18 @@ ${BOLD}Uso:${RESET}
   ${GREEN}assistant create skill${RESET} <nom> <ruta.md>        Crear una nueva habilidad personalizada
   ${GREEN}assistant <habilidad-personalizada>${RESET} [args]    Ejecutar una habilidad personalizada
   ${GREEN}assistant model${RESET} [--list|set <modelo>|status]  Gestionar los modelos del motor activo
-  ${GREEN}assistant harness${RESET} [<name>|--list|status]   Gestionar harnesses (engine es un alias compatible)
-  ${GREEN}assistant harness capabilities${RESET} [name]       Mostrar operaciones disponibles
+  ${GREEN}assistant adapters${RESET} [<nombre>|status]          Selecciona un adaptador o muestra su estado
+  ${GREEN}assistant adapters --list${RESET}                   Lista adaptadores integrados y personalizados sin menú
+  ${GREEN}assistant adapters select${RESET}                   Abre el menú interactivo de adaptadores
+  ${GREEN}assistant custom adapters --list${RESET}            Lista solo adaptadores personalizados
+  ${GREEN}assistant adapters capabilities${RESET} [nombre]     Muestra las operaciones disponibles
   ${GREEN}assistant skills install|verify|remove${RESET} <name>  Instalar, verificar o eliminar una skill en Codex; requiere --scope
-  ${GREEN}assistant engine${RESET} [<motor>|--list|status]      Cambiar el motor activo
-  ${GREEN}assistant engine status${RESET}                       Mostrar motor actual y modelo activo
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Gestionar modo pensamiento (ollama)
   ${GREEN}assistant lang${RESET} [<idioma>|--list|status]       Gestionar el idioma del asistente
 
 ${BOLD}Notas:${RESET}
   - Crea adaptadores personalizados en custom/adapters/<nombre>/init.sh.
+  - engine y harness son alias de adapters, también dentro de custom.
   - Los modelos se guardan por motor; cambiar el motor no hace perder los modelos anteriores.
 
 ${BOLD}Flags de pensamiento — Solo Ollama (por sesión o persistente):${RESET}
@@ -542,13 +544,14 @@ ${BOLD}Ejemplos:${RESET}
   assistant commit
   assistant branch
   assistant custom status
-  assistant custom adapters status
+  assistant custom adapters --list
   assistant channel beta
-  assistant engine agy
-  assistant engine opencode
-  assistant engine ollama
-  assistant engine --list
-  assistant engine status
+  assistant adapters agy
+  assistant adapters opencode
+  assistant adapters ollama
+  assistant adapters --list
+  assistant adapters select
+  assistant adapters status
   assistant status
 "
 }
@@ -574,7 +577,7 @@ t_skill_state() {
 }
 
 # Harness capabilities and native skills
-t_harness_usage() { _error "Uso: assistant harness [<nombre>|--list|status|capabilities [nombre]]"; }
+t_harness_usage() { t_adapters_usage; }
 t_harness_unknown() { _error "Harness desconocido: $1."; }
 t_harness_unsupported() { _error "El harness $1 no admite $2."; }
 t_harness_status() { _info "Harness: $1 | Modelo: $2"; }
@@ -583,7 +586,7 @@ t_harness_empty() { _error "El harness $1 no devolvió una respuesta final."; }
 t_harness_dependency() { _error "El harness $1 requiere $2 para esta operación."; }
 t_native_usage() { _error "Uso: assistant skills <install|verify|remove> <nombre> --harness codex --scope <project|user> [--project <directorio>] [--dry-run]"; }
 t_native_error() { _error "Error en la operación de la skill: $1 ($2)."; }
-t_harness_capabilities_header() { printf 'Harness\tPrompt\tInteractivo\tHerramientas de proyecto\tLista de modelos\tRespuesta final\tInstalación nativa\n'; }
+t_harness_capabilities_header() { printf 'Adaptador\tPrompt\tInteractivo\tHerramientas de proyecto\tLista de modelos\tRespuesta final\tInstalación nativa\n'; }
 t_harness_capability_value() {
   case "$1" in
     yes) printf '%s' 'sí' ;;
@@ -616,3 +619,12 @@ t_native_plan() {
   printf 'Vista previa: %s\nDestino: %s\nOrigen: %s\nVersión: %s\nSHA-256: %s\nArchivos: SKILL.md, .assistant-install.tsv, .assistant-install.sha256\n' "$(t_native_action "$1")" "$2" "$3" "$4" "$5"
 }
 t_native_done() { _success "$(t_native_action "$1"): $2"; }
+
+# Adapter management
+t_adapters_header() { printf 'Adaptador\tOrigen\tEjecutable disponible\tActivo\n'; }
+t_adapters_usage() { _error "Uso: assistant [custom] adapters [<nombre>|--list|select|status|capabilities [nombre]]"; }
+t_adapters_empty() { _error "No hay adaptadores disponibles para seleccionar."; }
+t_adapters_unknown() { _error "Adaptador desconocido: $1."; }
+t_adapters_no_active_custom() { _info "No hay ningún adaptador personalizado activo."; }
+t_adapters_status() { _info "Adaptador: $1 | Modelo: $2"; }
+t_adapters_changed() { _success "Adaptador activo cambiado a: $1"; }

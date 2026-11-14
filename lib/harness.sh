@@ -28,77 +28,8 @@ _harness_require() {
   fi
 }
 
-_harness_format_capabilities() {
-  printf '%s\n' "$1" | LC_ALL=C awk -F '\t' '
-    # Count UTF-8 characters without depending on the awk implementation or locale.
-    function characters(value) {
-      gsub(/[\200-\277]/, "", value)
-      return length(value)
-    }
-    {
-      for (column = 1; column <= NF; column++) {
-        cells[NR, column] = $column
-        size = characters($column)
-        if (size > widths[column]) widths[column] = size
-      }
-      columns = NF
-    }
-    END {
-      for (row = 1; row <= NR; row++) {
-        for (column = 1; column <= columns; column++) {
-          value = cells[row, column]
-          printf "%s", value
-          if (column < columns) printf "%*s | ", widths[column] - characters(value), ""
-        }
-        printf "\n"
-        if (row == 1) {
-          for (column = 1; column <= columns; column++) {
-            for (dash = 0; dash < widths[column]; dash++) printf "-"
-            printf "%s", (column < columns ? "-+-" : "\n")
-          }
-        }
-      }
-    }'
-}
-
 _cmd_harness() {
-  local action="${1:-status}" harness capability value
-  case "$action" in
-    capabilities)
-      [[ $# -le 2 ]] || { t_harness_usage; return 1; }
-      local harnesses
-      harnesses=$(_get_available_engines)
-      if [[ -n "${2:-}" ]]; then
-        if ! printf '%s\n' "$harnesses" | grep -Fxq -- "$2"; then
-          t_harness_unknown "$2" >&2
-          return 1
-        fi
-        harnesses="$2"
-      fi
-      local table
-      table=$(
-        t_harness_capabilities_header
-        while IFS= read -r harness; do
-          [[ -n "$harness" ]] || continue
-          printf '%s' "$harness"
-          for capability in prompt interactive workspace_tools model_list final_output native_skills; do
-            value=$(_harness_capability "$harness" "$capability") || return 1
-            printf '\t%s' "$(t_harness_capability_value "$value")"
-          done
-          printf '\n'
-        done <<< "$harnesses"
-      ) || return 1
-      _harness_format_capabilities "$table"
-      ;;
-    status|"")
-      [[ $# -le 1 ]] || { t_harness_usage; return 1; }
-      t_harness_status "$(_get_engine)" "$(_model_display "$(_get_model)")"
-      ;;
-    *)
-      [[ $# -eq 1 ]] || { t_harness_usage; return 1; }
-      _cmd_engine "$@"
-      ;;
-  esac
+  _cmd_adapters "$@"
 }
 
 # Publish only a validated final response; a failed executor never truncates the destination.

@@ -88,24 +88,11 @@ _ensure_engine_installed() {
 }
 
 _cmd_engine() {
-  local action="${1:-status}"
-
-  case "$action" in
-    status|"")
-      _cmd_engine_status
-      ;;
-    --list|list)
-      _cmd_engine_switch
-      ;;
-    *)
-      _set_engine "$action"
-      t_engine_changed "$action"
-      ;;
-  esac
+  _cmd_adapters "$@"
 }
 
 _cmd_engine_status() {
-  t_engine_status "$(_get_engine)" "$(_model_display "$(_get_model)")"
+  _cmd_adapters status
 }
 
 _get_available_models() {
@@ -217,7 +204,8 @@ _cmd_engine_switch() {
   local uninstalled_engines=()
   local all_engines=()
 
-  local eng bin_path
+  local eng
+  local scope="${1:-all}"
   while IFS= read -r eng; do
     [[ -z "$eng" ]] && continue
     if _is_engine_installed "$eng"; then
@@ -225,7 +213,7 @@ _cmd_engine_switch() {
     else
       uninstalled_engines+=("$eng")
     fi
-  done <<< "$(_get_available_engines)"
+  done <<< "$(_adapter_names "$scope")"
 
   local idx=1
 
@@ -266,7 +254,7 @@ _cmd_engine_switch() {
   local answer chosen=""
   while true; do
     echo -n "$(t_choose_engine_prompt)"
-    _prompt_read answer
+    _prompt_read answer || { t_cancelled; return 0; }
 
     answer="$(echo "$answer" | xargs 2>/dev/null || echo "$answer" | tr -d '[:space:]')"
 
@@ -293,8 +281,8 @@ _cmd_engine_switch() {
   done
 
   if [[ -n "$chosen" ]]; then
-    _set_engine "$chosen"
-    t_engine_changed "$chosen"
+    _set_engine "$chosen" || return 1
+    t_adapters_changed "$chosen"
     t_use_model_list_to_choose
     return 0
   fi

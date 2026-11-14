@@ -4,7 +4,7 @@ t_engine_changed() {
 }
 
 t_engine_usage() {
-  _error "Usage: assistant engine [<engine>|--list|status]"
+  t_adapters_usage
 }
 
 t_engine_status() {
@@ -44,7 +44,7 @@ t_engine_no_model_listing() {
 }
 
 t_menu_switch_engine() {
-  echo "[ Switch engine ]"
+  echo "[ Switch adapter ]"
 }
 
 t_menu_cancel() {
@@ -80,19 +80,19 @@ t_invalid_option_simple() {
 }
 
 t_engines_configured_header() {
-  _info "${BOLD}Installed engines:${RESET}"
+  _info "${BOLD}Adapters with an available executable:${RESET}"
 }
 
 t_engines_not_installed_header() {
-  _info "${BOLD}Not installed engines:${RESET}"
+  _info "${BOLD}Adapters with an unavailable executable:${RESET}"
 }
 
 t_no_engines_configured() {
-  echo -e "  ${DIM}(no installed engines)${RESET}"
+  echo -e "  ${DIM}(none available)${RESET}"
 }
 
 t_no_engines_uninstalled() {
-  echo -e "  ${DIM}(none)${RESET}"
+  echo -e "  ${DIM}(none uninstalled)${RESET}"
 }
 
 t_use_model_list_to_choose() {
@@ -100,7 +100,7 @@ t_use_model_list_to_choose() {
 }
 
 t_current_engine_label() {
-  echo -e "  Current engine: ${MAGENTA}${BOLD}$1${RESET}\n"
+  echo -e "  Active adapter: ${MAGENTA}${BOLD}$1${RESET}\n"
 }
 
 t_model_usage() {
@@ -459,11 +459,11 @@ t_custom_status_header() {
 }
 
 t_custom_usage() {
-  _error "Usage: assistant custom [adapters|skills|locales|status] [status]"
+  _error "Usage: assistant custom [adapters|skills|locales|status] [options]"
 }
 
 t_custom_engines_usage() {
-  _error "Usage: assistant custom adapters [status]"
+  t_adapters_usage
 }
 
 t_custom_skills_usage() {
@@ -520,16 +520,18 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant create skill${RESET} <name> <path.md>       Create a new custom skill
   ${GREEN}assistant <custom-skill>${RESET} [arguments]          Execute a custom skill
   ${GREEN}assistant model${RESET} [--list|set <model>|status]   Manage models for the active engine
-  ${GREEN}assistant harness${RESET} [<name>|--list|status]   Manage harnesses (engine is a compatible alias)
-  ${GREEN}assistant harness capabilities${RESET} [name]       Show supported operations
+  ${GREEN}assistant adapters${RESET} [<name>|status]          Select an adapter or show its status
+  ${GREEN}assistant adapters --list${RESET}                   List built-in and custom adapters without a menu
+  ${GREEN}assistant adapters select${RESET}                   Open the interactive adapter menu
+  ${GREEN}assistant custom adapters --list${RESET}            List only custom adapters
+  ${GREEN}assistant adapters capabilities${RESET} [name]     Show supported operations
   ${GREEN}assistant skills install|verify|remove${RESET} <name>  Install, verify or remove a Codex skill; requires --scope
-  ${GREEN}assistant engine${RESET} [<engine>|--list|status]     Switch the active engine
-  ${GREEN}assistant engine status${RESET}                       Show current engine and active model
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Manage think mode (ollama)
   ${GREEN}assistant lang${RESET} [<lang>|--list|status]         Manage assistant language
 
 ${BOLD}Notes:${RESET}
   - Create custom adapters in custom/adapters/<name>/init.sh.
+  - engine and harness are aliases of adapters, also under custom.
   - Models are saved per engine; switching engines does not lose previous model selections.
 
 ${BOLD}Thinking flags — Ollama only (per session or persistent):${RESET}
@@ -542,13 +544,14 @@ ${BOLD}Examples:${RESET}
   assistant commit
   assistant branch
   assistant custom status
-  assistant custom adapters status
+  assistant custom adapters --list
   assistant channel beta
-  assistant engine agy
-  assistant engine opencode
-  assistant engine ollama
-  assistant engine --list
-  assistant engine status
+  assistant adapters agy
+  assistant adapters opencode
+  assistant adapters ollama
+  assistant adapters --list
+  assistant adapters select
+  assistant adapters status
   assistant status
 "
 }
@@ -574,7 +577,7 @@ t_skill_state() {
 }
 
 # Harness capabilities and native skills
-t_harness_usage() { _error "Usage: assistant harness [<name>|--list|status|capabilities [name]]"; }
+t_harness_usage() { t_adapters_usage; }
 t_harness_unknown() { _error "Unknown harness: $1."; }
 t_harness_unsupported() { _error "Harness $1 does not support $2."; }
 t_harness_status() { _info "Harness: $1 | Model: $2"; }
@@ -583,7 +586,7 @@ t_harness_empty() { _error "Harness $1 returned no final response."; }
 t_harness_dependency() { _error "Harness $1 requires $2 for this operation."; }
 t_native_usage() { _error "Usage: assistant skills <install|verify|remove> <name> --harness codex --scope <project|user> [--project <directory>] [--dry-run]"; }
 t_native_error() { _error "Skill operation failed: $1 ($2)."; }
-t_harness_capabilities_header() { printf 'Harness\tPrompt\tInteractive\tProject tools\tModel list\tFinal response\tNative install\n'; }
+t_harness_capabilities_header() { printf 'Adapter\tPrompt\tInteractive\tProject tools\tModel list\tFinal response\tNative install\n'; }
 t_harness_capability_value() {
   case "$1" in
     yes) printf '%s' 'yes' ;;
@@ -616,3 +619,12 @@ t_native_plan() {
   printf 'Preview: %s\nDestination: %s\nSource: %s\nVersion: %s\nSHA-256: %s\nFiles: SKILL.md, .assistant-install.tsv, .assistant-install.sha256\n' "$(t_native_action "$1")" "$2" "$3" "$4" "$5"
 }
 t_native_done() { _success "$(t_native_action "$1"): $2"; }
+
+# Adapter management
+t_adapters_header() { printf 'Adapter\tOrigin\tExecutable available\tActive\n'; }
+t_adapters_usage() { _error "Usage: assistant [custom] adapters [<name>|--list|select|status|capabilities [name]]"; }
+t_adapters_empty() { _error "No adapters available for selection."; }
+t_adapters_unknown() { _error "Unknown adapter: $1."; }
+t_adapters_no_active_custom() { _info "No custom adapter is active."; }
+t_adapters_status() { _info "Adapter: $1 | Model: $2"; }
+t_adapters_changed() { _success "Active adapter changed to: $1"; }

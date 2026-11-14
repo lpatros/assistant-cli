@@ -154,17 +154,8 @@ _cmd_custom() {
     status|"")
       _cmd_custom_status
       ;;
-    adapters|engines)
-      local subaction="${1:-status}"
-      case "$subaction" in
-        status|"")
-          _cmd_custom_engines_status
-          ;;
-        *)
-          t_custom_engines_usage
-          return 1
-          ;;
-      esac
+    adapters|engine|engines|harness)
+      _cmd_adapters_for_scope custom "$@"
       ;;
     skills)
       local subaction="${1:-status}"
