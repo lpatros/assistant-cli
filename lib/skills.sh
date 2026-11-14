@@ -128,11 +128,16 @@ _cmd_skills() {
     t_skills_usage
     return 1
   fi
-  local name origin file state description folder result=0
-  t_skills_header
-  while IFS=$'\t' read -r name origin file state description folder; do
-    printf '%s\t%s\tSKILL.md\t%s\t%s\t%s\n' "$name" "$(t_skill_origin "$origin")" "$(t_skill_state "$state")" "$file" "$description"
-    case "$state" in ready|overridden) ;; *) result=1 ;; esac
-  done < <(_skill_registry)
+  local name origin file state description folder table result=0
+  table=$(
+    t_skills_header
+    while IFS=$'\t' read -r name origin file state description folder; do
+      printf '%s\t%s\tSKILL.md\t%s\t%s\t%s\n' "$name" "$(t_skill_origin "$origin")" "$(t_skill_state "$state")" "$file" "$description"
+      case "$state" in ready|overridden) ;; *) result=1 ;; esac
+    done < <(_skill_registry)
+    return "$result"
+  )
+  result=$?
+  _format_table "$table" || return 1
   return "$result"
 }

@@ -120,3 +120,36 @@ _open_url() {
   return 0
 }
 
+_format_table() {
+  printf '%s\n' "$1" | LC_ALL=C awk -F '\t' '
+    # Count UTF-8 characters without depending on the awk implementation or locale.
+    function characters(value) {
+      gsub(/[\200-\277]/, "", value)
+      return length(value)
+    }
+    {
+      for (column = 1; column <= NF; column++) {
+        cells[NR, column] = $column
+        size = characters($column)
+        if (size > widths[column]) widths[column] = size
+      }
+      columns = NF
+    }
+    END {
+      for (row = 1; row <= NR; row++) {
+        for (column = 1; column <= columns; column++) {
+          value = cells[row, column]
+          printf "%s", value
+          if (column < columns) printf "%*s | ", widths[column] - characters(value), ""
+        }
+        printf "\n"
+        if (row == 1) {
+          for (column = 1; column <= columns; column++) {
+            for (dash = 0; dash < widths[column]; dash++) printf "-"
+            printf "%s", (column < columns ? "-+-" : "\n")
+          }
+        }
+      }
+    }'
+}
+
