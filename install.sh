@@ -201,18 +201,23 @@ if [ "$SHELL_NAME" = "none" ]; then
   info "Skipping shell configuration."
   echo ""
   printf "  To configure manually, add this to your shell config:\n\n"
-  printf "    ${BOLD}source \"%s/init.sh\"${RESET}\n\n" "$INSTALL_DIR"
+  printf "    ${BOLD}source \"%s/init.sh\"${RESET}\n" "$INSTALL_DIR"
+  printf "    ${BOLD}(fish: source \"%s/init.fish\")${RESET}\n\n" "$INSTALL_DIR"
 else
   RC_FILE=$(get_rc_file "$SHELL_NAME")
 
   if [ "$SHELL_NAME" = "fish" ]; then
-    SOURCE_LINE="source \"$INSTALL_DIR/init.sh\""
-    GREP_PATTERN="^[^#]*$INSTALL_DIR/init\.sh"
+    SOURCE_LINE="source \"$INSTALL_DIR/init.fish\""
+    GREP_PATTERN="^[^#]*$INSTALL_DIR/init\.fish"
+    LEGACY_PATTERN="^[^#]*$INSTALL_DIR/init\.sh"
 
     mkdir -p "$(dirname "$RC_FILE")"
 
     if [ -f "$RC_FILE" ] && grep -q "$GREP_PATTERN" "$RC_FILE"; then
       info "Already configured in $RC_FILE"
+    elif [ -f "$RC_FILE" ] && grep -q "$LEGACY_PATTERN" "$RC_FILE"; then
+      sed -i.bak "s|$INSTALL_DIR/init\.sh|$INSTALL_DIR/init.fish|g" "$RC_FILE" && rm -f "$RC_FILE.bak"
+      success "Updated legacy init.sh entry in $RC_FILE to init.fish"
     else
       {
         echo ""
@@ -220,8 +225,6 @@ else
         echo "$SOURCE_LINE"
       } >> "$RC_FILE"
       success "Added to $RC_FILE"
-      warn "Fish shell compatibility depends on init.sh being POSIX-friendly."
-      echo "  If you encounter issues, you may need a dedicated init.fish wrapper."
     fi
   else
     SOURCE_LINE="source \"$INSTALL_DIR/init.sh\""
