@@ -121,28 +121,94 @@ _open_url() {
 }
 
 _format_table() {
-  printf '%s\n' "$1" | LC_ALL=C awk -F '\t' '
+  printf '%s\n' "$1" | LC_ALL=C awk -F '\t' -v max_width="${2:-0}" -v shorten="${3:-}" '
     # Count UTF-8 characters without depending on the awk implementation or locale.
     function characters(value) {
       gsub(/[\200-\277]/, "", value)
       return length(value)
     }
+    function take(value, count, byte, size) {
+      size = 0
+      for (byte = 1; byte <= length(value); byte++) {
+        if (substr(value, byte, 1) !~ /[\200-\277]/) {
+          if (size == count) break
+          size++
+        }
+      }
+      return substr(value, 1, byte - 1)
+    }
+    function abbreviate(value, width, head, tail, skip, parts, count, prefix, suffix, candidate) {
+      if (characters(value) <= width) return value
+      if (width <= 3) return substr("...", 1, width)
+      count = split(value, parts, "/")
+      if (count > 3 && substr(value, 1, 1) == "/") {
+        prefix = "/" parts[2] "/" parts[3]
+        suffix = parts[count - 1] "/" parts[count]
+        candidate = prefix "/.../" suffix
+        if (characters(candidate) <= width) return candidate
+        candidate = "/" parts[2] "/.../" suffix
+        if (characters(candidate) <= width) return candidate
+        candidate = "/.../" suffix
+        if (characters(candidate) <= width) return candidate
+        candidate = "/" parts[2] "/.../" parts[count]
+        if (characters(candidate) <= width) return candidate
+        candidate = "/.../" parts[count]
+        if (characters(candidate) <= width) return candidate
+      }
+      head = int((width - 3) / 2)
+      tail = width - head - 3
+      skip = take(value, characters(value) - tail)
+      return take(value, head) "..." substr(value, length(skip) + 1)
+    }
+    BEGIN {
+      count = split(shorten, selected, " ")
+      for (i = 1; i <= count; i++) compact[selected[i]] = 1
+    }
     {
       for (column = 1; column <= NF; column++) {
         cells[NR, column] = $column
         size = characters($column)
+        if (NR > 1 && compact[column] && size > 32) size = 32
         if (size > widths[column]) widths[column] = size
       }
       columns = NF
     }
     END {
+      total = 3 * (columns - 1)
+      for (column = 1; column <= columns; column++) total += widths[column]
+      if (max_width >= 3 * (columns - 1) + columns) {
+        while (total > max_width) {
+          widest = 1
+          for (column = 2; column <= columns; column++) {
+            if (widths[column] > widths[widest]) widest = column
+          }
+          widths[widest]--
+          total--
+        }
+      }
       for (row = 1; row <= NR; row++) {
         for (column = 1; column <= columns; column++) {
-          value = cells[row, column]
-          printf "%s", value
-          if (column < columns) printf "%*s | ", widths[column] - characters(value), ""
+          remaining[column] = cells[row, column]
+          if (row > 1 && compact[column]) remaining[column] = abbreviate(remaining[column], widths[column])
         }
-        printf "\n"
+        more = 1
+        while (more) {
+          more = 0
+          for (column = 1; column <= columns; column++) {
+            value = take(remaining[column], widths[column])
+            # Wrap labels at spaces when possible; long names retain every character.
+            if (characters(remaining[column]) > widths[column] && index(value, " ")) {
+              sub(/ [^ ]*$/, "", value)
+            }
+            remaining[column] = substr(remaining[column], length(value) + 1)
+            sub(/^ +/, "", remaining[column])
+            sub(/ +$/, "", value)
+            if (remaining[column] != "") more = 1
+            printf "%s", value
+            if (column < columns) printf "%*s | ", widths[column] - characters(value), ""
+          }
+          printf "\n"
+        }
         if (row == 1) {
           for (column = 1; column <= columns; column++) {
             for (dash = 0; dash < widths[column]; dash++) printf "-"

@@ -74,6 +74,11 @@ _native_inventory_row() {
     if _native_verify_record "$destination" "$name" "$harness" "$expected_scope" >/dev/null 2>&1; then
       source_file=$(_native_record_value "$record" source)
       revision=$(_native_record_value "$record" source_version)
+      if [[ "$revision" =~ ^[a-f0-9]{40,64}(:modified)?$ ]]; then
+        local suffix=""
+        [[ "$revision" != *:modified ]] || suffix=:modified
+        revision="${revision:0:12}$suffix"
+      fi
       edits=no
       _native_verify_files "$destination" "$name" "$harness" "$expected_scope" >/dev/null 2>&1 || edits=yes
       if [[ ! -f "$source_file" ]]; then
@@ -98,6 +103,19 @@ _native_inventory_row() {
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$(t_native_scope "$scope")" "$source_file" "$revision" "$(t_native_state "$edits")" "$(t_native_state "$available")" "$(t_native_state "$backup_state")" "$destination"
 }
 
+_native_inventory_table() {
+  local table="$1" width="$2" summary paths
+  if [[ "$width" -ge 160 ]]; then
+    _format_table "$table" "$width" '3 8'
+  else
+    summary=$(printf '%s\n' "$table" | awk -F '\t' 'BEGIN { OFS=FS } { print $1,$2,$4,$5,$6,$7 }')
+    paths=$(printf '%s\n' "$table" | awk -F '\t' 'BEGIN { OFS=FS } { print $1,$3,$8 }')
+    _format_table "$summary" "$width" || return 1
+    printf '\n'
+    _format_table "$paths" "$width" '2 3'
+  fi
+}
+
 _native_inventory() {
   local roots="$1" requested="$2" harness="$3" filter="$4" action="$5" entries visible table name scope root destination result=0 duplicates
   # Dynamically scoped so individual status requests can explain source overrides.
@@ -113,7 +131,9 @@ _native_inventory() {
       _native_inventory_row "$name" "$scope" "$root" "$destination" "$harness" || return 1
     done <<< "$visible"
   ) || return 1
-  _format_table "$table" || return 1
+  local terminal_width="${COLUMNS:-160}"
+  [[ "$terminal_width" =~ ^[0-9]+$ && "$terminal_width" -ge 40 && "$terminal_width" -le 10000 ]] || terminal_width=160
+  _native_inventory_table "$table" "$terminal_width" || return 1
   if [[ "$action" == status && -n "$requested" ]]; then
     local record source_file revision current_version current_hash expected_scope
     while IFS=$'\t' read -r name scope root destination; do
