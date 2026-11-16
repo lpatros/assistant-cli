@@ -45,3 +45,10 @@ _engine_kimi_default_model() {
 _engine_kimi_capabilities() {
   printf '%s\n' prompt interactive model_list final_output
 }
+
+# Native adapters can also declare discovery roots for inventory and scope warnings.
+# Enable only alongside native_skills, skill_root and render_skill implementations.
+# _engine_kimi_skill_roots() {
+#   printf 'project\t%s\nuser\t%s\n' \
+#     "$(_engine_kimi_skill_root project "$1")" "$(_engine_kimi_skill_root user '')"
+# }

@@ -57,9 +57,37 @@ The effective `SKILL.md` is exported unchanged. Built-in instructions are self-c
 
 Each installation contains `SKILL.md`, `.assistant-install.tsv` and `.assistant-install.sha256`. Provenance records the source path, its Git revision when tracked (or `unversioned`), the source SHA-256, rendered SHA-256 and renderer version. A modified tracked source is marked `:modified`. SHA-256 uses `sha256sum` or `shasum`; if neither exists the operation fails clearly. Provenance is read as data, never sourced as shell code.
 
-Installation rejects an existing destination, duplicate declared identities within the destination skills directory and symbolic links in managed paths. It does not merge or overwrite. Removal validates ownership metadata and hashes and refuses edited files, edited metadata, symlinks or additional files. It removes only its three files and their empty skill folder; it does not remove the shared skills directory. A file-operation failure is reported and may require inspecting a partially created target.
+Installation rejects an existing destination, duplicate declared identities within the destination skills directory and symbolic links in managed paths. It does not merge or overwrite. Removal validates ownership metadata and hashes and refuses edited files, edited metadata, symlinks or additional files. It removes only the three owned files and empty directory of each managed installation or backup, preserving the shared skills directory. A file-operation failure is reported and may require inspecting a partially created target.
 
-`verify` validates metadata, content, ownership and placement at the documented discovery path. It does not prove that a running Codex session has loaded the skill; restart Codex if it does not appear. Conflicts in other scopes, parent-project directories, system skills or a running session are outside the local destination check. [Official skill discovery paths](https://developers.openai.com/codex/skills) and [Codex final output](https://developers.openai.com/codex/noninteractive) were checked for this implementation.
+`verify` validates metadata, content, ownership and placement at the documented discovery path. It does not prove that a running Codex session has loaded the skill; restart Codex if it does not appear. See [official skill discovery paths](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills) and [Codex final output](https://developers.openai.com/codex/noninteractive).
+
+### Managed updates and diagnostics
+
+```bash
+assistant skills installed --harness codex
+assistant skills status commit --harness codex
+assistant skills diff commit --harness codex --scope project
+assistant skills update commit --harness codex --scope project --dry-run
+assistant skills update commit --harness codex --scope project
+assistant skills restore commit --harness codex --scope project --dry-run
+assistant skills restore commit --harness codex --scope project
+```
+
+Native management compares source contents rather than requiring a version field in SKILL.md. The recorded Git revision identifies the source snapshot; a different repository revision alone does not mean a skill `update` is available. Commands do not invoke Codex or perform inference.
+
+Use `installed` to list native packages and `status` to inspect a specific name. These commands show source, installed revision, local changes, available updates, backup state and destination. A named `status` also compares installed/current source revisions and SHA-256 values. They require `--harness codex`; `--scope` defaults to all and also accepts project or user. `assistant skills list` continues to list the Assistant source registry.
+
+Tables abbreviate paths in the middle and display Git revisions with 12 characters, retaining the modification suffix. Below 160 terminal columns, summary and paths use separate tables. Named `status` output keeps full paths, revisions and hashes in its details.
+
+`update` follows the absolute source path recorded during installation. A newer effective custom override produces a warning and does not switch that origin. If the recorded source is missing, invalid, linked or changes while rendering, `update` fails without replacing the installation. A content change marks an `update` as available. `diff` and `update --dry-run` show a unified `diff`; a real `update` also prints the `diff`. `diff` permits inspection of locally edited instructions when their provenance is valid. Read-only commands do not accept `--dry-run`.
+
+`update` refuses locally edited content, edited records, extra files, symlinks, unsupported records and duplicates within the same skill directory. It displays the content `diff` before reporting local edits. There is no force replacement or automatic merge. Dry runs do not change the destination or backup. All mutating commands require an explicit project or user scope.
+
+Each successful `update` retains one previous managed installation, including its original provenance, in `.agents/.assistant-skill-backups/codex/<name>/` beside the skills directory. Backups are not native skills and are not scanned as installations. A later `update` replaces this slot only when the existing backup validates. `restore` exchanges the current installation with this previous version, so one slot can also undo a restoration. It does not need the original source. Edited current installations or backups block restoration. `remove` deletes a valid owned backup along with the installation; edited backups are preserved and block removal.
+
+Discovery inspects the selected working directory, its ancestors up to the Git repository root, and the user skill directory. Outside Git, only the selected directory and user directory are inspected. `--project` selects the discovery starting directory for `installed/status`. Duplicates between user/project/ancestor directories produce warnings and do not block changes. Two folders declaring the same name inside one skill directory block installation, `update`, `restore` and `verify`; inventory lists both and returns nonzero. Unmanaged and damaged packages remain visible. Diagnostics do not cover administrator/system bundles, runtime activation or disabled-skill settings.
+
+Writes use a per-skill lock under `.agents/.assistant-skill-locks/`. A competing operation fails clearly. Replacement stages and validates files on the same filesystem, then moves directories with rollback on a detected move failure. It is not an atomic transaction across the installation and backup. An interruption can leave a lock or a `.assistant-skill-transaction.*` directory; inspect these paths before manual recovery. If automatic rollback fails, the recovery path is reported and preserved.
 
 ### Test without inference
 
@@ -67,6 +95,8 @@ Installation rejects an existing destination, duplicate declared identities with
 bash tests/smoke.sh
 bash tests/harness.sh
 zsh tests/harness.sh
+bash tests/skill-update.sh
+zsh tests/skill-update.sh
 shellcheck -S error init.sh lib/*.sh lib/adapters/*/init.sh utils/*.sh skills/*/init.sh locales/*.sh install.sh tests/*.sh
 ```
 

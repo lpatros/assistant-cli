@@ -57,9 +57,37 @@ O `SKILL.md` efetivo é exportado sem alterações. As instruções nativas são
 
 Cada instalação contém `SKILL.md`, `.assistant-install.tsv` e `.assistant-install.sha256`. O registro guarda caminho da origem, revisão Git quando rastreada (ou `unversioned`), SHA-256 da origem, SHA-256 do conteúdo adaptado e versão do renderizador. Uma origem rastreada modificada recebe `:modified`. O SHA-256 usa `sha256sum` ou `shasum`; se ambos faltarem, a operação retorna erro claro. O registro é lido como dados, nunca como código shell.
 
-A instalação rejeita destino existente, identidades declaradas duplicadas no diretório de skills de destino e links simbólicos em caminhos gerenciados. Não mescla nem sobrescreve. A remoção valida os registros e hashes e recusa arquivos editados, registros editados, links simbólicos ou arquivos adicionais. Apaga apenas os três arquivos próprios e a pasta vazia da skill; preserva o diretório compartilhado de skills. Uma falha de operação de arquivo é informada e pode exigir inspeção de um destino parcialmente criado.
+A instalação rejeita destino existente, identidades declaradas duplicadas no diretório de skills de destino e links simbólicos em caminhos gerenciados. Não mescla nem sobrescreve. A remoção valida os registros e hashes e recusa arquivos editados, registros editados, links simbólicos ou arquivos adicionais. Apaga somente os três arquivos próprios e a pasta vazia de cada instalação ou backup gerenciado; preserva o diretório compartilhado de skills. Uma falha de operação de arquivo é informada e pode exigir inspeção de um destino parcialmente criado.
 
-`verify` valida metadados, conteúdo, registro de origem e localização no caminho documentado de descoberta. Não comprova que uma sessão aberta do Codex já carregou a skill; reinicie o Codex se ela não aparecer. Conflitos em outros escopos, diretórios de projetos ancestrais, skills de sistema ou sessão em execução ficam fora da checagem local do destino. Foram verificadas as documentações oficiais de [descoberta de skills](https://developers.openai.com/codex/skills) e [saída final do Codex](https://developers.openai.com/codex/noninteractive).
+`verify` valida metadados, conteúdo, registro de origem e localização no caminho documentado de descoberta. Não comprova que uma sessão aberta do Codex já carregou a skill; reinicie o Codex se ela não aparecer. Consulte as documentações oficiais de [descoberta de skills](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills) e [saída final do Codex](https://developers.openai.com/codex/noninteractive).
+
+### Atualização gerenciada e diagnóstico
+
+```bash
+assistant skills installed --harness codex
+assistant skills status commit --harness codex
+assistant skills diff commit --harness codex --scope project
+assistant skills update commit --harness codex --scope project --dry-run
+assistant skills update commit --harness codex --scope project
+assistant skills restore commit --harness codex --scope project --dry-run
+assistant skills restore commit --harness codex --scope project
+```
+
+O gerenciamento nativo compara o conteúdo da origem sem exigir um campo de versão no SKILL.md. A revisão Git registrada identifica a origem; uma revisão diferente do repositório, por si só, não indica atualização da skill. Os comandos não invocam o Codex nem fazem inferência.
+
+Use `installed` para listar os pacotes nativos e `status` para inspecionar um nome específico. Esses comandos mostram origem, revisão instalada, alterações locais, atualização disponível, estado do backup e destino. O `status` de um nome também compara as revisões e os SHA-256 da origem registrada e atual. Exigem `--harness codex`; `--scope` usa all por padrão e também aceita project ou user. `assistant skills list` continua listando o registro de origens do Assistant.
+
+As tabelas abreviam caminhos no meio e exibem revisões Git com 12 caracteres, preservando o sufixo de modificação. Em terminais com menos de 160 colunas, resumo e caminhos aparecem em tabelas separadas. Os detalhes de `status` para um nome mantêm os caminhos, revisões e hashes completos.
+
+`update` acompanha o caminho absoluto da origem registrada na instalação. Uma substituição customizada efetiva gera aviso e não troca essa origem. Se a origem registrada estiver ausente, inválida, ligada por link simbólico ou mudar durante a preparação, a atualização falha sem substituir a instalação. Uma mudança de conteúdo indica atualização disponível. `diff` e `update --dry-run` exibem diferenças unificadas; a atualização efetiva também exibe o `diff`. `diff` permite inspecionar instruções editadas localmente quando o registro de origem é válido. Comandos de leitura não aceitam `--dry-run`.
+
+`update` recusa conteúdo editado localmente, registros editados, arquivos adicionais, links simbólicos, registros não suportados e duplicidades no mesmo diretório de skills. O `diff` do conteúdo é exibido antes de informar as edições locais. Não há substituição forçada nem mesclagem automática. As prévias não alteram o destino ou o backup. Todos os comandos de escrita exigem escopo explícito project ou user.
+
+Cada atualização bem-sucedida guarda uma instalação gerenciada anterior, incluindo seu registro de origem, em `.agents/.assistant-skill-backups/codex/<nome>/` ao lado do diretório skills. Backups não são skills nativas nem entram na descoberta de instalações. Uma atualização seguinte substitui esse espaço somente quando o backup existente é válido. `restore` troca a instalação atual pela versão anterior, permitindo também desfazer a restauração com o mesmo espaço. Não depende da origem original. Edições na instalação atual ou no backup bloqueiam a restauração. `remove` apaga o backup próprio válido junto com a instalação; backups editados são preservados e bloqueiam a remoção.
+
+A descoberta inspeciona o diretório de trabalho selecionado, seus ancestrais até a raiz do repositório Git e o diretório de skills do usuário. Fora de Git, somente o diretório selecionado e o diretório do usuário são inspecionados. `--project` escolhe o ponto inicial da descoberta em `installed/status`. Nomes repetidos entre diretórios de usuário/projeto/ancestrais geram avisos e não bloqueiam alterações. Duas pastas que declaram o mesmo nome dentro de um diretório de skills bloqueiam instalação, atualização, restauração e `verify`; a listagem mostra ambas e retorna erro. Pacotes não gerenciados ou danificados permanecem visíveis. O diagnóstico não cobre pacotes administrativos/de sistema, ativação em sessão nem configurações de skills desabilitadas.
+
+Escritas usam um bloqueio por skill em `.agents/.assistant-skill-locks/`. Uma operação concorrente falha com mensagem clara. A substituição prepara e valida os arquivos no mesmo sistema de arquivos e move diretórios, tentando reverter uma falha de movimentação detectada. Não é uma transação atômica entre instalação e backup. Uma interrupção pode deixar um bloqueio ou diretório `.assistant-skill-transaction.*`; inspecione esses caminhos antes da recuperação manual. Se a reversão automática falhar, o caminho de recuperação é informado e preservado.
 
 ### Testar sem inferência
 
@@ -67,6 +95,8 @@ A instalação rejeita destino existente, identidades declaradas duplicadas no d
 bash tests/smoke.sh
 bash tests/harness.sh
 zsh tests/harness.sh
+bash tests/skill-update.sh
+zsh tests/skill-update.sh
 shellcheck -S error init.sh lib/*.sh lib/adapters/*/init.sh utils/*.sh skills/*/init.sh locales/*.sh install.sh tests/*.sh
 ```
 

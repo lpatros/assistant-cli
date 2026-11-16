@@ -257,6 +257,10 @@ Você também pode utilizar os modelos de referência disponíveis em [`docs/tem
 | `assistant adapters capabilities [nome]` | Mostra capacidades dos adaptadores |
 | `assistant skills install <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Mostra prévia ou instala skill nativa no Codex |
 | `assistant skills verify <name> --harness codex --scope <project\|user> [--project <dir>]` | Valida a instalação gerenciada |
+| `assistant skills diff <name> --harness codex --scope <project\|user>` | Compara uma instalação com sua origem registrada |
+| `assistant skills update <name> --harness codex --scope <project\|user> [--dry-run]` | Mostra prévia ou aplica uma atualização gerenciada |
+| `assistant skills restore <name> --harness codex --scope <project\|user> [--dry-run]` | Mostra prévia ou restaura a versão gerenciada anterior |
+| `assistant skills <installed\|status> [name] --harness codex [--scope <project\|user\|all>]` | Lista instalações nativas e diagnostica um nome |
 | `assistant skills remove <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Remove instalação gerenciada sem edições locais |
 | `assistant skills list` | Lista skills, origens e conflitos |
 | `assistant create skill <nome> <caminho.md>` | Cria uma nova skill personalizada a partir de um modelo Markdown |

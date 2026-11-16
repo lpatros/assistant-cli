@@ -262,6 +262,10 @@ When running `assistant`, you have access to the following commands:
 | `assistant adapters capabilities [name]` | Show adapter capabilities |
 | `assistant skills install <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Preview or install a native Codex skill |
 | `assistant skills verify <name> --harness codex --scope <project\|user> [--project <dir>]` | Validate the managed installation |
+| `assistant skills diff <name> --harness codex --scope <project\|user>` | Compare an installation with its recorded source |
+| `assistant skills update <name> --harness codex --scope <project\|user> [--dry-run]` | Preview or apply a managed update |
+| `assistant skills restore <name> --harness codex --scope <project\|user> [--dry-run]` | Preview or restore the previous managed version |
+| `assistant skills <installed\|status> [name] --harness codex [--scope <project\|user\|all>]` | List native installations and diagnose a name |
 | `assistant skills remove <name> --harness codex --scope <project\|user> [--project <dir>] [--dry-run]` | Remove an unedited managed installation |
 | `assistant skills list` | List skills, origins and conflicts |
 | `assistant create skill <name> <path.md>` | Creates a new custom skill from a Markdown template |

@@ -70,6 +70,7 @@ El hook `_engine_<nombre>_capabilities()` imprime un token de soporte por línea
 
 Los hooks de prompt deben emitir solo texto final, mantener los diagnósticos en stderr y devolver el código del ejecutor. `_harness_capture_text <nombre> <archivo_salida> <comando> [args...]` almacena temporalmente la salida de un modo de la CLI que ya emite solo la respuesta final; no elimina logs de un flujo arbitrario. Rechaza respuestas vacías y publica solo tras el éxito. Los adaptadores de instalación nativa implementan también `_engine_<nombre>_skill_root <alcance> <proyecto>` (ruta absoluta de descubrimiento) y `_engine_<nombre>_render_skill <nombre> <archivo_origen>` (SKILL.md adaptado válido en stdout). Solo el adaptador Codex ofrece instalación nativa en esta versión.
 
+El hook opcional `_engine_<nombre>_skill_roots <directorio-de-trabajo>` imprime `project`, `ancestor` o `user`, una tabulación y un directorio absoluto de descubrimiento por línea. Alimenta el listado nativo y los avisos de duplicados entre alcances; no altera los destinos de instalación. Los adaptadores sin este hook usan solo las raíces de proyecto/usuario. Las actualizaciones mantienen el origen registrado; los renderizadores no deben cambiarlo silenciosamente.
 
 ### Paso a Paso de Creación
 
@@ -161,7 +162,6 @@ El descubrimiento lee solo archivos inmediatos `<nombre>/SKILL.md` y nunca ejecu
 Los comandos administrativos y sus alias están reservados: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Las skills no pueden interceptarlos. El orden es: comandos administrativos, skills validadas (instrucciones personalizadas antes que nativas), comandos dinámicos personalizados y prompts directos.
 
 Para migrar una skill antigua, mueve sus instrucciones a `custom/skills/<nombre>/SKILL.md` y agrega el frontmatter obligatorio. Se ignora el nombre antiguo. Usa [SKILL.md.template](../templates/skills/SKILL.md.template) como referencia.
-
 
 ## Comandos Personalizados Dinámicos (`custom/init.sh`)
 

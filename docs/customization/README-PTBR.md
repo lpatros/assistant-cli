@@ -70,6 +70,7 @@ O hook `_engine_<nome>_capabilities()` imprime um token de suporte por linha: `p
 
 Os hooks de prompt devem emitir apenas o texto final, manter diagnósticos em stderr e retornar o código do executor. `_harness_capture_text <nome> <arquivo_saida> <comando> [args...]` armazena temporariamente a saída de um modo da CLI que já emite apenas a resposta final; não remove logs de um fluxo arbitrário. Rejeita respostas vazias e publica somente após sucesso. Adaptadores de instalação nativa implementam também `_engine_<nome>_skill_root <escopo> <projeto>` (caminho absoluto de descoberta) e `_engine_<nome>_render_skill <nome> <arquivo_origem>` (SKILL.md adaptado válido em stdout). Somente o adaptador Codex fornece instalação nativa nesta versão.
 
+O hook opcional `_engine_<nome>_skill_roots <diretório-de-trabalho>` imprime `project`, `ancestor` ou `user`, uma tabulação e um diretório absoluto de descoberta por linha. Alimenta a listagem nativa e os avisos de duplicidade entre escopos; não altera os destinos de instalação. Adaptadores sem esse hook usam somente as raízes de projeto/usuário. A origem registrada é mantida nas atualizações; renderizadores não devem trocar a origem silenciosamente.
 
 ### Passo a Passo de Criação
 
@@ -161,7 +162,6 @@ A descoberta lê apenas arquivos imediatos `<nome>/SKILL.md` e nunca executa scr
 Comandos administrativos e aliases são reservados: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills não podem interceptá-los. A resolução segue: comandos administrativos, skills validadas (instruções customizadas antes das nativas), comandos dinâmicos customizados e prompts diretos.
 
 Para migrar uma skill antiga, mova suas instruções para `custom/skills/<nome>/SKILL.md` e acrescente o frontmatter obrigatório. O nome antigo é ignorado. Use o [SKILL.md.template](../templates/skills/SKILL.md.template) como referência.
-
 
 ## Comandos Customizados Dinâmicos (`custom/init.sh`)
 

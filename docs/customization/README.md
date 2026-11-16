@@ -70,6 +70,7 @@ The `_engine_<name>_capabilities()` hook prints one supported token per line: `p
 
 Prompt hooks must emit only the final text, keep diagnostics on stderr and return the executor exit code. `_harness_capture_text <name> <output_file> <command> [args...]` buffers text from a CLI mode that already emits only the final response; it cannot remove logs from an arbitrary stream. It rejects empty results and publishes only after successful execution. Native-install adapters additionally implement `_engine_<name>_skill_root <scope> <project>` (absolute discovery path) and `_engine_<name>_render_skill <name> <source_file>` (valid rendered SKILL.md on stdout). Only the Codex adapter ships native installation in this release.
 
+The optional `_engine_<name>_skill_roots <working-directory>` hook prints `project`, `ancestor` or `user`, a tab, and an absolute discovery directory per line. It supplies native inventory and cross-scope duplicate warnings; it does not change installation destinations. Adapters without this hook use only project/user roots. Recorded source paths remain pinned during updates; renderers must not silently switch sources.
 
 ### Step-by-Step Guide
 
@@ -161,7 +162,6 @@ Discovery reads only immediate `<name>/SKILL.md` files and never executes packag
 Administrative commands and aliases are reserved: `create`, `skills`, `model`, `adapters`, `engine`, `harness`, `think`, `lang`, `custom`, `status`, `update`, `channel`, `changelog`, `version`, `--version`, `-v`, `help`, `--help`, `-h`, `--think`, `--no-think`, `--hide-think`. Skills cannot intercept them. Resolution order is administrative commands, validated skills (custom instructions before built-in), dynamic custom commands, then direct prompts.
 
 To migrate an old custom skill, move its instructions to `custom/skills/<name>/SKILL.md` and add the required frontmatter. The old filename is ignored. Start from [SKILL.md.template](../templates/skills/SKILL.md.template).
-
 
 ## Dynamic Custom Commands (`custom/init.sh`)
 
