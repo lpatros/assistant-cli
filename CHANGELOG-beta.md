@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.0-beta.1](https://github.com/lpatros/assistant-cli/compare/v2.0.0-beta...v2.0.0-beta.1) (2026-11-16)
+
+
+### Features
+
+* **skills:** add managed updates and recovery ([0db7457](https://github.com/lpatros/assistant-cli/commit/0db7457537e5f18fddf5331526aa2f1c3242f290))
+
+
+### Bug Fixes
+
+* **ui:** fit native skill tables to terminals ([d4d0278](https://github.com/lpatros/assistant-cli/commit/d4d0278c0fe1b20e1c02f615a1ffb004523f029b))
+
 ## [2.0.0-beta](https://github.com/lpatros/assistant-cli/compare/v1.6.0-beta...v2.0.0-beta) (2026-11-14)
 
 
