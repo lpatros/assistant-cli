@@ -119,7 +119,7 @@ ${LLM_CLEAN_ARGS[*]}"
 
 _cmd_skills() {
   case "${1:-list}" in
-    install|remove|verify)
+    install|remove|verify|update|restore|diff|installed|status)
       _cmd_skill_install "$@"
       return $?
       ;;

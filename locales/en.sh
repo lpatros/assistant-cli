@@ -525,7 +525,10 @@ ${BOLD}Usage:${RESET}
   ${GREEN}assistant adapters select${RESET}                   Open the interactive adapter menu
   ${GREEN}assistant custom adapters --list${RESET}            List only custom adapters
   ${GREEN}assistant adapters capabilities${RESET} [name]     Show supported operations
-  ${GREEN}assistant skills install|verify|remove${RESET} <name>  Install, verify or remove a Codex skill; requires --scope
+  ${GREEN}assistant skills install|verify|remove${RESET} <name>  Manage native Codex skills; explicit scope required
+  ${GREEN}assistant skills update|restore${RESET} <name>         Update a skill or restore its previous version
+  ${GREEN}assistant skills installed|status${RESET} [name] --harness codex  List installations, changes and available updates
+  ${GREEN}assistant skills diff${RESET} <name> --harness codex --scope <project|user>  Show differences from the recorded source
   ${GREEN}assistant think${RESET} [on|off|hide|clear|status]    Manage think mode (ollama)
   ${GREEN}assistant lang${RESET} [<lang>|--list|status]         Manage assistant language
 
@@ -557,7 +560,7 @@ ${BOLD}Examples:${RESET}
 }
 
 # Skill discovery
-t_skills_usage() { _error "Usage: assistant skills [list|install|verify|remove]"; }
+t_skills_usage() { _error "Usage: assistant skills [list|installed|status|install|verify|remove|update|restore|diff]"; }
 t_skills_header() { printf 'Name\tOrigin\tFormat\tState\tPath\tDescription\n'; }
 t_skill_error() { _error "Invalid skill: $1 ($2)."; }
 t_skill_origin() {
@@ -584,7 +587,7 @@ t_harness_status() { _info "Harness: $1 | Model: $2"; }
 t_harness_failed() { _error "Harness $1 failed (exit $2)."; }
 t_harness_empty() { _error "Harness $1 returned no final response."; }
 t_harness_dependency() { _error "Harness $1 requires $2 for this operation."; }
-t_native_usage() { _error "Usage: assistant skills <install|verify|remove> <name> --harness codex --scope <project|user> [--project <directory>] [--dry-run]"; }
+t_native_usage() { _error "Usage: assistant skills <install|remove|update|restore> <name> --harness codex --scope <project|user> [--project <directory>] [--dry-run]\nUsage: assistant skills <verify|diff> <name> --harness codex --scope <project|user> [--project <directory>]\nUsage: assistant skills <installed|status> [name] --harness codex [--scope <project|user|all>] [--project <directory>]"; }
 t_native_error() { _error "Skill operation failed: $1 ($2)."; }
 t_harness_capabilities_header() { printf 'Adapter\tPrompt\tInteractive\tProject tools\tModel list\tFinal response\tNative install\n'; }
 t_harness_capability_value() {
@@ -605,6 +608,12 @@ t_native_reason() {
     conflict) printf '%s' 'destination or skill name already exists' ;;
     failed) printf '%s' 'file operation failed; inspect the destination' ;;
     unsupported) printf '%s' 'native installation is unavailable for this harness' ;;
+    locked) printf '%s' 'another operation holds the lock; inspect it before retrying' ;;
+    diff) printf '%s' 'diff is required to compare skill contents' ;;
+    source_changed) printf '%s' 'the source changed while rendering; retry with a stable source' ;;
+    source_missing) printf '%s' 'the recorded source is unavailable' ;;
+    no_backup) printf '%s' 'no previous version is available' ;;
+    not_installed) printf '%s' 'no installed skill matches the request' ;;
     reserved) printf '%s' 'administrative command name is reserved' ;;
   esac
 }
@@ -612,6 +621,8 @@ t_native_action() {
   case "$1" in
     install) printf '%s' 'install' ;;
     verify) printf '%s' 'verify' ;;
+    update) printf '%s' 'update' ;;
+    restore) printf '%s' 'restore' ;;
     remove) printf '%s' 'remove' ;;
   esac
 }
@@ -628,3 +639,28 @@ t_adapters_unknown() { _error "Unknown adapter: $1."; }
 t_adapters_no_active_custom() { _info "No custom adapter is active."; }
 t_adapters_status() { _info "Adapter: $1 | Model: $2"; }
 t_adapters_changed() { _success "Active adapter changed to: $1"; }
+
+# Native skill updates and inventory
+t_native_current() { _info "The installed skill matches its recorded source: $1"; }
+t_native_source_notice() { _warn "The recorded source is $1; the effective Assistant source is $2. The recorded source is preserved."; }
+t_native_duplicate() { _warn "Skill name $1 also appears at $2. Duplicates within the same skill directory block changes."; }
+t_native_inventory_header() { printf 'Name\tScope\tSource\tRevision\tEdits\tUpdates\tBackup\tPath\n'; }
+t_native_scope() {
+  case "$1" in
+    project) printf '%s' 'project' ;;
+    ancestor) printf '%s' 'ancestor' ;;
+    user) printf '%s' 'user' ;;
+  esac
+}
+t_native_state() {
+  case "$1" in
+    yes) printf '%s' 'yes' ;;
+    no) printf '%s' 'no' ;;
+    unknown) printf '%s' 'unknown' ;;
+    source_invalid) printf '%s' 'invalid source' ;;
+    missing) printf '%s' 'source missing' ;;
+    unmanaged) printf '%s' 'unmanaged' ;;
+    invalid) printf '%s' 'invalid record or backup' ;;
+  esac
+}
+t_native_versions() { printf '\nInstallation: %s\nSource: %s\nInstalled revision: %s\nCurrent source revision: %s\nRecorded source SHA-256:\n  %s\nCurrent source SHA-256:\n  %s\n' "$1" "$6" "$2" "$3" "$4" "$5"; }

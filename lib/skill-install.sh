@@ -37,8 +37,8 @@ _native_source_version() {
   fi
 }
 
-_native_verify_files() {
-  local destination="$1" name="$2" harness="$3" scope="$4" record checksum expected actual extra
+_native_verify_record() {
+  local destination="$1" name="$2" harness="$3" scope="$4" record checksum expected actual
   record="$destination/.assistant-install.tsv"
   checksum="$destination/.assistant-install.sha256"
   _native_no_symlinks "$destination" || return 1
@@ -58,7 +58,14 @@ _native_verify_files() {
   [[ "$(_native_record_value "$record" format)" == 1 && "$(_native_record_value "$record" renderer)" == 1 && "$(_native_record_value "$record" harness)" == "$harness" && "$(_native_record_value "$record" scope)" == "$scope" && "$(_native_record_value "$record" name)" == "$name" ]] || {
     _native_error unmanaged "$record"; return 1;
   }
-  expected=$(_native_record_value "$record" installed_hash)
+  [[ "$(_native_record_value "$record" source)" == /* ]] || { _native_error unmanaged "$record"; return 1; }
+  [[ "$(_native_record_value "$record" source_hash)" =~ ^[a-f0-9]{64}$ && "$(_native_record_value "$record" installed_hash)" =~ ^[a-f0-9]{64}$ ]] || { _native_error unmanaged "$record"; return 1; }
+}
+
+_native_verify_files() {
+  local destination="$1" name="$2" harness="$3" scope="$4" expected actual extra
+  _native_verify_record "$destination" "$name" "$harness" "$scope" || return 1
+  expected=$(_native_record_value "$destination/.assistant-install.tsv" installed_hash)
   actual=$(_native_digest "$destination/SKILL.md") || return 1
   [[ "$actual" == "$expected" ]] || { _native_error edited "$destination/SKILL.md"; return 1; }
   local metadata
@@ -70,13 +77,13 @@ _native_verify_files() {
 
 # Check names in other folders too, including skills with additional native metadata.
 _native_check_conflicts() {
-  local root="$1" name="$2" destination file declared files
+  local root="$1" name="$2" skip="${3:-}" destination file declared files
   destination="$root/$name"
-  [[ ! -e "$destination" && ! -L "$destination" ]] || { _native_error conflict "$destination"; return 1; }
+  [[ "$destination" == "$skip" || ( ! -e "$destination" && ! -L "$destination" ) ]] || { _native_error conflict "$destination"; return 1; }
   [[ -d "$root" ]] || return 0
   files=$(find -L "$root" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print) || { _native_error failed "$root"; return 1; }
   while IFS= read -r file; do
-    [[ -n "$file" ]] || continue
+    [[ -n "$file" && "$file" != "$skip/SKILL.md" ]] || continue
     declared=$(awk 'NR==1 { sub(/\r$/, ""); if ($0 != "---") exit; next }
       /^---\r?$/ { exit }
       /^name:[ \t]*/ { sub(/^name:[ \t]*/, ""); sub(/[ \t\r]+$/, ""); gsub(/^[\047\"]|[\047\"]$/, ""); print; exit }' "$file")
@@ -84,23 +91,35 @@ _native_check_conflicts() {
   done <<< "$files"
 }
 
-_native_install() {
-  local name="$1" harness="$2" scope="$3" root="$4" dry_run="$5" source_file="$6" renderer="$7"
-  local destination="$root/$name" temp_dir source_hash installed_hash version run_rc
-  _native_check_conflicts "$root" "$name" || return 1
+_native_build_package() {
+  local name="$1" harness="$2" scope="$3" source_file="$4" renderer="$5" temp_dir="$6"
+  local source_hash installed_hash version metadata
+  _native_no_symlinks "$source_file" || return 1
+  metadata=$(_skill_metadata "$source_file") || { _native_error invalid "$source_file"; return 1; }
+  [[ "${metadata%%$'\t'*}" == "$name" ]] || { _native_error invalid "$source_file"; return 1; }
   source_hash=$(_native_digest "$source_file") || return 1
   version=$(_native_source_version "$source_file") || return 1
-  temp_dir=$(mktemp -d) || return 1
   if ! "$renderer" "$name" "$source_file" > "$temp_dir/SKILL.md"; then
-    rm -rf -- "$temp_dir"
     return 1
   fi
-  installed_hash=$(_native_digest "$temp_dir/SKILL.md") || { rm -rf -- "$temp_dir"; return 1; }
+  [[ "$source_hash" == "$(_native_digest "$source_file")" ]] || { _native_error source_changed "$source_file"; return 1; }
+  installed_hash=$(_native_digest "$temp_dir/SKILL.md") || return 1
   {
     printf 'format\t1\nharness\t%s\nscope\t%s\nname\t%s\n' "$harness" "$scope" "$name"
     printf 'source\t%s\nsource_version\t%s\nsource_hash\t%s\ninstalled_hash\t%s\nrenderer\t1\n' "$source_file" "$version" "$source_hash" "$installed_hash"
-  } > "$temp_dir/.assistant-install.tsv"
-  _native_digest "$temp_dir/.assistant-install.tsv" > "$temp_dir/.assistant-install.sha256" || { rm -rf -- "$temp_dir"; return 1; }
+  } > "$temp_dir/.assistant-install.tsv" || return 1
+  _native_digest "$temp_dir/.assistant-install.tsv" > "$temp_dir/.assistant-install.sha256" || return 1
+  _native_verify_files "$temp_dir" "$name" "$harness" "$scope"
+}
+
+_native_install() {
+  local name="$1" harness="$2" scope="$3" root="$4" dry_run="$5" source_file="$6" renderer="$7"
+  local destination="$root/$name" temp_dir installed_hash version run_rc
+  _native_check_conflicts "$root" "$name" || return 1
+  temp_dir=$(mktemp -d) || return 1
+  _native_build_package "$name" "$harness" "$scope" "$source_file" "$renderer" "$temp_dir" || { rm -rf -- "$temp_dir"; return 1; }
+  installed_hash=$(_native_record_value "$temp_dir/.assistant-install.tsv" installed_hash)
+  version=$(_native_record_value "$temp_dir/.assistant-install.tsv" source_version)
   if [[ "$dry_run" == yes ]]; then
     t_native_plan install "$destination" "$source_file" "$version" "$installed_hash"
     rm -rf -- "$temp_dir"
@@ -123,64 +142,4 @@ _native_install() {
     return 1
   fi
   t_native_done install "$destination"
-}
-
-_cmd_skill_install() {
-  local action="$1" name="${2:-}" harness="" scope="" project="" project_set=no dry_run=no
-  [[ $# -ge 2 ]] || { t_native_usage; return 1; }
-  shift 2
-  [[ "$name" =~ ^[a-z0-9][a-z0-9_-]*$ ]] || { t_native_usage; return 1; }
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --harness|--scope|--project)
-        [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || { t_native_usage; return 1; }
-        case "$1" in
-          --harness) [[ -z "$harness" ]] || { t_native_usage; return 1; }; harness="$2" ;;
-          --scope) [[ -z "$scope" ]] || { t_native_usage; return 1; }; scope="$2" ;;
-          --project) [[ "$project_set" == no ]] || { t_native_usage; return 1; }; project="$2"; project_set=yes ;;
-        esac
-        shift 2
-        ;;
-      --dry-run) dry_run=yes; shift ;;
-      *) t_native_usage; return 1 ;;
-    esac
-  done
-  [[ -n "$harness" && ( "$scope" == project || "$scope" == user ) && ( "$scope" == project || "$project_set" == no ) && ( "$action" != verify || "$dry_run" == no ) ]] || { t_native_usage; return 1; }
-  _harness_require "$harness" native_skills || return 1
-  local clean_harness root_func renderer root destination source_file version
-  clean_harness=$(_sanitize_engine_name "$harness")
-  root_func="_engine_${clean_harness}_skill_root"
-  renderer="_engine_${clean_harness}_render_skill"
-  command -v "$root_func" >/dev/null 2>&1 && command -v "$renderer" >/dev/null 2>&1 || { _native_error unsupported "$harness"; return 1; }
-  if [[ "$scope" == project ]]; then
-    if [[ "$project_set" == no ]]; then
-      project=$(git rev-parse --show-toplevel 2>/dev/null) || project="$PWD"
-    fi
-    project=$(cd -- "$project" && pwd -P) || { _native_error invalid "$project"; return 1; }
-  fi
-  root=$("$root_func" "$scope" "$project") || return 1
-  [[ "$root" == /* && "$root" != *$'\t'* && "$root" != *$'\n'* ]] || { _native_error invalid "$root"; return 1; }
-  _native_no_symlinks "$root" || return 1
-  destination="$root/$name"
-  case "$action" in
-    install)
-      _skill_is_reserved "$name" && { _native_error reserved "$name"; return 1; }
-      source_file=$(_resolve_skill "$name") || { _native_error invalid "$name"; return 1; }
-      [[ "$source_file" != *$'\t'* && "$source_file" != *$'\n'* ]] || { _native_error invalid "$source_file"; return 1; }
-      _native_install "$name" "$harness" "$scope" "$root" "$dry_run" "$source_file" "$renderer"
-      ;;
-    verify|remove)
-      _native_verify_files "$destination" "$name" "$harness" "$scope" || return 1
-      if [[ "$action" == verify ]]; then
-        t_native_done verify "$destination"
-      elif [[ "$dry_run" == yes ]]; then
-        version=$(_native_record_value "$destination/.assistant-install.tsv" source_version)
-        t_native_plan remove "$destination" "$(_native_record_value "$destination/.assistant-install.tsv" source)" "$version" "$(_native_record_value "$destination/.assistant-install.tsv" installed_hash)"
-      else
-        rm -- "$destination/SKILL.md" "$destination/.assistant-install.tsv" "$destination/.assistant-install.sha256" && rmdir -- "$destination" || { _native_error failed "$destination"; return 1; }
-        t_native_done remove "$destination"
-      fi
-      ;;
-    *) t_native_usage; return 1 ;;
-  esac
 }

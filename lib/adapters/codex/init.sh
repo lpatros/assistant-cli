@@ -57,3 +57,18 @@ _engine_codex_render_skill() {
   local source_file="$2"
   cat "$source_file"
 }
+
+_engine_codex_skill_roots() {
+  local cursor="$1" boundary scope=project root
+  boundary=$(git -C "$cursor" rev-parse --show-toplevel 2>/dev/null) || boundary="$cursor"
+  boundary=$(cd -- "$boundary" && pwd -P) || return 1
+  while true; do
+    root=$(_engine_codex_skill_root project "$cursor") || return 1
+    printf '%s\t%s\n' "$scope" "$root"
+    [[ "$cursor" != "$boundary" && "$cursor" != / ]] || break
+    cursor=$(dirname -- "$cursor")
+    scope=ancestor
+  done
+  root=$(_engine_codex_skill_root user '') || return 1
+  printf 'user\t%s\n' "$root"
+}

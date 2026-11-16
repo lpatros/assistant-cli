@@ -36,6 +36,8 @@ source "$ASSISTANT_LIB_DIR/channel.sh"
 source "$ASSISTANT_LIB_DIR/changelog.sh"
 source "$ASSISTANT_LIB_DIR/skills.sh"
 source "$ASSISTANT_LIB_DIR/skill-install.sh"
+source "$ASSISTANT_LIB_DIR/skill-update.sh"
+source "$ASSISTANT_LIB_DIR/skill-status.sh"
 source "$ASSISTANT_LIB_DIR/custom.sh"
 
 _load_locale

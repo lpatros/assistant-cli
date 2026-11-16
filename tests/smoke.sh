@@ -176,6 +176,20 @@ else
   skip "harness checks in zsh: interpreter not installed"
 fi
 
+section "Managed skill updates and diagnostics (isolated files)"
+
+for interpreter in bash zsh; do
+  if command -v "$interpreter" >/dev/null 2>&1; then
+    if "$interpreter" tests/skill-update.sh >"$ERR_FILE" 2>&1; then
+      pass "managed update and diagnostic checks in $interpreter"
+    else
+      fail "managed update and diagnostic checks in $interpreter"
+    fi
+  else
+    skip "managed update checks in $interpreter: interpreter not installed"
+  fi
+done
+
 section "Summary"
 
 printf "  ${BOLD}%d passed${RESET}, %d failed" "$PASS" "$FAIL"

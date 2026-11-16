@@ -16,10 +16,11 @@ end
 complete -c assistant -f
 complete -c assistant -f -a 'adapters harness skills commit branch create resume readme model engine think lang custom status update channel changelog version help --version --help --think --no-think --hide-think'
 
-complete -c assistant -n "__fish_seen_subcommand_from skills" -a 'list install verify remove'
+complete -c assistant -n "__fish_seen_subcommand_from skills" -a 'list install verify remove update restore diff installed status'
 complete -c assistant -n "__fish_seen_subcommand_from adapters harness engine" -a 'capabilities status list select --list'
-complete -c assistant -n "__fish_seen_subcommand_from install verify remove" -l harness -xa codex
-complete -c assistant -n "__fish_seen_subcommand_from install verify remove" -l scope -xa 'project user'
-complete -c assistant -n "__fish_seen_subcommand_from install verify remove" -l project -r
-complete -c assistant -n "__fish_seen_subcommand_from install remove" -l dry-run
+complete -c assistant -n "__fish_seen_subcommand_from skills; and __fish_seen_subcommand_from install verify remove update restore diff installed status" -l harness -xa codex
+complete -c assistant -n "__fish_seen_subcommand_from skills; and __fish_seen_subcommand_from install verify remove update restore diff installed status" -l scope -xa 'project user'
+complete -c assistant -n "__fish_seen_subcommand_from skills; and __fish_seen_subcommand_from installed status" -l scope -xa all
+complete -c assistant -n "__fish_seen_subcommand_from skills; and __fish_seen_subcommand_from install verify remove update restore diff installed status" -l project -r
+complete -c assistant -n "__fish_seen_subcommand_from skills; and __fish_seen_subcommand_from install remove update restore" -l dry-run
 complete -c assistant -n "__fish_seen_subcommand_from custom" -a 'adapters engine engines harness skills locales status'
